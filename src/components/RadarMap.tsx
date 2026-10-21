@@ -240,7 +240,9 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       imageOverlayRef.current = null;
     }
 
-    if (currentFrame?.imageUrl) {
+    // Com o feixe girando, os ecos são desenhados pelo RadarSweepCanvas,
+    // revelados somente onde a linha do sonar já passou.
+    if (currentFrame?.imageUrl && !isSweepActive) {
       const bounds = radarMeta.leafletBounds;
       const overlay = L.imageOverlay(currentFrame.imageUrl, bounds, {
         opacity: opacity / 100,
@@ -249,7 +251,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       }).addTo(mapInstance);
       imageOverlayRef.current = overlay;
     }
-  }, [currentFrame, opacity, radarMeta, mapInstance]);
+  }, [currentFrame, opacity, radarMeta, mapInstance, isSweepActive]);
 
   // Recenter helper
   const handleRecenter = () => {
@@ -269,6 +271,9 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         rangeKm={radarMeta.rangeKm || 250}
         isSweepActive={isSweepActive}
         sweepSpeedRpm={3}
+        echoImageUrl={currentFrame?.imageUrl ?? null}
+        echoBounds={radarMeta.leafletBounds}
+        echoOpacity={opacity / 100}
       />
 
       {/* 3. Map HUD (top-right): zoom + recenter */}

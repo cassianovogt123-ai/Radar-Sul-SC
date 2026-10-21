@@ -7,7 +7,15 @@ interface RadarSweepCanvasProps {
   rangeKm: number;
   isSweepActive: boolean;
   sweepSpeedRpm?: number; // e.g. 3 RPM (20 seconds per rotation)
+  /** Imagem de ecos (nuvens) revelada somente por onde o feixe já passou */
+  echoImageUrl?: string | null;
+  echoBounds?: [[number, number], [number, number]];
+  echoOpacity?: number; // 0..1
 }
+
+// Quanto da volta o eco leva para apagar depois que o feixe passa.
+// O restante (FADE_DEG..360) fica totalmente oculto, à frente da linha.
+const ECHO_FADE_DEG = 320;
 
 export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   map,
@@ -15,7 +23,30 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   rangeKm = 250,
   isSweepActive = true,
   sweepSpeedRpm = 3, // 3 RPM is typical for surveillance radar
+  echoImageUrl = null,
+  echoBounds,
+  echoOpacity = 1,
 }) => {
+  const echoImgRef = useRef<HTMLImageElement | null>(null);
+  const echoCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Carrega a imagem de ecos fora do Leaflet para desenhá-la mascarada pelo feixe
+  useEffect(() => {
+    if (!echoImageUrl) {
+      echoImgRef.current = null;
+      return;
+    }
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => {
+      echoImgRef.current = img;
+    };
+    img.src = echoImageUrl;
+    return () => {
+      img.onload = null;
+    };
+  }, [echoImageUrl]);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const angleRef = useRef<number>(0);
   const animFrameIdRef = useRef<number | null>(null);
@@ -33,6 +64,9 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       const size = map.getSize();
       canvas.width = size.x;
       canvas.height = size.y;
+      if (!echoCanvasRef.current) echoCanvasRef.current = document.createElement('canvas');
+      echoCanvasRef.current.width = size.x;
+      echoCanvasRef.current.height = size.y;
     };
 
     handleResize();
@@ -72,6 +106,62 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       ) {
         animFrameIdRef.current = requestAnimationFrame(render);
         return;
+      }
+
+      // 0. Ecos revelados pelo feixe: só aparece o que a linha já varreu,
+      //    apagando aos poucos; à frente da linha a camada de nuvens fica oculta.
+      const echoImg = echoImgRef.current;
+      const echoCanvas = echoCanvasRef.current;
+      if (isSweepActive && echoImg && echoBounds && echoCanvas) {
+        const ectx = echoCanvas.getContext('2d');
+        if (ectx) {
+          const p1 = map.latLngToContainerPoint(echoBounds[0]);
+          const p2 = map.latLngToContainerPoint(echoBounds[1]);
+          const ex = Math.min(p1.x, p2.x);
+          const ey = Math.min(p1.y, p2.y);
+          const ew = Math.abs(p2.x - p1.x);
+          const eh = Math.abs(p2.y - p1.y);
+
+          ectx.globalCompositeOperation = 'source-over';
+          ectx.clearRect(0, 0, echoCanvas.width, echoCanvas.height);
+          ectx.drawImage(echoImg, ex, ey, ew, eh);
+
+          // Máscara angular: mantém apenas a fatia atrás da linha do feixe
+          ectx.globalCompositeOperation = 'destination-in';
+          const lineRad = (angleRef.current * Math.PI) / 180;
+          const hiddenFrac = 1 - ECHO_FADE_DEG / 360;
+          if (typeof (ectx as any).createConicGradient === 'function') {
+            // Gradiente cônico começa na linha e gira no sentido horário:
+            // logo à frente da linha = oculto; chegando de volta na linha = 100%.
+            const g = (ectx as any).createConicGradient(lineRad, cx, cy) as CanvasGradient;
+            g.addColorStop(0, 'rgba(0,0,0,0)');
+            g.addColorStop(hiddenFrac, 'rgba(0,0,0,0)');
+            g.addColorStop(1, 'rgba(0,0,0,1)');
+            ectx.fillStyle = g;
+            ectx.fillRect(0, 0, echoCanvas.width, echoCanvas.height);
+          } else {
+            // Fallback para WebViews antigos: fatias com alfa decrescente
+            const maskR = Math.hypot(echoCanvas.width, echoCanvas.height) + radius;
+            const slices = 90;
+            const fadeRad = (ECHO_FADE_DEG * Math.PI) / 180;
+            const step = fadeRad / slices;
+            for (let i = 0; i < slices; i++) {
+              const a0 = lineRad - (i + 1) * step;
+              const a1 = lineRad - i * step + 0.004;
+              ectx.beginPath();
+              ectx.moveTo(cx, cy);
+              ectx.arc(cx, cy, maskR, a0, a1);
+              ectx.closePath();
+              ectx.fillStyle = `rgba(0,0,0,${1 - (i + 0.5) / slices})`;
+              ectx.fill();
+            }
+          }
+          ectx.globalCompositeOperation = 'source-over';
+
+          ctx.globalAlpha = Math.max(0, Math.min(1, echoOpacity));
+          ctx.drawImage(echoCanvas, 0, 0);
+          ctx.globalAlpha = 1;
+        }
       }
 
       ctx.save();
@@ -195,7 +285,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       }
       map.off('resize', handleResize);
     };
-  }, [map, radarCoords, rangeKm, isSweepActive, sweepSpeedRpm]);
+  }, [map, radarCoords, rangeKm, isSweepActive, sweepSpeedRpm, echoBounds, echoOpacity]);
 
   return (
     <canvas
