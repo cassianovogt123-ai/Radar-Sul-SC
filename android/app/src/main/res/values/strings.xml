@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Radar Chapecó</string>
-    <string name="title_activity_main">Radar Chapecó</string>
+    <string name="app_name">VogtSonar Sul</string>
+    <string name="title_activity_main">VogtSonar Sul</string>
     <string name="package_name">br.com.radarchapeco</string>
     <string name="custom_url_scheme">br.com.radarchapeco</string>
 </resources>

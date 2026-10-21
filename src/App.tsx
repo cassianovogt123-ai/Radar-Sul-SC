@@ -403,10 +403,10 @@ export default function App() {
           </div>
           <div className="min-w-0 leading-tight">
             <h1 className="text-[15px] font-semibold tracking-tight text-white truncate">
-              Radar Chapecó
+              VogtSonar Sul
             </h1>
             <p className="font-mono text-[11px] text-slate-400 truncate">
-              <span className="hidden sm:inline">Defesa Civil SC · SIFAP · Morro da Cruz 822 m</span>
+              <span className="hidden sm:inline">Radar Chapecó · Defesa Civil SC · Morro da Cruz 822 m</span>
               <span className="sm:hidden">{ageLabel ? `Última varredura ${ageLabel}` : 'Defesa Civil SC'}</span>
             </p>
           </div>

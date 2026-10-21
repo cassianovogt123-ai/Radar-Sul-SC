@@ -12,7 +12,7 @@ function createWindow() {
     minWidth: 360,
     minHeight: 560,
     backgroundColor: '#050b18',
-    title: 'Radar Chapecó',
+    title: 'VogtSonar Sul',
     icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
     webPreferences: {

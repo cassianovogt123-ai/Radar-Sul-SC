@@ -48,11 +48,11 @@
     "typescript": "^7.0.2"
   },
   "description": "Radar meteorológico de Chapecó em tempo real (Defesa Civil SC)",
-  "author": "Radar Chapecó",
+  "author": "VogtSonar Sul",
   "main": "electron/main.cjs",
   "build": {
     "appId": "br.com.radarchapeco",
-    "productName": "Radar Chapecó",
+    "productName": "VogtSonar Sul",
     "directories": {
       "output": "release"
     },
@@ -68,16 +68,16 @@
         "portable"
       ],
       "icon": "electron/icon.png",
-      "artifactName": "Radar-Chapeco-${version}-${arch}-${target}.${ext}"
+      "artifactName": "VogtSonar-Sul-${version}-${arch}-${target}.${ext}"
     },
     "nsis": {
       "oneClick": true,
       "createDesktopShortcut": true,
-      "shortcutName": "Radar Chapecó",
-      "artifactName": "Radar-Chapeco-Instalador.${ext}"
+      "shortcutName": "VogtSonar Sul",
+      "artifactName": "VogtSonar-Sul-Instalador.${ext}"
     },
     "portable": {
-      "artifactName": "Radar-Chapeco-Portatil.${ext}"
+      "artifactName": "VogtSonar-Sul-Portatil.${ext}"
     }
   }
 }

@@ -36,11 +36,11 @@ jobs:
       - name: Compilar APK
         working-directory: android
         run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
-      - run: cp android/app/build/outputs/apk/release/app-release.apk Radar-Chapeco.apk
+      - run: cp android/app/build/outputs/apk/release/app-release.apk VogtSonar-Sul.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Radar-Chapeco-APK
-          path: Radar-Chapeco.apk
+          name: VogtSonar-Sul-APK
+          path: VogtSonar-Sul.apk
 
   windows:
     runs-on: windows-latest
@@ -58,10 +58,10 @@ jobs:
       - run: npm run build:win
       - uses: actions/upload-artifact@v4
         with:
-          name: Radar-Chapeco-Windows
+          name: VogtSonar-Sul-Windows
           path: |
-            release/Radar-Chapeco-Instalador.exe
-            release/Radar-Chapeco-Portatil.exe
+            release/VogtSonar-Sul-Instalador.exe
+            release/VogtSonar-Sul-Portatil.exe
 
   publicar:
     needs: [android, windows]
@@ -74,9 +74,9 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}
-          name: Radar Chapecó 1.0.${{ github.run_number }}
+          name: VogtSonar Sul 1.0.${{ github.run_number }}
           make_latest: "true"
           body: |
-            **Celular (Android):** baixe `Radar-Chapeco.apk` e abra o arquivo (permita "instalar apps desconhecidos").
-            **Computador (Windows):** `Radar-Chapeco-Instalador.exe` (instala com atalho) ou `Radar-Chapeco-Portatil.exe` (abre sem instalar).
+            **Celular (Android):** baixe `VogtSonar-Sul.apk` e abra o arquivo (permita "instalar apps desconhecidos").
+            **Computador (Windows):** `VogtSonar-Sul-Instalador.exe` (instala com atalho) ou `VogtSonar-Sul-Portatil.exe` (abre sem instalar).
           files: out/*

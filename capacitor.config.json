@@ -1,6 +1,6 @@
 {
   "appId": "br.com.radarchapeco",
-  "appName": "Radar Chapecó",
+  "appName": "VogtSonar Sul",
   "webDir": "dist",
   "backgroundColor": "#050b18",
   "server": { "androidScheme": "https" },

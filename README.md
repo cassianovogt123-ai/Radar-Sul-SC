@@ -1,13 +1,13 @@
-# Radar Chapecó
+# VogtSonar Sul
 
 Radar meteorológico em tempo real (Defesa Civil SC / SIFAP) com mapa, feixe de varredura, análise de ecos e chat regional.
 
 ## Baixar o app
 Depois de configurado (passo abaixo), os arquivos ficam sempre neste endereço do seu repositório:
 
-- **Celular Android:** `https://github.com/SEU-USUARIO/SEU-REPO/releases/latest/download/Radar-Chapeco.apk`
-- **Windows (instalador):** `.../releases/latest/download/Radar-Chapeco-Instalador.exe`
-- **Windows (sem instalar):** `.../releases/latest/download/Radar-Chapeco-Portatil.exe`
+- **Celular Android:** `https://github.com/SEU-USUARIO/SEU-REPO/releases/latest/download/VogtSonar-Sul.apk`
+- **Windows (instalador):** `.../releases/latest/download/VogtSonar-Sul-Instalador.exe`
+- **Windows (sem instalar):** `.../releases/latest/download/VogtSonar-Sul-Portatil.exe`
 
 No celular: abra o link, baixe o APK, toque nele e permita "instalar apps desconhecidos".
 No Windows: se aparecer "O Windows protegeu o computador", clique em **Mais informações → Executar assim mesmo** (o app não tem assinatura paga da Microsoft).
