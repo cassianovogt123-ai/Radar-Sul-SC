@@ -31,7 +31,7 @@ jobs:
               await pg.goto('http://localhost:3000/', { waitUntil: 'networkidle2', timeout: 90000 }).catch(e => log.push('goto ' + e.message));
               await sleep(8000);
               const pinPos = name => pg.evaluate(n => { const el = [...document.querySelectorAll('.city-pin')].find(e => e.textContent.includes(n)); if (!el) return null; const r = el.getBoundingClientRect(); return [r.x + 8, r.y + 8]; }, name);
-              let pos = await pinPos('Chapecó');
+              let pos = await pinPos('Concórdia');
               log.push('pin ' + JSON.stringify(pos));
               await pg.mouse.move(pos[0], pos[1]); await sleep(1000); await shot('t1_tooltip');
               await pg.mouse.click(pos[0], pos[1]); await sleep(30000); await shot('t2_modal');
