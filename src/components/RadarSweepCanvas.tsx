@@ -15,6 +15,8 @@ interface RadarSweepCanvasProps {
   echoOpacity?: number; // 0..1
   /** Toca um ping suave quando a linha passa sobre uma nuvem */
   soundEnabled?: boolean;
+  /** Volume do ping (1 = padrão) */
+  soundVolume?: number;
 }
 
 // A nuvem só aparece no rastro logo atrás da linha do sonar e some em
@@ -163,7 +165,10 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   echoBounds,
   echoOpacity = 1,
   soundEnabled = false,
+  soundVolume = 1,
 }) => {
+  const soundVolumeRef = useRef<number>(soundVolume);
+  soundVolumeRef.current = soundVolume;
   const pingEventsRef = useRef<PingEvent[] | null>(null);
   const soundEnabledRef = useRef<boolean>(soundEnabled);
   soundEnabledRef.current = soundEnabled;
@@ -236,7 +241,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
         // na formação (relógio de saída do próprio aparelho). Qualquer velocidade.
         const events = pingEventsRef.current;
         const abs = absAngleRef.current;
-        if (soundEnabledRef.current && events && events.length && degPerSec > 0) {
+        if (soundEnabledRef.current && soundVolumeRef.current > 0 && events && events.length && degPerSec > 0) {
           const horizon = abs + degPerSec * 0.45;
           const from = Math.max(abs, lastScheduledAbsRef.current);
           if (horizon > from) {
@@ -249,7 +254,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
                 if (evAbs > from && evAbs <= horizon) {
                   // instante (relógio da tela) em que a linha chega à formação
                   const atPerf = time + ((evAbs - abs) / degPerSec) * 1000;
-                  const cancel = playSonarPing(ev.intensity, perfToAudioTime(atPerf));
+                  const cancel = playSonarPing(ev.intensity, perfToAudioTime(atPerf), soundVolumeRef.current);
                   if (cancel) pending.push({ evAbs, cancel });
                 }
               }

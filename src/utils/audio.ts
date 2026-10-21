@@ -155,15 +155,23 @@ export function perfToAudioTime(perfMs: number): number {
  * leve harmônico e decaimento de ~0,9 s, como um sonar. Volume moderado.
  * intensity (0..1) deixa o ping um pouco mais presente em ecos mais fortes.
  * atAudioTime: instante no relógio do áudio (ver perfToAudioTime); omitido = agora.
+ * volume: multiplicador do volume do ping (1 = padrão).
  * Devolve uma função que cancela o ping se ele ainda não tocou (true = cancelado).
  */
-export function playSonarPing(intensity: number = 0.5, atAudioTime?: number): (() => boolean) | null {
+export function playSonarPing(
+  intensity: number = 0.5,
+  atAudioTime?: number,
+  volume: number = 1
+): (() => boolean) | null {
   try {
     const ctx = getAudioContext(); // também retoma o áudio se o Android o suspendeu
     if (ctx.state !== 'running') return null;
     const now = Math.max(ctx.currentTime + 0.005, atAudioTime ?? 0);
     const k = Math.max(0, Math.min(1, intensity));
-    const peak = 0.22 + 0.13 * k;
+    // volume: 1 = nível padrão; o controle do app vai de 0 a ~1,7
+    const v = Math.max(0, Math.min(1.7, volume));
+    if (v <= 0.001) return null;
+    const peak = Math.max(0.0005, (0.22 + 0.13 * k) * v);
     const f = 900 + 120 * k;
 
     const master = ctx.createGain();

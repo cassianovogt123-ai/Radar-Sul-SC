@@ -12,6 +12,7 @@ interface RadarMapProps {
   radarMeta: RadarMetadata;
   isSweepActive: boolean;
   isSoundEnabled?: boolean;
+  soundVolume?: number;
   sweepSpeedRpm?: number;
   baseMapType: 'osm' | 'dark' | 'satellite' | 'topo';
   onChangeBaseMap: (type: 'osm' | 'dark' | 'satellite' | 'topo') => void;
@@ -50,6 +51,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   radarMeta,
   isSweepActive,
   isSoundEnabled = false,
+  soundVolume = 1,
   sweepSpeedRpm = 3,
   baseMapType,
   onChangeBaseMap,
@@ -284,6 +286,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         echoBounds={radarMeta.leafletBounds}
         echoOpacity={opacity / 100}
         soundEnabled={isSoundEnabled}
+        soundVolume={soundVolume}
       />
 
       {/* 3. Map HUD (top-right): zoom + recenter */}

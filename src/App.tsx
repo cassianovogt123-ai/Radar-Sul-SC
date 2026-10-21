@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RadarMap } from './components/RadarMap';
 import { DbzLegend } from './components/DbzLegend';
 import { RadarFrame, RadarMetadata, ConnectionStatus } from './types/radar';
-import { RefreshCw, Play, Pause, Radio, Volume2, VolumeX, MessageSquare } from 'lucide-react';
-import { unlockAudio, playRadarAlertChime, playApproachAlertChime } from './utils/audio';
+import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare } from 'lucide-react';
+import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData } from './services/radarDirect';
 import { CommunityChat } from './components/CommunityChat';
@@ -69,6 +69,63 @@ export default function App() {
       return 0;
     }
   });
+  // Som do feixe (ping do sonar): liga/desliga e volume próprios,
+  // independentes do alerta sonoro de chuva do cabeçalho
+  const readPref = (key: string, fallback: number) => {
+    try {
+      const raw = localStorage.getItem(key);
+      const v = raw === null ? NaN : Number(raw);
+      return Number.isFinite(v) ? v : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+  const savePref = (key: string, value: number) => {
+    try {
+      localStorage.setItem(key, String(value));
+    } catch {}
+  };
+  const [isBeamSoundOn, setIsBeamSoundOn] = useState<boolean>(() => readPref('beamSoundOn', 1) === 1);
+  const [beamVolume, setBeamVolume] = useState<number>(() => Math.max(0, Math.min(100, readPref('beamVolume', 60))));
+  const [isBeamPanelOpen, setIsBeamPanelOpen] = useState<boolean>(false);
+  const beamPanelRef = useRef<HTMLDivElement | null>(null);
+  // 60% = volume padrão do ping; 100% ≈ 1,7× mais alto
+  const beamVolumeFactor = beamVolume / 60;
+
+  const toggleBeamSound = async () => {
+    const next = !isBeamSoundOn;
+    if (next) await unlockAudio();
+    setIsBeamSoundOn(next);
+    savePref('beamSoundOn', next ? 1 : 0);
+  };
+  const changeBeamVolume = (v: number) => {
+    setBeamVolume(v);
+    savePref('beamVolume', v);
+  };
+  const testBeamSound = async () => {
+    await unlockAudio();
+    playSonarPing(0.5, undefined, beamVolumeFactor);
+  };
+
+  // O navegador só libera o áudio após um toque: o primeiro toque na tela já libera
+  useEffect(() => {
+    const unlock = () => {
+      unlockAudio();
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    return () => window.removeEventListener('pointerdown', unlock);
+  }, []);
+
+  // Fecha o painel de som do feixe ao tocar fora dele
+  useEffect(() => {
+    if (!isBeamPanelOpen) return;
+    const close = (e: PointerEvent) => {
+      if (beamPanelRef.current && !beamPanelRef.current.contains(e.target as Node)) setIsBeamPanelOpen(false);
+    };
+    window.addEventListener('pointerdown', close);
+    return () => window.removeEventListener('pointerdown', close);
+  }, [isBeamPanelOpen]);
+
   const cycleSweepSpeed = () => {
     setSweepSpeedIdx((i) => {
       const n = (i + 1) % SWEEP_SPEEDS.length;
@@ -274,7 +331,7 @@ export default function App() {
             }
           >
             {isAudioEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-            <span className="hidden sm:inline">{isAudioEnabled ? 'Som ativo' : 'Ativar som'}</span>
+            <span className="hidden sm:inline">{isAudioEnabled ? 'Alerta ativo' : 'Ativar alerta'}</span>
           </button>
 
           <button
@@ -307,7 +364,8 @@ export default function App() {
           opacity={opacity}
           radarMeta={CHAPECO_RADAR_META}
           isSweepActive={isSweepActive}
-          isSoundEnabled={isAudioEnabled}
+          isSoundEnabled={isBeamSoundOn && isSweepActive}
+          soundVolume={beamVolumeFactor}
           sweepSpeedRpm={SWEEP_SPEEDS[sweepSpeedIdx].rpm}
           baseMapType={baseMapType}
           onChangeBaseMap={setBaseMapType}
@@ -319,7 +377,7 @@ export default function App() {
             <DbzLegend />
           </div>
 
-          <div className="pointer-events-auto glass rounded-2xl p-2 flex items-center justify-between sm:justify-start gap-3">
+          <div className="pointer-events-auto relative glass rounded-2xl p-2 flex items-center justify-between sm:justify-start gap-2 sm:gap-3">
             <button
               onClick={() => setIsSweepActive(!isSweepActive)}
               data-active={isSweepActive}
@@ -340,15 +398,94 @@ export default function App() {
               {SWEEP_SPEEDS[sweepSpeedIdx].label}
             </button>
 
-            <label className="flex items-center gap-2.5 pr-2">
-              <span className="eyebrow">Ecos</span>
+            <div ref={beamPanelRef}>
+              <button
+                onClick={() => setIsBeamPanelOpen(!isBeamPanelOpen)}
+                data-active={isBeamPanelOpen}
+                className="btn btn-icon"
+                aria-haspopup="dialog"
+                aria-expanded={isBeamPanelOpen}
+                aria-label={isBeamSoundOn ? `Som do feixe ligado, volume ${beamVolume}%` : 'Som do feixe desligado'}
+                title="Som do feixe: ligar/desligar e volume"
+              >
+                {!isBeamSoundOn || beamVolume === 0 ? (
+                  <VolumeX className="w-4 h-4 text-slate-400" />
+                ) : beamVolume < 50 ? (
+                  <Volume1 className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </button>
+
+              {isBeamPanelOpen && (
+                <div
+                  role="dialog"
+                  aria-label="Som do feixe"
+                  className="absolute bottom-full right-0 mb-2 w-72 max-w-full glass bg-[#0a1324]/95 rounded-2xl p-3 flex flex-col gap-3 shadow-xl"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="leading-tight">
+                      <span className="block text-[13px] font-medium text-slate-100">Som do feixe</span>
+                      <span className="block text-[11px] text-slate-400">Ping quando a linha passa na nuvem</span>
+                    </div>
+                    <button
+                      role="switch"
+                      aria-checked={isBeamSoundOn}
+                      onClick={toggleBeamSound}
+                      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors cursor-pointer ${
+                        isBeamSoundOn ? 'bg-cyan-500' : 'bg-white/15'
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                          isBeamSoundOn ? 'translate-x-5' : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <label className={`flex flex-col gap-2 ${isBeamSoundOn ? '' : 'opacity-40 pointer-events-none'}`}>
+                    <span className="flex items-center justify-between">
+                      <span className="eyebrow">Volume</span>
+                      <span className="font-mono text-[11px] text-slate-300 tabular-nums">{beamVolume}%</span>
+                    </span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={beamVolume}
+                      onChange={(e) => changeBeamVolume(Number(e.target.value))}
+                      onPointerUp={testBeamSound}
+                      onKeyUp={testBeamSound}
+                      className="range-cyan w-full"
+                      style={{ ['--fill' as string]: `${beamVolume}%` }}
+                      aria-label="Volume do som do feixe"
+                      disabled={!isBeamSoundOn}
+                    />
+                  </label>
+
+                  <button onClick={testBeamSound} className="btn justify-center" disabled={!isBeamSoundOn || beamVolume === 0}>
+                    <Volume2 className="w-3.5 h-3.5" />
+                    <span>Testar som</span>
+                  </button>
+
+                  <p className="text-[11px] leading-snug text-slate-500">
+                    O alerta de chuva (botão de som no topo) é separado e não muda aqui.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <label className="flex items-center gap-2 sm:gap-2.5 pr-1 sm:pr-2" title="Opacidade dos ecos">
+              <span className="eyebrow hidden sm:inline">Ecos</span>
               <input
                 type="range"
                 min={10}
                 max={100}
                 value={opacity}
                 onChange={(e) => setOpacity(Number(e.target.value))}
-                className="range-cyan w-24 sm:w-28"
+                className="range-cyan w-16 min-[400px]:w-20 sm:w-28"
                 style={{ ['--fill' as string]: `${((opacity - 10) / 90) * 100}%` }}
                 aria-label="Opacidade dos ecos do radar"
               />
