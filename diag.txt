@@ -1,0 +1,118 @@
+NOW=2026-10-21T13:41:40Z
+=== DescribeDomains GOES-East_ABI_Band13_Clean_Infrared GoogleMapsCompatible_Level6
+HTTP/2 200 
+content-type: text/xml; charset=UTF-8
+content-length: 380
+date: Wed, 21 Oct 2026 13:41:41 GMT
+x-xss-protection: 1; mode=block
+server: ServerTokens ProductOnly
+cache-control: public, max-age=1800
+vary: Accept-Encoding
+access-control-allow-origin: *
+x-cache-detail: "cache miss: attempting entity save" from 172.17.0.3
+x-content-type-options: nosniff
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-frame-options: SAMEORIGIN
+x-request-id: dRdzEvtOjjc00OLOTAPcUASrIlebeEHr1D7FeumFmILmMUdpjfGuAw==
+x-cache: Miss from cloudfront
+via: 1.1 f0d7632c883c9599147ea9f71dcc8ed2.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: dRdzEvtOjjc00OLOTAPcUASrIlebeEHr1D7FeumFmILmMUdpjfGuAw==
+
+<Domains xmlns:ows='http://www.opengis.net/ows/1.1'><SpaceDomain><BoundingBox maxy='20037508.342789' miny='-20037508.342789' crs='urn:ogc:def:crs:EPSG::3857' maxx='20037508.342789' minx='-20037508.342789'/></SpaceDomain><DimensionDomain><ows:Identifier>time</ows:Identifier><Domain>2026-10-21T09:50:00Z/2026-10-21T13:20:00Z/PT10M</Domain><Size>1</Size></DimensionDomain></Domains>
+=== DescribeDomains GOES-East_ABI_Band2_Red_Visible_1km GoogleMapsCompatible_Level7
+HTTP/2 200 
+content-type: text/xml; charset=UTF-8
+content-length: 380
+date: Wed, 21 Oct 2026 13:41:41 GMT
+x-xss-protection: 1; mode=block
+server: ServerTokens ProductOnly
+cache-control: public, max-age=1800
+vary: Accept-Encoding
+access-control-allow-origin: *
+x-cache-detail: "cache miss: attempting entity save" from 172.17.0.3
+x-request-id: vClalVKa4V-aNvmz-GcOx5VqMJ6MSumX_ZcB04o2fFz8ax_BFZwQww==
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-cache: Miss from cloudfront
+via: 1.1 f899e87b32a4b595456b11b0a317a23c.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: vClalVKa4V-aNvmz-GcOx5VqMJ6MSumX_ZcB04o2fFz8ax_BFZwQww==
+
+<Domains xmlns:ows='http://www.opengis.net/ows/1.1'><SpaceDomain><BoundingBox crs='urn:ogc:def:crs:EPSG::3857' maxx='20037508.342789' miny='-20037508.342789' minx='-20037508.342789' maxy='20037508.342789'/></SpaceDomain><DimensionDomain><ows:Identifier>time</ows:Identifier><Domain>2026-10-21T09:50:00Z/2026-10-21T13:20:00Z/PT10M</Domain><Size>1</Size></DimensionDomain></Domains>
+=== DescribeDomains GOES-East_ABI_GeoColor GoogleMapsCompatible_Level7
+HTTP/2 200 
+content-type: text/xml; charset=UTF-8
+content-length: 333
+date: Wed, 21 Oct 2026 13:41:41 GMT
+x-frame-options: SAMEORIGIN
+server: ServerTokens ProductOnly
+cache-control: public, max-age=1800
+vary: Accept-Encoding
+access-control-allow-origin: *
+x-cache-detail: "cache miss: attempting entity save" from 172.17.0.3
+x-request-id: kgYH8oY2EokvPYY8VwMBbE70j6pO0eZu78VUIDix44PuXigRJmrE0Q==
+x-content-type-options: nosniff
+x-xss-protection: 1; mode=block
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+x-cache: Miss from cloudfront
+via: 1.1 c1e10addfd71e01a8c56f4755a03bf98.cloudfront.net (CloudFront)
+x-amz-cf-pop: HIO52-P5
+x-amz-cf-id: kgYH8oY2EokvPYY8VwMBbE70j6pO0eZu78VUIDix44PuXigRJmrE0Q==
+
+<Domains xmlns:ows='http://www.opengis.net/ows/1.1'><SpaceDomain><BoundingBox crs='urn:ogc:def:crs:EPSG::3857' minx='-20037508.342789' miny='-20037508.342789' maxy='20037508.342789' maxx='20037508.342789'/></SpaceDomain><DimensionDomain><ows:Identifier>time</ows:Identifier><Domain></Domain><Size>0</Size></DimensionDomain></Domains>
+=== capabilities GOES-East layers (3857 best)
+-rw-r--r-- 1 runner runner 5845787 Oct 21 13:41 cap.xml
+GOES-East_ABI_Air_Mass ['GoogleMapsCompatible_Level6'] ['image/png'] default= 2026-10-21T12:50:00Z lastval= 2026-10-17T06:00:00Z/2026-10-21T12:50:00Z/PT10M
+    []
+GOES-West_ABI_Air_Mass ['GoogleMapsCompatible_Level6'] ['image/png'] default= 2026-10-21T13:00:00Z lastval= 2026-10-19T19:40:00Z/2026-10-21T13:00:00Z/PT10M
+    []
+GOES-East_ABI_Band13_Clean_Infrared ['GoogleMapsCompatible_Level6'] ['image/png'] default= 2026-10-21T13:00:00Z lastval= 2026-10-20T19:40:00Z/2026-10-21T13:00:00Z/PT10M
+    []
+GOES-West_ABI_Band13_Clean_Infrared ['GoogleMapsCompatible_Level6'] ['image/png'] default= 2026-10-21T13:00:00Z lastval= 2026-10-20T19:50:00Z/2026-10-21T13:00:00Z/PT10M
+    []
+GOES-East_ABI_Dust ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T12:40:00Z lastval= 2026-10-21T12:40:00Z/2026-10-21T12:40:00Z/PT10M
+    []
+GOES-West_ABI_Dust ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T12:30:00Z lastval= 2026-10-21T12:20:00Z/2026-10-21T12:30:00Z/PT10M
+    []
+GOES-East_ABI_FireTemp ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T12:40:00Z lastval= 2026-10-21T12:40:00Z/2026-10-21T12:40:00Z/PT10M
+    []
+GOES-West_ABI_FireTemp ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T12:50:00Z lastval= 2026-10-21T12:50:00Z/2026-10-21T12:50:00Z/PT10M
+    []
+GOES-East_ABI_GeoColor ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-20T15:00:00Z lastval= 2026-10-12T16:10:00Z/2026-10-20T15:00:00Z/PT10M
+    []
+GOES-West_ABI_GeoColor ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-20T15:00:00Z lastval= 2026-10-12T19:10:00Z/2026-10-20T15:00:00Z/PT10M
+    []
+GOES-East_ABI_Band2_Red_Visible_1km ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T13:00:00Z lastval= 2026-10-18T19:50:00Z/2026-10-21T13:00:00Z/PT10M
+    []
+GOES-West_ABI_Band2_Red_Visible_1km ['GoogleMapsCompatible_Level7'] ['image/png'] default= 2026-10-21T12:50:00Z lastval= 2026-10-18T19:50:00Z/2026-10-21T12:50:00Z/PT10M
+    []
+=== tile test (latest default)
+200 image/png 94467
+200 image/png 101679
+HTTP/2 200 
+date: Wed, 21 Oct 2026 13:41:42 GMT
+server: Apache/2.4.37 (rocky) OpenSSL/1.1.1k mod_fcgid/2.3.9 mod_wsgi/4.6.4 Python/3.6
+x-powered-by: PHP/7.2.24
+cache-control: no-cache, must-revalidate
+expires: Sat, 26 Jul 1997 05:00:00 GMT
+set-cookie: PHPSESSID=5ler7e1mupj7jjnega60bg0dc8; path=/
+access-control-allow-origin: *
+access-control-allow-headers: *
+content-type: application/json
+set-cookie: SERVERID=re4_8001; path=/
+
+[{"id":"G18-ABI-CONUS-BAND02","dataid":"G18-ABI-CONUS-BAND02","duplicate":false,"reingest":false,"name":"GOES West ABI ConUS B02 Hi-Res \"Red\" Visible","description":"he \u2018Red\u2019 Visible band \u2013 0.64 \u00b5m \u2013 has the\nfinest spatial resolution (0.5 km at the subsatellite point) of all ABI bands. Thus it is ideal to identify small-scale features such as river fogs and fog\/clear air boundaries, or overshooting tops or cumulus clouds. It has also been used to document daytime snow and ice cover, diagnose low-level cloud-drift winds, assist with detection of volcanic ash and analysis of hurricanes and winter storms. The \u2018Red\u2019 Visible band is also essential for creation of \u201ctrue color\u201d imagery.","owner":"","collaborator":null,"url":"http:\/\/cimss.ssec.wisc.edu\/goes\/OCLOFactSheetPDFs\/ABIQuickGuide_Band02.pdf","categories":["GOES West ConUS"],"order":0,"orderclause":"","opacity":100,"type":"raster","displaytype":"tile","projection":"epsg:4326","marker":"","probe":"value","units":"","maxzoom":7,"tilecache":true,"seedpolicy":-1,"seedlatbound":85,"static":false,"staticshapecache":false,"released":true,"status":0,"optimizeflag":0,"fetch":false,"centerproperty":"","declutter":true,"cluster":true,"declutterexempt":"","outputtype":"png24","resample":"nearest","processing":"","scalemin":"0","scalemax":"0","minutes":"30","timewindow":"0","applystyle":true,"showlegend":false,"merge":"none","mergeproducts":"","times":["20261014.133617","20261014.134117","20261014.134617","20261014.135117","20261014.135617","20261014.140117","20261014.140617","20261014.141117","20261014.141617","20261014.142117","20261014.142617","20261014.143117","20261014.143617","20261014.144117","20261014.144617","20261014.145117","20261014.145617","20261014.150117","20261014.150617","20261014.151117","20261014.151617","20261014.152117","20261014.152617","20261014.153117","20261014.153617","20261014.154117","20261014.154617","20261014.155117","20261014.155617","20261014.160117","20261014.160617","20261014.161117","20261014.161617","20261014.162117","20261014.162617","20261014.163117","20261014.163617","20261014.164117","20261014.164617","20261014.165117","20261014.165617","20261014.170117","20261014.170617","20261014.171117","20261014.171617","20261014.172117","20261014.172617","20261014.173117","20261014.173617","20261014.174117","20261014.174617","20261014.175117","20261014.175617","20261014.180117","20261014.180617","20261014.181117","20261014.181617","20261014.182117","20261014.182617","20261014.183117","20261014.1
+[{"id":"G18-ABI-CONUS-BAND02","dataid":"G18-ABI-CONUS-BAND02","duplicate":false,"reingest":false,"name":"GOES West ABI ConUS B02 Hi-Res \"Red\" Visible","description":"he \u2018Red\u2019 Visible band \u2013 0.64 \u00b5m \u2013 has the\nfinest spatial resolution (0.5 km at the subsatellite point) of all ABI bands. Thus it is ideal to identify small-scale features such as river fogs and fog\/clear air boundaries, or overshooting tops or cumulus clouds. It has also been used to document daytime snow and ice cover, diagnose low-level cloud-drift winds, assist with detection of volcanic ash and analysis of hurricanes and winter storms. The \u2018Red\u2019 Visible band is also essential for creation of \u201ctrue color\u201d imagery.","owner":"","collaborator":null,"url":"http:\/\/cimss.ssec.wisc.edu\/goes\/OCLOFactSheetPDFs\/ABIQuickGuide_Band02.pdf","categories":["GOES West ConUS"],"order":0,"orderclause":"","opacity":100,"type":"raster","displaytype":"tile","projection":"epsg:4326","marker":"","probe":"value","units":"","maxzoom":7,"tilecache":true,"seedpolicy":-1,"seedlatbound":85,"static":false,"staticshapecache":false,"released":true,"status":0,"optimizeflag":0,"fetch":false,"centerproperty":"","declutter":true,"cluster":true,"declutterexempt":"","outputtype":"png24","resample":"nearest","processing":"","scalemin":"0","scalemax":"0","minutes":"30","timewindow":"0","applystyle":true,"showlegend":false,"merge":"none","mergeproducts":"","times":["20261014.133617","20261014.134117","20261014.134617","20261014.135117","20261014.135617","20261014.140117","20261014.140617","20261014.141117","20261014.141617","20261014.142117","20261014.142617","20261014.143117","20261014.143617","20261014.144117","20261014.144617","20261014.145117","20261014.145617","20261014.150117","20261014.150617","20261014.151117","20261014.151617","20261014.152117","20261014.152617","20261014.153117","20261014.153617","20261014.154117","20261014.154617","20261014.155117","20261014.155617","20261014.1
+HTTP/2 200 
+server: nginx/1.30.6
+date: Wed, 21 Oct 2026 13:41:43 GMT
+content-type: image/jpeg
+content-length: 7647581
+last-modified: Wed, 21 Oct 2026 13:31:25 GMT
+etag: "6ad8bead-74b15d"
+cache-control: max-age=0,s-maxage=60
+access-control-allow-origin: *
+accept-ranges: bytes
+
