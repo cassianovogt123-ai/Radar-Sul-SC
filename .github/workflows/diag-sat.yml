@@ -9,19 +9,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Probes
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci && npx vite build
+      - name: Servidor + capturas
         run: |
-          exec > >(tee diag5.txt) 2>&1
-          set +e
-          B=https://idapfile.mdr.gov.br/idap/api/rss/cap
-          curl -s -m 60 --compressed -o /dev/null -w "gzip: %{size_download} bytes  %{http_code}\n" -H "Accept-Encoding: gzip" "$B"
-          curl -s -m 60 -D - -o /dev/null -H "Accept-Encoding: gzip, br" "$B" | grep -i "content-encoding\|content-length\|access-control\|cache"
-          curl -s -m 30 -X OPTIONS -D - -o /dev/null -H "Origin: https://localhost" -H "Access-Control-Request-Method: GET" "$B" | head -12
-          for q in "?uf=SC" "/SC" "?estado=SC" "?limit=5"; do curl -s -m 60 -o /dev/null -w "$q -> %{http_code} %{size_download}\n" "$B$q"; done
-          for u in https://idapfile.mdr.gov.br/idap/api/rss https://idapfile.mdr.gov.br/idap/api/ https://idapfile.mdr.gov.br/idap/api/rss/cap/uf/SC https://idapfile.mdr.gov.br/idap/api/alertas https://idapfile.mdr.gov.br/idap/swagger-ui.html https://idapfile.mdr.gov.br/idap/v3/api-docs; do curl -s -m 30 -o r.txt -w "$u -> %{http_code} %{content_type} %{size_download}\n" "$u"; head -c 300 r.txt; echo; done
-          echo "=== INMET"
-          for u in https://apiprevmet3.inmet.gov.br/avisos/ativos https://apiprevmet3.inmet.gov.br/avisos/rss https://alertas2.inmet.gov.br/; do curl -s -m 40 -D h.txt -o r.txt -w "$u -> %{http_code} %{content_type} %{size_download} err=%{errormsg}\n" "$u" -H "Origin: https://localhost"; grep -i access-control h.txt; head -c 400 r.txt; echo; done
+          (NODE_ENV=production PORT=3000 npx tsx server.ts > srv.log 2>&1 &)
+          sleep 10
+          curl -s -m 90 localhost:3000/api/alertas/defesa-civil | head -c 300 > alerts_head.txt; echo >> alerts_head.txt
+          curl -s -m 30 "localhost:3000/api/radar/sc/latest?radar=CHP&prod=0" | head -c 300 >> alerts_head.txt
+          mkdir -p /tmp/pp && cd /tmp/pp && npm init -y >/dev/null && npm i puppeteer-core >/dev/null
+          cat > s.js <<'JS'
+          const p = require('puppeteer-core'); const W = process.env.GITHUB_WORKSPACE;
+          const sleep = ms => new Promise(r => setTimeout(r, ms));
+          (async () => {
+            const b = await p.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+            const pg = await b.newPage(); const log = []; pg.on('console', m => log.push(m.text()));
+            const shot = async n => pg.screenshot({ path: W + '/' + n + '.png' });
+            try {
+              await pg.setViewport({ width: 1280, height: 800 });
+              await pg.goto('http://localhost:3000/', { waitUntil: 'networkidle2', timeout: 90000 }).catch(e => log.push('goto ' + e.message));
+              await sleep(8000);
+              const pinPos = name => pg.evaluate(n => { const el = [...document.querySelectorAll('.city-pin')].find(e => e.textContent.includes(n)); if (!el) return null; const r = el.getBoundingClientRect(); return [r.x + 8, r.y + 8]; }, name);
+              let pos = await pinPos('Chapecó');
+              log.push('pin ' + JSON.stringify(pos));
+              await pg.mouse.move(pos[0], pos[1]); await sleep(1000); await shot('t1_tooltip');
+              await pg.mouse.click(pos[0], pos[1]); await sleep(30000); await shot('t2_modal');
+              await pg.evaluate(() => { const d = document.querySelector('[role=dialog] .overflow-y-auto'); if (d) d.scrollTop = d.scrollHeight; }); await sleep(600); await shot('t3_modal_bottom');
+              await pg.evaluate(() => document.querySelector('[role=dialog] button[aria-label=Fechar]').click()); await sleep(600);
+              await pg.evaluate(() => document.querySelector('button[aria-label="Abrir chat regional"]').click()); await sleep(4000); await shot('t4_chat');
+              await pg.evaluate(() => document.querySelector('button[aria-label="Abrir chat regional"]').click()); await sleep(800);
+              await pg.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 }); await sleep(2000);
+              pos = await pinPos('Itapiranga');
+              if (pos) { await pg.mouse.click(pos[0], pos[1]); await sleep(4000); }
+              await shot('t5_phone_modal');
+            } catch (e) { log.push('ERR ' + e.stack); }
+            require('fs').writeFileSync(W + '/t_log.txt', log.join('\n')); await b.close();
+          })();
+          JS
+          node s.js
+          cd $GITHUB_WORKSPACE; tail -20 srv.log >> t_log.txt
       - name: Salvar
+        if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f diag5.txt; git commit -m "diag5 [skip ci]"; git push
+          for f in t1_tooltip.png t2_modal.png t3_modal_bottom.png t4_chat.png t5_phone_modal.png t_log.txt alerts_head.txt; do [ -s $f ] && git add -f $f; done
+          git commit -m "diag6 [skip ci]"; git push
