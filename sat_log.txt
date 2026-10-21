@@ -2,301 +2,167 @@ Failed to load resource: the server responded with a status of 404 (File not fou
 Erro ao atualizar varredura do radar: Error: Servidor retornou status 404
 Failed to load resource: the server responded with a status of 404 (File not found)
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/wmts.cgi?SERVICE=WMTS&REQUEST=DescribeDomains&VERSION=1.0.0&LAYER=GOES-East_ABI_Band13_Clean_Infrared&TILEMATRIXSET=GoogleMapsCompatible_Level6&TIME=
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/10.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/12.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/11.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/16/11.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/12.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/10.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/11.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/11.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/12.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/16/11.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/11.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/10.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/20/11.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/16/10.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/16/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/20/11.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/16/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/20/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/20/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/10.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/16/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/20/12.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/11.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/11.png
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/13.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/8.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/9.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/13.png
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/9.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/8.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/9.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/9.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/13.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/13.png net::ERR_BLOCKED_BY_ORB
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/13.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-FAIL https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/13.png net::ERR_BLOCKED_BY_ORB
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:20:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/18/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/18/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:40:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:50:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:10:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:10:00Z/GoogleMapsCompatible_Level6/5/18/13.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:30:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:20:00Z/GoogleMapsCompatible_Level6/5/17/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:40:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T12:00:00Z/GoogleMapsCompatible_Level6/5/19/8.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:30:00Z/GoogleMapsCompatible_Level6/5/19/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T11:50:00Z/GoogleMapsCompatible_Level6/5/17/9.png
-200 https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/2026-10-21T13:00:00Z/GoogleMapsCompatible_Level6/5/19/9.png
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/114021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/115021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/120021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/121021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/122021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/123021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/124021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/125021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/130021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/131021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/132021/6/23/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/22/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/22/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/21/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/23/36.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/21/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/23/37.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/22/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/22/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/21/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/23/35.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/21/38.png net::ERR_ABORTED
+FAIL https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/20261021/133021/6/23/38.png net::ERR_ABORTED
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
+Failed to load resource: the server responded with a status of 404 (File not found)
+Erro ao atualizar varredura do radar: Error: Servidor retornou status 404
 WebSocket connection to 'ws://localhost:4173/ws/chat' failed: Error during WebSocket handshake: Unexpected response code: 404
