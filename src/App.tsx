@@ -55,6 +55,29 @@ export default function App() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('conectado');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isSweepActive, setIsSweepActive] = useState<boolean>(true);
+  // Velocidade do feixe (voltas por minuto); o som acompanha a linha em qualquer uma
+  const SWEEP_SPEEDS = [
+    { rpm: 3, label: '1×' },
+    { rpm: 6, label: '2×' },
+    { rpm: 10, label: '3×' },
+  ];
+  const [sweepSpeedIdx, setSweepSpeedIdx] = useState<number>(() => {
+    try {
+      const v = Number(localStorage.getItem('sweepSpeedIdx'));
+      return v >= 0 && v < 3 ? v : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const cycleSweepSpeed = () => {
+    setSweepSpeedIdx((i) => {
+      const n = (i + 1) % SWEEP_SPEEDS.length;
+      try {
+        localStorage.setItem('sweepSpeedIdx', String(n));
+      } catch {}
+      return n;
+    });
+  };
   const [opacity, setOpacity] = useState<number>(85);
   const [baseMapType, setBaseMapType] = useState<'osm' | 'dark' | 'satellite' | 'topo'>('osm');
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
@@ -285,6 +308,7 @@ export default function App() {
           radarMeta={CHAPECO_RADAR_META}
           isSweepActive={isSweepActive}
           isSoundEnabled={isAudioEnabled}
+          sweepSpeedRpm={SWEEP_SPEEDS[sweepSpeedIdx].rpm}
           baseMapType={baseMapType}
           onChangeBaseMap={setBaseMapType}
         />
@@ -305,6 +329,15 @@ export default function App() {
             >
               {isSweepActive ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
               <span>{isSweepActive ? 'Pausar feixe' : 'Girar feixe'}</span>
+            </button>
+
+            <button
+              onClick={cycleSweepSpeed}
+              className="btn font-mono tabular-nums"
+              title="Velocidade do feixe (toque para trocar)"
+              aria-label={`Velocidade do feixe ${SWEEP_SPEEDS[sweepSpeedIdx].label}`}
+            >
+              {SWEEP_SPEEDS[sweepSpeedIdx].label}
             </button>
 
             <label className="flex items-center gap-2.5 pr-2">

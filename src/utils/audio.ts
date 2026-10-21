@@ -133,11 +133,11 @@ export function playApproachAlertChime(volume: number = 0.75): boolean {
  * leve harmônico e decaimento de ~0,9 s, como um sonar. Volume moderado.
  * intensity (0..1) deixa o ping um pouco mais presente em ecos mais fortes.
  */
-export function playSonarPing(intensity: number = 0.5): boolean {
+export function playSonarPing(intensity: number = 0.5, delaySec: number = 0): boolean {
   try {
     const ctx = getAudioContext(); // também retoma o áudio se o Android o suspendeu
     if (ctx.state !== 'running') return false;
-    const now = ctx.currentTime + 0.01;
+    const now = ctx.currentTime + Math.max(0, delaySec);
     const k = Math.max(0, Math.min(1, intensity));
     const peak = 0.22 + 0.13 * k;
     const f = 900 + 120 * k;
@@ -171,5 +171,21 @@ export function playSonarPing(intensity: number = 0.5): boolean {
   } catch (err) {
     console.warn('Failed to play sonar ping:', err);
     return false;
+  }
+}
+
+/**
+ * Atraso entre agendar um som e ele sair no alto-falante (segundos).
+ * Android/WebView costuma ter 100–250 ms; usa o valor informado pelo sistema
+ * quando existe, senão uma estimativa segura.
+ */
+export function getAudioOutputLatency(): number {
+  try {
+    const ctx = getAudioContext() as AudioContext & { outputLatency?: number };
+    const measured = (ctx.outputLatency || 0) + (ctx.baseLatency || 0);
+    if (measured > 0.005) return Math.min(measured, 0.5);
+    return /Android/i.test(navigator.userAgent) ? 0.18 : 0.04;
+  } catch {
+    return 0.1;
   }
 }

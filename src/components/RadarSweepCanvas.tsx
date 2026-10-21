@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
-import { playSonarPing } from '../utils/audio';
+import { playSonarPing, getAudioOutputLatency } from '../utils/audio';
 import { estimateDbzFromRgb, DBZ_PRECIPITATION_THRESHOLD } from '../utils/echoAnalyzer';
 
 interface RadarSweepCanvasProps {
@@ -103,7 +103,9 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   const echoProfileRef = useRef<Float32Array | null>(null);
   const soundEnabledRef = useRef<boolean>(soundEnabled);
   soundEnabledRef.current = soundEnabled;
-  const lastPingAtRef = useRef<number>(0);
+  // Ângulo acumulado (sem voltar a 0) para agendar os pings com antecedência
+  const absAngleRef = useRef<number>(0);
+  const lastScheduledAbsRef = useRef<number>(0);
   const echoImgRef = useRef<HTMLImageElement | null>(null);
   const echoCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -161,24 +163,34 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       if (isSweepActive) {
         // Rotate clockwise (degrees per second: 360 * (RPM / 60))
         const degPerSec = 360 * (sweepSpeedRpm / 60);
-        const prevAngle = angleRef.current;
-        const advance = Math.min(degPerSec * dt, 30); // evita salto após app em segundo plano
-        angleRef.current = (prevAngle + advance) % 360;
+        // evita salto após app em segundo plano e nunca anda para trás
+        const advance = Math.max(0, Math.min(degPerSec * dt, 30));
+        absAngleRef.current += advance;
+        angleRef.current = absAngleRef.current % 360;
 
-        // Ping suave quando a linha entra numa nuvem (borda de cada formação)
+        // Ping sincronizado com a linha: olha um pouco à frente do feixe e agenda
+        // o som para sair no instante exato em que a linha chega à borda da nuvem,
+        // descontando o atraso de áudio do aparelho. Vale para qualquer velocidade.
         const profile = echoProfileRef.current;
-        if (soundEnabledRef.current && profile && advance > 0) {
-          const from = Math.floor(prevAngle);
-          const to = Math.floor(prevAngle + advance);
-          for (let d = from + 1; d <= to; d++) {
+        if (soundEnabledRef.current && profile && degPerSec > 0) {
+          const latency = getAudioOutputLatency();
+          const lookaheadDeg = degPerSec * (latency + 0.12);
+          const abs = absAngleRef.current;
+          if (lastScheduledAbsRef.current > abs + 360) lastScheduledAbsRef.current = abs;
+          const firstDeg = Math.max(Math.floor(abs) + 1, Math.floor(lastScheduledAbsRef.current) + 1);
+          const lastDeg = Math.floor(abs + lookaheadDeg);
+          for (let d = firstDeg; d <= lastDeg; d++) {
             const bin = ((d % 360) + 360) % 360;
             const prevBin = (bin + 359) % 360;
-            if (profile[bin] > 0 && profile[prevBin] === 0 && time - lastPingAtRef.current > 400) {
-              lastPingAtRef.current = time;
-              playSonarPing(profile[bin]);
-              break;
+            if (profile[bin] > 0 && profile[prevBin] === 0) {
+              const secsUntilLine = (d - abs) / degPerSec;
+              playSonarPing(profile[bin], secsUntilLine - latency);
+              lastScheduledAbsRef.current = d;
             }
           }
+          if (lastDeg > lastScheduledAbsRef.current) lastScheduledAbsRef.current = lastDeg;
+        } else {
+          lastScheduledAbsRef.current = absAngleRef.current;
         }
       }
 
