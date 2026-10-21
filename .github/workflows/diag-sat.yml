@@ -9,45 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fontes de alerta e previsão
+      - name: Probes
         run: |
-          exec > >(tee diag4.txt) 2>&1
+          exec > >(tee diag5.txt) 2>&1
           set +e
-          echo NOW $(date -u +%FT%TZ)
-          echo "=== IDAP CAP feed"
-          curl -s -m 30 -D idap.h "https://idapfile.mdr.gov.br/idap/api/rss/cap" -o idap.xml -H "Origin: https://localhost"; grep -i "HTTP/\|content-type\|access-control" idap.h; ls -la idap.xml; head -c 1500 idap.xml; echo
-          python3 - <<'PY'
-          import re
-          x=open('idap.xml',encoding='utf-8',errors='replace').read()
-          entries=re.findall(r'<entry>(.*?)</entry>',x,re.S)
-          print('entries',len(entries))
-          for e in entries[:3]: print(e[:1200]); print('-----')
-          links=re.findall(r'<link[^>]*href="([^"]+)"',x)
-          print('links sample',links[:5])
-          sc=[e for e in entries if 'SC' in e or 'Santa Catarina' in e]
-          print('SC entries',len(sc))
-          for e in sc[:2]: print(e[:1500]); print('=====')
-          PY
-          L=$(python3 -c "import re;x=open('idap.xml',encoding='utf-8',errors='replace').read();l=re.findall(r'<link[^>]*href=\"([^\"]+)\"',x);print(l[1] if len(l)>1 else '')")
-          echo "detail link: $L"; [ -n "$L" ] && curl -s -m 20 -D - "$L" -H "Origin: https://localhost" | head -c 3000; echo
-          echo "=== INMET avisos ativos"
-          curl -s -m 30 -D inmet.h "https://apiprevmet3.inmet.gov.br/avisos/ativos" -o inmet.json -H "Origin: https://localhost"; grep -i "HTTP/\|content-type\|access-control" inmet.h; ls -la inmet.json
-          python3 - <<'PY'
-          import json
-          try:
-            d=json.load(open('inmet.json'))
-            print(type(d), list(d.keys()) if isinstance(d,dict) else len(d))
-            arr=(d.get('hoje',[]) + d.get('futuro',[])) if isinstance(d,dict) else d
-            print('n',len(arr))
-            if arr: print(json.dumps(arr[0],ensure_ascii=False)[:1800])
-            sc=[a for a in arr if 'Santa Catarina' in json.dumps(a,ensure_ascii=False) or '4204202' in json.dumps(a)]
-            print('com SC/Chapeco', len(sc))
-            for a in sc[:3]: print({k:(str(v)[:200]) for k,v in a.items() if k not in ('poligono','geocodes')}); print('geocodes contains Chapeco 4204202:', '4204202' in str(a.get('geocodes','')))
-          except Exception as ex: print('ERR',ex); print(open('inmet.json').read()[:500])
-          PY
-          echo "=== Open-Meteo"
-          curl -s -m 30 -D om.h "https://api.open-meteo.com/v1/forecast?latitude=-27.0963,-27.1683&longitude=-52.6186,-53.7631&hourly=precipitation_probability,precipitation,weather_code,wind_gusts_10m&daily=precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,weather_code&timezone=America%2FSao_Paulo&forecast_days=3" -o om.json -H "Origin: https://localhost"; grep -i "HTTP/\|access-control" om.h; head -c 1500 om.json; echo
+          B=https://idapfile.mdr.gov.br/idap/api/rss/cap
+          curl -s -m 60 --compressed -o /dev/null -w "gzip: %{size_download} bytes  %{http_code}\n" -H "Accept-Encoding: gzip" "$B"
+          curl -s -m 60 -D - -o /dev/null -H "Accept-Encoding: gzip, br" "$B" | grep -i "content-encoding\|content-length\|access-control\|cache"
+          curl -s -m 30 -X OPTIONS -D - -o /dev/null -H "Origin: https://localhost" -H "Access-Control-Request-Method: GET" "$B" | head -12
+          for q in "?uf=SC" "/SC" "?estado=SC" "?limit=5"; do curl -s -m 60 -o /dev/null -w "$q -> %{http_code} %{size_download}\n" "$B$q"; done
+          for u in https://idapfile.mdr.gov.br/idap/api/rss https://idapfile.mdr.gov.br/idap/api/ https://idapfile.mdr.gov.br/idap/api/rss/cap/uf/SC https://idapfile.mdr.gov.br/idap/api/alertas https://idapfile.mdr.gov.br/idap/swagger-ui.html https://idapfile.mdr.gov.br/idap/v3/api-docs; do curl -s -m 30 -o r.txt -w "$u -> %{http_code} %{content_type} %{size_download}\n" "$u"; head -c 300 r.txt; echo; done
+          echo "=== INMET"
+          for u in https://apiprevmet3.inmet.gov.br/avisos/ativos https://apiprevmet3.inmet.gov.br/avisos/rss https://alertas2.inmet.gov.br/; do curl -s -m 40 -D h.txt -o r.txt -w "$u -> %{http_code} %{content_type} %{size_download} err=%{errormsg}\n" "$u" -H "Origin: https://localhost"; grep -i access-control h.txt; head -c 400 r.txt; echo; done
       - name: Salvar
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          for f in diag4.txt idap.xml inmet.json om.json; do [ -s $f ] && git add -f $f; done; git commit -m "diag4 [skip ci]"; git push
+          git add -f diag5.txt; git commit -m "diag5 [skip ci]"; git push
