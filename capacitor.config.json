@@ -1,0 +1,8 @@
+{
+  "appId": "br.com.radarchapeco",
+  "appName": "Radar Chapecó",
+  "webDir": "dist",
+  "backgroundColor": "#050b18",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}

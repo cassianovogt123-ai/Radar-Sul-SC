@@ -1,0 +1,82 @@
+name: Gerar APK e app Windows
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - name: Certificados da Defesa Civil SC (ICP-Brasil)
+        run: bash scripts/sifap-certs.sh
+      - name: Build web + sincronizar Android
+        run: npx vite build && npx cap sync android
+      - name: Compilar APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleRelease --no-daemon
+      - run: cp android/app/build/outputs/apk/release/app-release.apk Radar-Chapeco.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Radar-Chapeco-APK
+          path: Radar-Chapeco.apk
+
+  windows:
+    runs-on: windows-latest
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Radar-Chapeco-Windows
+          path: |
+            release/Radar-Chapeco-Instalador.exe
+            release/Radar-Chapeco-Portatil.exe
+
+  publicar:
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Radar Chapecó 1.0.${{ github.run_number }}
+          make_latest: "true"
+          body: |
+            **Celular (Android):** baixe `Radar-Chapeco.apk` e abra o arquivo (permita "instalar apps desconhecidos").
+            **Computador (Windows):** `Radar-Chapeco-Instalador.exe` (instala com atalho) ou `Radar-Chapeco-Portatil.exe` (abre sem instalar).
+          files: out/*

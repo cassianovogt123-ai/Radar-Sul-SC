@@ -1,0 +1,32 @@
+[
+  {
+    "id": "msg_welcome_1",
+    "userId": "system_chapeco",
+    "nickname": "Moderador Radar",
+    "municipality": "Chapecó",
+    "content": "Bem-vindo ao canal meteorológico de Chapecó e região Oeste! Compartilhe aqui observações de chuva, granizo, vento e tempo local.",
+    "timestamp": 1792513374484,
+    "createdAt": "2026-10-20T16:22:54.484Z",
+    "reportsCount": 0
+  },
+  {
+    "id": "msg_1792516980494_6aqwa",
+    "userId": "test_user_1",
+    "nickname": "Carlos",
+    "municipality": "Xanxerê",
+    "content": "Céu nublado aqui em Xanxerê, vento moderado do quadrante sul.",
+    "timestamp": 1792516980494,
+    "createdAt": "2026-10-20T17:23:00.494Z",
+    "reportsCount": 0
+  },
+  {
+    "id": "msg_1792518522553_ur07t",
+    "userId": "test_itapiranga_1",
+    "nickname": "Luciano",
+    "municipality": "Itapiranga (SC)",
+    "content": "Aqui em Itapiranga tempo firme às margens do Rio Uruguai, sem chuva no momento.",
+    "timestamp": 1792518522553,
+    "createdAt": "2026-10-20T17:48:42.553Z",
+    "reportsCount": 0
+  }
+]
