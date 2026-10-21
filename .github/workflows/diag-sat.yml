@@ -9,29 +9,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm ci && npx vite build
-      - name: Screenshot satélite
+      - name: Fontes
         run: |
-          cd dist && (python3 -m http.server 4173 >/dev/null 2>&1 &) && cd ..
-          mkdir -p /tmp/pp && cd /tmp/pp && npm init -y >/dev/null && npm i puppeteer-core >/dev/null
-          cat > s.js <<'JS'
-          const p=require('puppeteer-core');
-          (async()=>{const b=await p.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
-          const pg=await b.newPage(); await pg.setViewport({width:430,height:860,deviceScaleFactor:1});
-          const log=[]; pg.on('console',m=>log.push(m.text())); pg.on('requestfailed',r=>log.push('FAIL '+r.url().slice(0,160)+' '+r.failure().errorText));
-          pg.on('response',r=>{if(/gibs/.test(r.url())) log.push(r.status()+' '+r.url().slice(0,200));});
-          await pg.goto('http://localhost:4173/',{waitUntil:'networkidle2',timeout:60000}).catch(e=>log.push('goto '+e.message));
-          await pg.evaluate(()=>[...document.querySelectorAll('button')].find(x=>/Satélite GOES/.test(x.textContent)).click());
-          await new Promise(r=>setTimeout(r,20000));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_phone.png'});
-          await pg.setViewport({width:1280,height:800}); await new Promise(r=>setTimeout(r,8000));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_desktop.png'});
-          require('fs').writeFileSync(process.env.GITHUB_WORKSPACE+'/sat_log.txt',log.join('\n')); await b.close();})();
-          JS
-          node s.js
+          exec > >(tee diag2.txt) 2>&1
+          set +e
+          echo NOW $(date -u +%FT%TZ)
+          curl -s "https://realearth.ssec.wisc.edu/api/products?search=G19" -o p.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('p.json'))
+          for p in d:
+              t=p.get('times') or []
+              print(p['id'], '|', p['name'][:60], '|', p.get('projection'), '| n=',len(t), '| last=', t[-1] if t else None)
+          PY
+          for id in G19-ABI-FD-BAND13 G19-ABI-FD-BAND02; do
+            curl -s "https://realearth.ssec.wisc.edu/api/times?products=$id" | head -c 400; echo
+            curl -s -o $id.png -w "$id tile %{http_code} %{content_type} %{size_download}\n" "https://realearth.ssec.wisc.edu/tiles/$id/5/11/18.png"
+          done
+          echo "=== GIBS default capabilities vs probe for Chapeco tiles"
+          for t in 12:50 13:00 13:10 13:20 13:30 13:40; do
+            T=$(date -u +%F)T$t:00Z; ok=0; n=0
+            for xy in 17/10 17/11 17/12 18/10 18/11 18/12 19/10 19/11 19/12; do n=$((n+1)); c=$(curl -s -o /dev/null -w "%{http_code}%{content_type}" "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/$T/GoogleMapsCompatible_Level6/5/${xy%/*}/${xy#*/}.png"); [ "$c" = "200image/png" ] && ok=$((ok+1)); done
+            echo "$T $ok/$n"
+          done
+          echo "=== STAR ssa listing"
+          curl -s "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/ssa/13/" | grep -o 'href="[^"]*"' | tail -15
+          echo "=== Esri dark gray"
+          curl -s -o /dev/null -w "%{http_code} %{content_type}\n" "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/5/18/11"
+          curl -s -o /dev/null -w "%{http_code} %{content_type}\n" "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/5/18/11"
+          curl -s -o /dev/null -w "carto %{http_code} %{content_type}\n" "https://a.basemaps.cartocdn.com/dark_all/5/11/18.png"
+          curl -s "https://a.basemaps.cartocdn.com/dark_all/5/11/18.png" | head -c 200 | strings | head -3
       - name: Salvar
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f sat_phone.png sat_desktop.png sat_log.txt; git commit -m "diag shots [skip ci]"; git push
+          git add -f diag2.txt *.png; git commit -m "diag2 [skip ci]"; git push
