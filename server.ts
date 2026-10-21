@@ -330,7 +330,7 @@ app.get('/api/radar/sc/image', async (req: Request, res: Response) => {
 
     const contentType = imgResponse.headers.get('content-type') || 'image/png';
     const arrayBuffer = await imgResponse.arrayBuffer();
-    let buffer = Buffer.from(arrayBuffer);
+    let buffer: Buffer = Buffer.from(arrayBuffer);
 
     // Convert clear-air black pixels into true alpha transparency
     if (contentType.includes('png') || file.endsWith('.png')) {
