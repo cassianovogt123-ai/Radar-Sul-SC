@@ -278,6 +278,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         opacity: opacity / 100,
         zIndex: 200,
         interactive: false,
+        className: 'radar-pixelated',
       }).addTo(mapInstance);
       imageOverlayRef.current = overlay;
     }

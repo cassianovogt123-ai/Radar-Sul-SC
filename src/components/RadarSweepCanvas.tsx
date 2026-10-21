@@ -211,13 +211,21 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Desenha na resolução real da tela (celular tem 2–3 pixels físicos por ponto);
+    // sem isso a camada é esticada e os pixels do radar ficam borrados.
+    let dpr = 1;
+    let viewW = 0;
+    let viewH = 0;
     const handleResize = () => {
       const size = map.getSize();
-      canvas.width = size.x;
-      canvas.height = size.y;
+      dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+      viewW = size.x;
+      viewH = size.y;
+      canvas.width = Math.round(size.x * dpr);
+      canvas.height = Math.round(size.y * dpr);
       if (!echoCanvasRef.current) echoCanvasRef.current = document.createElement('canvas');
-      echoCanvasRef.current.width = size.x;
-      echoCanvasRef.current.height = size.y;
+      echoCanvasRef.current.width = canvas.width;
+      echoCanvasRef.current.height = canvas.height;
     };
 
     handleResize();
@@ -271,7 +279,10 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
         }
       }
 
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // daqui em diante tudo é desenhado em coordenadas do mapa (pontos de tela)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       // Convert Radar geographical coordinates to screen pixel coordinates
       const centerPoint = map.latLngToContainerPoint(radarCoords);
@@ -287,9 +298,9 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       // Only draw if within or near viewport
       if (
         cx + radius < -50 ||
-        cx - radius > canvas.width + 50 ||
+        cx - radius > viewW + 50 ||
         cy + radius < -50 ||
-        cy - radius > canvas.height + 50 ||
+        cy - radius > viewH + 50 ||
         radius < 5
       ) {
         animFrameIdRef.current = requestAnimationFrame(render);
@@ -311,8 +322,33 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
           const eh = Math.abs(p2.y - p1.y);
 
           ectx.globalCompositeOperation = 'source-over';
+          ectx.setTransform(1, 0, 0, 1, 0, 0);
           ectx.clearRect(0, 0, echoCanvas.width, echoCanvas.height);
-          ectx.drawImage(echoImg, ex, ey, ew, eh);
+          ectx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          // Pixels do radar exatamente como medidos: cada pixel da imagem vira um
+          // quadrado nítido (sem suavização/interpolação que borra as bordas).
+          ectx.imageSmoothingEnabled = false;
+          // Com zoom alto, desenha só o trecho da imagem que aparece na tela
+          // (recorte alinhado a pixels inteiros do radar, sem deslocar nada).
+          const iw = echoImg.naturalWidth;
+          const ih = echoImg.naturalHeight;
+          const sx0 = Math.max(0, Math.floor(((0 - ex) / ew) * iw));
+          const sy0 = Math.max(0, Math.floor(((0 - ey) / eh) * ih));
+          const sx1 = Math.min(iw, Math.ceil(((viewW - ex) / ew) * iw));
+          const sy1 = Math.min(ih, Math.ceil(((viewH - ey) / eh) * ih));
+          if (sx1 > sx0 && sy1 > sy0 && iw > 0 && ih > 0) {
+            ectx.drawImage(
+              echoImg,
+              sx0,
+              sy0,
+              sx1 - sx0,
+              sy1 - sy0,
+              ex + (sx0 * ew) / iw,
+              ey + (sy0 * eh) / ih,
+              ((sx1 - sx0) * ew) / iw,
+              ((sy1 - sy0) * eh) / ih
+            );
+          }
 
           // Máscara angular: mantém apenas a fatia atrás da linha do feixe
           ectx.globalCompositeOperation = 'destination-in';
@@ -326,10 +362,10 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
             g.addColorStop(hiddenFrac, 'rgba(0,0,0,0)');
             g.addColorStop(1, 'rgba(0,0,0,1)');
             ectx.fillStyle = g;
-            ectx.fillRect(0, 0, echoCanvas.width, echoCanvas.height);
+            ectx.fillRect(0, 0, viewW, viewH);
           } else {
             // Fallback para WebViews antigos: fatias com alfa decrescente
-            const maskR = Math.hypot(echoCanvas.width, echoCanvas.height) + radius;
+            const maskR = Math.hypot(viewW, viewH) + radius;
             const slices = 90;
             const fadeRad = (ECHO_FADE_DEG * Math.PI) / 180;
             const step = fadeRad / slices;
@@ -346,9 +382,13 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
           }
           ectx.globalCompositeOperation = 'source-over';
 
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.imageSmoothingEnabled = false;
           ctx.globalAlpha = Math.max(0, Math.min(1, echoOpacity));
           ctx.drawImage(echoCanvas, 0, 0);
           ctx.globalAlpha = 1;
+          ctx.imageSmoothingEnabled = true;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
       }
 

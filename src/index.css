@@ -175,3 +175,9 @@ select:focus-visible {
     animation: none !important;
   }
 }
+
+/* Ecos do radar com pixels nítidos (feixe pausado): mesma leitura do radar, sem suavização */
+.radar-pixelated {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
