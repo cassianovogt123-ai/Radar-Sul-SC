@@ -1,0 +1,213 @@
+NOW 2026-10-21T16:25:36Z
+=== IDAP CAP feed
+HTTP/1.1 200 OK
+Content-Type: application/rss+xml;charset=UTF-8
+-rw-r--r-- 1 runner runner 10225533 Oct 21 16:26 idap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title>Rss Idap</title>
+  <id>http://idapapi.mi.gov.br/api/rss/cap</id>
+  <updated>2026-10-21T16:21:17Z</updated>
+  <dc:date>2026-10-21T16:21:17Z</dc:date>
+  <entry>
+    <title>CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194514/2026</id>
+    <updated>2026-10-21T10:36:32Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194514/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T07:36:32-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Immediate</urgency>
+          <severity>Severe</severity>
+          <certainty>Possible</certainty>
+          <onset>2026-10-21T07:36:32-03:00</onset>
+          <expires>2026-10-21T10:00:00-03:00</expires>
+          <senderName>Defesa Civil Nacional</senderName>
+          <description>A análise da imagem de satélite GOES, no canal infravermelho, disponível no portal da INMET, indica a presença de nuvens associadas a chuva intensa com possibilidade de pancadas de chuva de in
+entries 20
+
+    <title>CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194514/2026</id>
+    <updated>2026-10-21T10:36:32Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194514/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T07:36:32-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Immediate</urgency>
+          <severity>Severe</severity>
+          <certainty>Possible</certainty>
+          <onset>2026-10-21T07:36:32-03:00</onset>
+          <expires>2026-10-21T10:00:00-03:00</expires>
+          <senderName>Defesa Civil Nacional</senderName>
+          <description>A análise da imagem de satélite GOES, no canal infravermelho, disponível no portal da INMET, indica a presença de nuvens associadas a chuva intensa com possibilidade de pancadas de chuva de intensidade moderada a forte sob
+-----
+
+    <title>TEMPESTADE LOCAL/CONVECTIVA - CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194515/2026</id>
+    <updated>2026-10-21T12:47:00Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194515/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T09:47:00-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>TEMPESTADE LOCAL/CONVECTIVA - CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Expected</urgency>
+          <severity>Moderate</severity>
+          <certainty>Likely</certainty>
+          <onset>2026-10-21T12:00:00-03:00</onset>
+          <expires>2026-10-24T23:55:00-03:00</expires>
+          <senderName>Defesa Civil Estadual de Santa Catarina</senderName>
+          <description>Atualização: Observação Meteorológica SDC/SC 21/10 09:30 ¿ Chuva intensa e temporais isolados entre esta quarta (21) e sábado (24). Ocorrências l
+-----
+
+    <title>CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194516/2026</id>
+    <updated>2026-10-21T12:56:24Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194516/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T09:56:24-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Expected</urgency>
+          <severity>Moderate</severity>
+          <certainty>Possible</certainty>
+          <onset>2026-10-21T09:56:24-03:00</onset>
+          <expires>2026-10-22T00:59:00-03:00</expires>
+          <senderName>Defesa Civil Estadual de Mato Grosso</senderName>
+          <headline>Defesa Civil:MT. Previsao de Chuva ate 30mm/h, ventos de 40 a 60km/h. Riscos de queda de galhos de arvores, alagamentos e descargas eletricas. Ligue: 193/199.</headline>
+          <description>Defesa Civil:MT.
+-----
+links sample []
+SC entries 9
+
+    <title>TEMPESTADE LOCAL/CONVECTIVA - CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194515/2026</id>
+    <updated>2026-10-21T12:47:00Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194515/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T09:47:00-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>TEMPESTADE LOCAL/CONVECTIVA - CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Expected</urgency>
+          <severity>Moderate</severity>
+          <certainty>Likely</certainty>
+          <onset>2026-10-21T12:00:00-03:00</onset>
+          <expires>2026-10-24T23:55:00-03:00</expires>
+          <senderName>Defesa Civil Estadual de Santa Catarina</senderName>
+          <description>Atualização: Observação Meteorológica SDC/SC 21/10 09:30 ¿ Chuva intensa e temporais isolados entre esta quarta (21) e sábado (24). Ocorrências ligue 199 ou 193.</description>
+          <instruction>Siga as orientações da defesa civil local e do plano de contingência municipal. Em caso de emergência, ligue 199 ou 193.</instruction>
+          <web>https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil/saiba-como-agir</web>
+          <c
+=====
+
+    <title>CHUVAS INTENSAS</title>
+    <author>
+      <name />
+    </author>
+    <id>194520/2026</id>
+    <updated>2026-10-21T13:32:39Z</updated>
+    <content type="text/xml">
+      <alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+        <identifier>194520/2026</identifier>
+        <sender>CENAD-SEDEC</sender>
+        <sent>2026-10-21T10:32:39-03:00</sent>
+        <status>Actual</status>
+        <msgType>Alert</msgType>
+        <source>Defesa Civil</source>
+        <scope>Public</scope>
+        <info>
+          <language>pt-BR</language>
+          <category>Met</category>
+          <event>CHUVAS INTENSAS</event>
+          <responseType>Execute</responseType>
+          <urgency>Expected</urgency>
+          <severity>Severe</severity>
+          <certainty>Likely</certainty>
+          <onset>2026-10-21T10:32:39-03:00</onset>
+          <expires>2026-10-21T11:40:00-03:00</expires>
+          <senderName>Defesa Civil Nacional</senderName>
+          <headline>Defesa Civil:ALERTA RISCO ALTO: chuva intensa. Chuva intensa pode causar alagamentos pontuais. Siga as orientacoes da defesa civil local.</headline>
+          <description>A análise da imagem de satélite GOES, no canal infravermelho, disponível no portal da INMET, indica a presença de nuvens associadas a chuva intensa com possibilidade de pancadas de chuva de intensidade moderada a forte sobre o(s) referido(s) município(s). Também há chance de descargas elétricas e rajadas de vento, além do risco de alagamentos e enxurrada
+=====
+detail link: 
+
+=== INMET avisos ativos
+ls: cannot access 'inmet.json': No such file or directory
+ERR [Errno 2] No such file or directory: 'inmet.json'
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: 'inmet.json'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 11, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: 'inmet.json'
+=== Open-Meteo
+HTTP/1.1 200 OK
+access-control-allow-origin: *
+access-control-allow-headers: accept, authorization, content-type, origin, x-requested-with, user-agent, access-control-allow-origin, range, if-match, if-unmodified-since
+access-control-allow-methods: GET, POST, OPTIONS
+access-control-max-age: 600
+[{"latitude":-27.100176,"longitude":-52.65851,"generationtime_ms":1.7271041870117188,"utc_offset_seconds":-10800,"timezone":"America/Sao_Paulo","timezone_abbreviation":"GMT-3","elevation":656.0,"hourly_units":{"time":"iso8601","precipitation_probability":"%","precipitation":"mm","weather_code":"wmo code","wind_gusts_10m":"km/h"},"hourly":{"time":["2026-10-21T00:00","2026-10-21T01:00","2026-10-21T02:00","2026-10-21T03:00","2026-10-21T04:00","2026-10-21T05:00","2026-10-21T06:00","2026-10-21T07:00","2026-10-21T08:00","2026-10-21T09:00","2026-10-21T10:00","2026-10-21T11:00","2026-10-21T12:00","2026-10-21T13:00","2026-10-21T14:00","2026-10-21T15:00","2026-10-21T16:00","2026-10-21T17:00","2026-10-21T18:00","2026-10-21T19:00","2026-10-21T20:00","2026-10-21T21:00","2026-10-21T22:00","2026-10-21T23:00","2026-10-22T00:00","2026-10-22T01:00","2026-10-22T02:00","2026-10-22T03:00","2026-10-22T04:00","2026-10-22T05:00","2026-10-22T06:00","2026-10-22T07:00","2026-10-22T08:00","2026-10-22T09:00","2026-10-22T10:00","2026-10-22T11:00","2026-10-22T12:00","2026-10-22T13:00","2026-10-22T14:00","2026-10-22T15:00","2026-10-22T16:00","2026-10-22T17:00","2026-10-22T18:00","2026-10-22T19:00","2026-10-22T20:00","2026-10-22T21:00","2026-10-22T22:00","2026-10-22T23:00","2026-10-23T00:00","2026-10-23T01:00","2026-10-23T02:00","2026-10-23T03:00","2026-10-23T04:00","2026-10-23T05:00","2026-10-23T06:00","2026-10-23T07:00","2026-10-23T08:00","2026-10-23T09:00","2026-10-23T10:00","2026-10-23T11:00","2026-10-23
