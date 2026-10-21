@@ -9,41 +9,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm ci && npx vite build
-      - name: Probes
+      - name: Fontes de alerta e previsão
         run: |
-          exec > >(tee diag3.txt) 2>&1
+          exec > >(tee diag4.txt) 2>&1
+          set +e
           echo NOW $(date -u +%FT%TZ)
-          curl -s "https://realearth.ssec.wisc.edu/api/times?products=G19-ABI-FD-BAND13" | python3 -c "import json,sys;t=json.load(sys.stdin)['G19-ABI-FD-BAND13'];print('RE last',t[-3:])"
-          for z in "6/22/37" "7/44/74" "8/89/149" "9/178/298"; do curl -s -o /dev/null -w "RE z$z %{http_code} %{content_type} %{size_download}\n" "https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND13/$z.png"; done
-          for z in "7/44/74" "8/89/149" "9/178/298"; do curl -s -o /dev/null -w "RE B02 z$z %{http_code} %{content_type} %{size_download}\n" "https://realearth.ssec.wisc.edu/tiles/G19-ABI-FD-BAND02/$z.png"; done
-      - name: Screenshot
-        run: |
-          cd dist && (python3 -m http.server 4173 >/dev/null 2>&1 &) && cd ..
-          mkdir -p /tmp/pp && cd /tmp/pp && npm init -y >/dev/null && npm i puppeteer-core >/dev/null
-          cat > s.js <<'JS'
-          const p=require('puppeteer-core');
-          (async()=>{const b=await p.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
-          const pg=await b.newPage(); await pg.setViewport({width:430,height:860});
-          const log=[]; pg.on('console',m=>log.push(m.text())); pg.on('requestfailed',r=>log.push('FAIL '+r.url().slice(0,170)+' '+r.failure().errorText));
-          await pg.goto('http://localhost:4173/',{waitUntil:'networkidle2',timeout:60000}).catch(e=>log.push('goto '+e.message));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/radar_dark0.png'});
-          await pg.evaluate(()=>[...document.querySelectorAll('button')].find(x=>/^Escuro$/.test(x.textContent.trim())).click());
-          await new Promise(r=>setTimeout(r,5000));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/radar_dark.png'});
-          await pg.evaluate(()=>[...document.querySelectorAll('button')].find(x=>/Satélite GOES/.test(x.textContent)).click());
-          await new Promise(r=>setTimeout(r,30000));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_ir.png'});
-          await pg.evaluate(()=>[...document.querySelectorAll('button')].find(x=>/^Visível$/.test(x.textContent.trim())).click());
-          await new Promise(r=>setTimeout(r,30000));
-          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_vis.png'});
-          require('fs').writeFileSync(process.env.GITHUB_WORKSPACE+'/sat_log.txt',log.join('\n')); await b.close();})();
-          JS
-          node s.js
+          echo "=== IDAP CAP feed"
+          curl -s -m 30 -D idap.h "https://idapfile.mdr.gov.br/idap/api/rss/cap" -o idap.xml -H "Origin: https://localhost"; grep -i "HTTP/\|content-type\|access-control" idap.h; ls -la idap.xml; head -c 1500 idap.xml; echo
+          python3 - <<'PY'
+          import re
+          x=open('idap.xml',encoding='utf-8',errors='replace').read()
+          entries=re.findall(r'<entry>(.*?)</entry>',x,re.S)
+          print('entries',len(entries))
+          for e in entries[:3]: print(e[:1200]); print('-----')
+          links=re.findall(r'<link[^>]*href="([^"]+)"',x)
+          print('links sample',links[:5])
+          sc=[e for e in entries if 'SC' in e or 'Santa Catarina' in e]
+          print('SC entries',len(sc))
+          for e in sc[:2]: print(e[:1500]); print('=====')
+          PY
+          L=$(python3 -c "import re;x=open('idap.xml',encoding='utf-8',errors='replace').read();l=re.findall(r'<link[^>]*href=\"([^\"]+)\"',x);print(l[1] if len(l)>1 else '')")
+          echo "detail link: $L"; [ -n "$L" ] && curl -s -m 20 -D - "$L" -H "Origin: https://localhost" | head -c 3000; echo
+          echo "=== INMET avisos ativos"
+          curl -s -m 30 -D inmet.h "https://apiprevmet3.inmet.gov.br/avisos/ativos" -o inmet.json -H "Origin: https://localhost"; grep -i "HTTP/\|content-type\|access-control" inmet.h; ls -la inmet.json
+          python3 - <<'PY'
+          import json
+          try:
+            d=json.load(open('inmet.json'))
+            print(type(d), list(d.keys()) if isinstance(d,dict) else len(d))
+            arr=(d.get('hoje',[]) + d.get('futuro',[])) if isinstance(d,dict) else d
+            print('n',len(arr))
+            if arr: print(json.dumps(arr[0],ensure_ascii=False)[:1800])
+            sc=[a for a in arr if 'Santa Catarina' in json.dumps(a,ensure_ascii=False) or '4204202' in json.dumps(a)]
+            print('com SC/Chapeco', len(sc))
+            for a in sc[:3]: print({k:(str(v)[:200]) for k,v in a.items() if k not in ('poligono','geocodes')}); print('geocodes contains Chapeco 4204202:', '4204202' in str(a.get('geocodes','')))
+          except Exception as ex: print('ERR',ex); print(open('inmet.json').read()[:500])
+          PY
+          echo "=== Open-Meteo"
+          curl -s -m 30 -D om.h "https://api.open-meteo.com/v1/forecast?latitude=-27.0963,-27.1683&longitude=-52.6186,-53.7631&hourly=precipitation_probability,precipitation,weather_code,wind_gusts_10m&daily=precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,weather_code&timezone=America%2FSao_Paulo&forecast_days=3" -o om.json -H "Origin: https://localhost"; grep -i "HTTP/\|access-control" om.h; head -c 1500 om.json; echo
       - name: Salvar
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git rm -q --cached -r src || true
-          git add -f diag3.txt sat_ir.png sat_vis.png radar_dark.png sat_log.txt; git commit -m "diag3 [skip ci]"; git push
+          git add -f diag4.txt idap.xml inmet.json; git commit -m "diag4 [skip ci]"; git push
