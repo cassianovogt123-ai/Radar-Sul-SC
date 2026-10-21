@@ -128,32 +128,45 @@ export function playApproachAlertChime(volume: number = 0.75): boolean {
 
 
 /**
- * "Ping" de sonar baixo e suave, tocado quando o feixe passa sobre uma nuvem.
- * Seno puro com ataque e decaimento lentos — discreto, não compete com os alertas.
+ * "Ping" de sonar suave, tocado quando o feixe passa sobre uma nuvem.
+ * Tom limpo (~950 Hz, faixa que alto-falante de celular reproduz bem) com
+ * leve harmônico e decaimento de ~0,9 s, como um sonar. Volume moderado.
  * intensity (0..1) deixa o ping um pouco mais presente em ecos mais fortes.
  */
 export function playSonarPing(intensity: number = 0.5): boolean {
   try {
-    if (!isAudioUnlocked()) return false;
-    const ctx = getAudioContext();
-    const now = ctx.currentTime;
+    const ctx = getAudioContext(); // também retoma o áudio se o Android o suspendeu
+    if (ctx.state !== 'running') return false;
+    const now = ctx.currentTime + 0.01;
     const k = Math.max(0, Math.min(1, intensity));
-    const peak = 0.05 + 0.07 * k; // bem baixo
+    const peak = 0.22 + 0.13 * k;
+    const f = 900 + 120 * k;
+
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0.0001, now);
+    master.gain.exponentialRampToValueAtTime(peak, now + 0.015);
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+    master.connect(ctx.destination);
 
     const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(620 + 120 * k, now);
-    osc.frequency.exponentialRampToValueAtTime(560 + 100 * k, now + 0.6);
+    osc.frequency.setValueAtTime(f, now);
+    osc.frequency.exponentialRampToValueAtTime(f * 0.94, now + 0.9);
+    osc.connect(master);
 
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(peak, now + 0.04);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+    // harmônico baixinho dá o "brilho" de sonar e ajuda em alto-falante pequeno
+    const h = ctx.createOscillator();
+    const hg = ctx.createGain();
+    h.type = 'sine';
+    h.frequency.setValueAtTime(f * 2, now);
+    hg.gain.setValueAtTime(0.25, now);
+    h.connect(hg);
+    hg.connect(master);
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
     osc.start(now);
-    osc.stop(now + 0.7);
+    h.start(now);
+    osc.stop(now + 0.95);
+    h.stop(now + 0.95);
     return true;
   } catch (err) {
     console.warn('Failed to play sonar ping:', err);

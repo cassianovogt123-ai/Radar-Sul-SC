@@ -4,6 +4,7 @@ import { DbzLegend } from './components/DbzLegend';
 import { RadarFrame, RadarMetadata, ConnectionStatus } from './types/radar';
 import { RefreshCw, Play, Pause, Radio, Volume2, VolumeX, MessageSquare } from 'lucide-react';
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime } from './utils/audio';
+declare const __APP_VERSION__: string;
 import { fetchLatestRadarData } from './services/radarDirect';
 import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
@@ -337,6 +338,8 @@ export default function App() {
           <span>Limiar de alerta ≥10 dBZ</span>
           <span className="text-slate-700">·</span>
           <span>WGS84</span>
+          <span className="text-slate-700">·</span>
+          <span>v{__APP_VERSION__}</span>
         </div>
         <div className="flex items-center gap-2 truncate">
           <span className="text-cyan-300/70">Varredura a cada ~6 min</span>

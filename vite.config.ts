@@ -8,6 +8,10 @@ export default defineConfig(() => {
     // caminhos relativos: funciona no APK (Capacitor), no app Windows (Electron) e na web
     base: './',
     plugins: [react(), tailwindcss()],
+    define: {
+      // versão exibida no rodapé (igual à do APK / release do GitHub)
+      __APP_VERSION__: JSON.stringify('1.0.' + (process.env.VERSION_CODE || 'dev')),
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
