@@ -10,6 +10,14 @@ import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
 import { NEARBY_CITIES } from './components/RadarMap';
 import {
+  RadarSourceId,
+  RadarSourceSelector,
+  RadarSourceWelcome,
+  SimeparMosaicView,
+  loadSavedRadarSource,
+  saveRadarSource,
+} from './components/RadarSourceSelector';
+import {
   analyzeRadarEchoesReal,
   EchoAnalysisResult,
   DBZ_PRECIPITATION_THRESHOLD,
@@ -57,6 +65,15 @@ export default function App() {
   const [baseMapType, setBaseMapType] = useState<'osm' | 'dark' | 'satellite' | 'topo'>('osm');
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState<boolean>(false);
+
+  // Seleção de radar (Chapecó / Mosaico Simepar - PR)
+  const [radarSource, setRadarSource] = useState<RadarSourceId>(() => loadSavedRadarSource() ?? 'chapeco');
+  const [isRadarWelcomeOpen, setIsRadarWelcomeOpen] = useState<boolean>(() => loadSavedRadarSource() === null);
+  const handleSelectRadarSource = (id: RadarSourceId) => {
+    setRadarSource(id);
+    saveRadarSource(id);
+    setIsRadarWelcomeOpen(false);
+  };
 
   // Proximity & Rain Cell Threat Monitoring State
   const [municipalityThreats, setMunicipalityThreats] = useState<Record<string, MunicipalityProximityStatus>>({});
@@ -321,6 +338,12 @@ export default function App() {
             </label>
           </div>
         </div>
+
+        {radarSource === 'simepar' && (
+          <SimeparMosaicView onBackToChapeco={() => handleSelectRadarSource('chapeco')} />
+        )}
+        <RadarSourceSelector value={radarSource} onChange={handleSelectRadarSource} />
+        {isRadarWelcomeOpen && <RadarSourceWelcome onChoose={handleSelectRadarSource} />}
       </main>
 
       {/* 3. Footer */}
