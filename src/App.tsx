@@ -9,6 +9,7 @@ import { fetchLatestRadarData } from './services/radarDirect';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
 import { CapAlert } from './services/capAlerts';
 import { fetchDefesaCivilAlerts } from './services/defesaCivilAlerts';
+import { fetchInmetAlerts } from './services/inmetAlerts';
 import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
@@ -156,6 +157,11 @@ export default function App() {
     alerts: [],
     at: null,
   });
+  const [inmetAlerts, setInmetAlerts] = useState<{ status: 'idle' | 'loading' | 'ok' | 'error'; alerts: CapAlert[]; at: number | null; error?: string }>({
+    status: 'idle',
+    alerts: [],
+    at: null,
+  });
 
   const previousCellsRef = useRef<RainCell[]>([]);
   const previousTimestampRef = useRef<number | null>(null);
@@ -289,14 +295,22 @@ export default function App() {
     };
   }, []);
 
+  // Alertas oficiais: Defesa Civil (IDAP) e INMET, consultados em paralelo e independentes
   const loadDefesaCivilAlerts = useCallback(async (force = false) => {
     setDcAlerts((s) => ({ ...s, status: s.status === 'ok' && !force ? 'ok' : 'loading', error: undefined }));
-    try {
-      const { alerts, at } = await fetchDefesaCivilAlerts(force);
-      setDcAlerts({ status: 'ok', alerts, at });
-    } catch (err: any) {
-      setDcAlerts((s) => ({ ...s, status: 'error', error: err?.message || 'Falha ao consultar a Defesa Civil' }));
-    }
+    setInmetAlerts((s) => ({ ...s, status: s.status === 'ok' && !force ? 'ok' : 'loading', error: undefined }));
+    await Promise.all([
+      fetchDefesaCivilAlerts(force)
+        .then(({ alerts, at }) => setDcAlerts({ status: 'ok', alerts, at }))
+        .catch((err: any) =>
+          setDcAlerts((s) => ({ ...s, status: 'error', error: err?.message || 'Falha ao consultar a Defesa Civil' }))
+        ),
+      fetchInmetAlerts(force)
+        .then(({ alerts, at }) => setInmetAlerts({ status: 'ok', alerts, at }))
+        .catch((err: any) =>
+          setInmetAlerts((s) => ({ ...s, status: 'error', error: err?.message || 'Falha ao consultar o INMET' }))
+        ),
+    ]);
   }, []);
 
   const openMunicipality = useCallback(
@@ -638,7 +652,9 @@ export default function App() {
             coords={city.coords}
             status={municipalityThreats[city.name] ?? null}
             forecast={cityForecasts[city.name] ?? null}
+            ibge={city.ibge}
             alerts={dcAlerts}
+            inmetAlerts={inmetAlerts}
             onRetryAlerts={() => loadDefesaCivilAlerts(true)}
             onClose={() => setSelectedMunicipality(null)}
           />

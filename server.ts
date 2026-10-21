@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { makeRadarPngTransparent } from './server/pngTransparent.ts';
 import { parseCapFeed, CapAlert } from './src/services/capAlerts.ts';
+import { normalizeInmet } from './src/services/inmetParser.ts';
 
 dotenv.config();
 
@@ -463,6 +464,21 @@ app.get('/api/alertas/defesa-civil', async (_req: Request, res: Response) => {
     res.json({ success: true, fetchedAt: defesaCivilCache.at, alerts: defesaCivilCache.alerts });
   } catch (err: any) {
     res.status(502).json({ success: false, message: err?.message || 'Falha ao consultar a Defesa Civil' });
+  }
+});
+
+// Avisos do INMET (só responde a acessos feitos do Brasil)
+let inmetCache: { at: number; alerts: CapAlert[] } | null = null;
+app.get('/api/alertas/inmet', async (_req: Request, res: Response) => {
+  try {
+    if (!inmetCache || Date.now() - inmetCache.at > 5 * 60 * 1000) {
+      const r = await fetch('https://apiprevmet3.inmet.gov.br/avisos/ativos', { signal: AbortSignal.timeout(30000) });
+      if (!r.ok) throw new Error(`INMET retornou HTTP ${r.status}`);
+      inmetCache = { at: Date.now(), alerts: normalizeInmet(await r.json()) };
+    }
+    res.json({ success: true, fetchedAt: inmetCache.at, alerts: inmetCache.alerts });
+  } catch (err: any) {
+    res.status(502).json({ success: false, message: err?.message || 'Falha ao consultar o INMET' });
   }
 });
 

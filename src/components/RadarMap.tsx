@@ -32,20 +32,20 @@ interface RadarMapProps {
 
 // Confirmed municipalities in the radar coverage zone
 export const NEARBY_CITIES = [
-  { name: 'Chapecó', coords: [-27.0963, -52.6186] as [number, number], state: 'SC', isCenter: true },
-  { name: 'Xaxim', coords: [-26.9597, -52.5367] as [number, number], state: 'SC' },
-  { name: 'Xanxerê', coords: [-26.8747, -52.4036] as [number, number], state: 'SC' },
-  { name: 'Concórdia', coords: [-27.2336, -52.0264] as [number, number], state: 'SC' },
-  { name: 'Seara', coords: [-27.1489, -52.3117] as [number, number], state: 'SC' },
-  { name: 'Pinhalzinho', coords: [-26.8483, -52.9961] as [number, number], state: 'SC' },
-  { name: 'Maravilha', coords: [-26.7644, -53.1747] as [number, number], state: 'SC' },
-  { name: 'São Miguel do Oeste', coords: [-26.7247, -53.5186] as [number, number], state: 'SC' },
-  { name: 'Itapiranga', coords: [-27.1683, -53.7631] as [number, number], state: 'SC' },
-  { name: 'Nonoai', coords: [-27.3589, -52.7733] as [number, number], state: 'RS' },
-  { name: 'Erechim', coords: [-27.6342, -52.2739] as [number, number], state: 'RS' },
-  { name: 'Passo Fundo', coords: [-28.2628, -52.4086] as [number, number], state: 'RS' },
-  { name: 'Pato Branco', coords: [-26.2294, -52.6711] as [number, number], state: 'PR' },
-  { name: 'Francisco Beltrão', coords: [-26.0811, -53.0550] as [number, number], state: 'PR' },
+  { name: 'Chapecó', ibge: '4204202', coords: [-27.0963, -52.6186] as [number, number], state: 'SC', isCenter: true },
+  { name: 'Xaxim', ibge: '4219705', coords: [-26.9597, -52.5367] as [number, number], state: 'SC' },
+  { name: 'Xanxerê', ibge: '4219507', coords: [-26.8747, -52.4036] as [number, number], state: 'SC' },
+  { name: 'Concórdia', ibge: '4204301', coords: [-27.2336, -52.0264] as [number, number], state: 'SC' },
+  { name: 'Seara', ibge: '4217501', coords: [-27.1489, -52.3117] as [number, number], state: 'SC' },
+  { name: 'Pinhalzinho', ibge: '4212908', coords: [-26.8483, -52.9961] as [number, number], state: 'SC' },
+  { name: 'Maravilha', ibge: '4210506', coords: [-26.7644, -53.1747] as [number, number], state: 'SC' },
+  { name: 'São Miguel do Oeste', ibge: '4217204', coords: [-26.7247, -53.5186] as [number, number], state: 'SC' },
+  { name: 'Itapiranga', ibge: '4208401', coords: [-27.1683, -53.7631] as [number, number], state: 'SC' },
+  { name: 'Nonoai', ibge: '4312708', coords: [-27.3589, -52.7733] as [number, number], state: 'RS' },
+  { name: 'Erechim', ibge: '4307005', coords: [-27.6342, -52.2739] as [number, number], state: 'RS' },
+  { name: 'Passo Fundo', ibge: '4314100', coords: [-28.2628, -52.4086] as [number, number], state: 'RS' },
+  { name: 'Pato Branco', ibge: '4118501', coords: [-26.2294, -52.6711] as [number, number], state: 'PR' },
+  { name: 'Francisco Beltrão', ibge: '4108403', coords: [-26.0811, -53.0550] as [number, number], state: 'PR' },
 ];
 
 const BASEMAP_OPTIONS: { id: 'osm' | 'dark' | 'satellite' | 'topo'; label: string; title: string }[] = [

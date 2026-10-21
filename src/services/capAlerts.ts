@@ -11,6 +11,14 @@ export interface CapArea {
 
 export interface CapAlert {
   id: string;
+  /** origem do alerta */
+  source?: 'defesa_civil' | 'inmet';
+  /** rótulo de severidade da própria fonte (ex.: INMET "Perigo potencial") */
+  severityLabel?: string;
+  /** municípios afetados por código IBGE (quando a fonte informa) */
+  geocodes?: string[];
+  /** riscos listados pela fonte */
+  risks?: string[];
   sender: string; // ex.: "Defesa Civil Estadual de Santa Catarina"
   event: string; // ex.: "TEMPESTADE LOCAL/CONVECTIVA - CHUVAS INTENSAS"
   severity: 'Extreme' | 'Severe' | 'Moderate' | 'Minor' | 'Unknown';
@@ -105,8 +113,15 @@ function pointInPolygon(lat: number, lon: number, poly: [number, number][]): boo
   return inside;
 }
 
-/** O alerta cobre o município? (ponto dentro de algum polígono; sem polígono, pelo nome) */
-export function alertCoversCity(alert: CapAlert, cityName: string, state: string, coords: [number, number]): boolean {
+/** O alerta cobre o município? (código IBGE; senão ponto dentro de algum polígono; senão pelo nome) */
+export function alertCoversCity(
+  alert: CapAlert,
+  cityName: string,
+  state: string,
+  coords: [number, number],
+  ibge?: string
+): boolean {
+  if (ibge && alert.geocodes && alert.geocodes.length) return alert.geocodes.includes(ibge);
   const norm = (s: string) =>
     s
       .normalize('NFD')
@@ -141,9 +156,16 @@ export const SEVERITY_INFO: Record<CapAlert['severity'], { label: string; risk: 
 /** Quais tipos de desastre um alerta oficial indica (pelo nome do evento) */
 export function hazardsOfAlert(alert: CapAlert): HazardId[] {
   const e = alert.event.toUpperCase();
+  // riscos que a própria fonte lista (ex.: INMET "Tempestade" cita chuva forte e granizo)
+  const r = (alert.risks || []).join(' ').toUpperCase();
   const out = new Set<HazardId>();
+  if (/GRANIZO/.test(r)) out.add('granizo');
+  if (/MM\/H|MM\/DIA|ALAGAMENTO|ENXURRADA/.test(r)) out.add('alagamento');
+  if (/DESLIZAMENTO/.test(r)) out.add('deslizamento');
+  if (/VENTOS?|RAJADA/.test(r)) out.add('vendaval');
+  if (/DESCARGAS? EL[ÉE]TRICA|RAIO/.test(r)) out.add('raios');
   if (/CHUVA|ALAGAMENTO|ENXURRADA|INUNDA/.test(e)) out.add('alagamento');
-  if (/DESLIZAMENTO|MOVIMENTO DE MASSA|QUEDA DE BLOCOS|CORRIDA DE MASSA/.test(e)) out.add('deslizamento');
+  if (/DESLIZAMENTO|MOVIMENTO DE MASSA|QUEDA DE BLOCOS|CORRIDA DE MASSA|ACUMULADO DE CHUVA/.test(e)) out.add('deslizamento');
   if (/VENDAVAL|VENTOS? COSTEIRO|CICLONE|TORNADO/.test(e)) out.add('vendaval');
   if (/GRANIZO/.test(e)) out.add('granizo');
   if (/TEMPESTADE|RAIO|DESCARGA/.test(e)) {

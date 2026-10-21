@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { X, CloudRain, ShieldAlert, Radar, Info, RefreshCw, ChevronDown, Phone } from 'lucide-react';
+import { X, CloudRain, ShieldAlert, Radar, Info, RefreshCw, ChevronDown, Phone, ExternalLink } from 'lucide-react';
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import {
   CityForecast,
@@ -12,13 +12,17 @@ import {
 } from '../services/forecast';
 import { CapAlert, SEVERITY_INFO, alertCoversCity, hazardsOfAlert, sortAlerts } from '../services/capAlerts';
 
+type AlertState = { status: 'idle' | 'loading' | 'ok' | 'error'; alerts: CapAlert[]; at: number | null; error?: string };
+
 interface MunicipalityDetailModalProps {
   cityName: string;
   state: string;
   coords: [number, number];
+  ibge?: string;
   status: MunicipalityProximityStatus | null;
   forecast: CityForecast | null;
-  alerts: { status: 'idle' | 'loading' | 'ok' | 'error'; alerts: CapAlert[]; at: number | null; error?: string };
+  alerts: AlertState;
+  inmetAlerts: AlertState;
   onRetryAlerts: () => void;
   onClose: () => void;
 }
@@ -86,15 +90,17 @@ const Section: React.FC<{ icon: React.ReactNode; title: string; right?: React.Re
 const AlertCard: React.FC<{ alert: CapAlert }> = ({ alert }) => {
   const [open, setOpen] = useState(false);
   const sev = SEVERITY_INFO[alert.severity];
+  const isInmet = alert.source === 'inmet';
+  const sevLabel = isInmet && alert.severityLabel ? alert.severityLabel : sev.label;
   const text = alert.headline || alert.description;
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-1.5">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-[12px] font-semibold text-slate-100 leading-snug">{alert.event}</p>
-          <p className="text-[11px] text-slate-400">{alert.sender}</p>
+          <p className="text-[11px] text-slate-400">{isInmet ? 'INMET · aviso meteorológico' : alert.sender}</p>
         </div>
-        <Chip className={RISK_STYLE[sev.risk]}>{sev.label}</Chip>
+        <Chip className={RISK_STYLE[sev.risk]}>{sevLabel}</Chip>
       </div>
       <p className="font-mono text-[11px] text-slate-400 tabular-nums">
         {fmt(alert.onset || alert.sent)} → {fmt(alert.expires)}
@@ -108,6 +114,17 @@ const AlertCard: React.FC<{ alert: CapAlert }> = ({ alert }) => {
           <strong className="font-semibold">O que fazer: </strong>
           {alert.instruction}
         </p>
+      )}
+      {open && isInmet && alert.web && (
+        <a
+          href={alert.web}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[11px] text-cyan-300 hover:text-cyan-200"
+        >
+          <ExternalLink className="w-3 h-3" />
+          Ver no INMET (mapa e municípios)
+        </a>
       )}
       <button
         onClick={() => setOpen(!open)}
@@ -125,16 +142,23 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
   cityName,
   state,
   coords,
+  ibge,
   status,
   forecast,
   alerts,
+  inmetAlerts,
   onRetryAlerts,
   onClose,
 }) => {
   const cityAlerts = useMemo(
-    () => sortAlerts(alerts.alerts.filter((a) => alertCoversCity(a, cityName, state, coords))),
-    [alerts.alerts, cityName, state, coords]
+    () =>
+      sortAlerts(
+        [...alerts.alerts, ...inmetAlerts.alerts].filter((a) => alertCoversCity(a, cityName, state, coords, ibge))
+      ),
+    [alerts.alerts, inmetAlerts.alerts, cityName, state, coords, ibge]
   );
+  const loadingAny = alerts.status === 'loading' || inmetAlerts.status === 'loading';
+  const bothFailed = alerts.status === 'error' && !alerts.at && inmetAlerts.status === 'error' && !inmetAlerts.at;
 
   // Risco por desastre = o maior entre a estimativa da previsão e os alertas oficiais
   const risks = useMemo(() => {
@@ -215,9 +239,9 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
           {/* Alertas oficiais */}
           <Section
             icon={<ShieldAlert className="w-4 h-4 text-amber-300" />}
-            title="Alertas da Defesa Civil"
+            title="Alertas oficiais"
             right={
-              alerts.status !== 'loading' && (
+              !loadingAny && (
                 <button onClick={onRetryAlerts} className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200 cursor-pointer">
                   <RefreshCw className="w-3 h-3" />
                   Atualizar
@@ -225,26 +249,45 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
               )
             }
           >
-            {alerts.status === 'loading' || alerts.status === 'idle' ? (
-              <p className="text-[12px] text-slate-400">Consultando a Defesa Civil…</p>
-            ) : alerts.status === 'error' && !alerts.at ? (
-              <p className="text-[12px] text-amber-300">Não foi possível consultar os alertas agora ({alerts.error}).</p>
-            ) : cityAlerts.length === 0 ? (
-              <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-3 py-2.5 text-[12px] text-emerald-200">
-                Nenhum alerta ativo da Defesa Civil para {cityName} neste momento.
-              </div>
-            ) : (
+            {cityAlerts.length > 0 && (
               <div className="space-y-2">
                 {cityAlerts.map((a) => (
                   <AlertCard key={a.id} alert={a} />
                 ))}
               </div>
             )}
-            {alerts.at && (
-              <p className="text-[10px] text-slate-500 font-mono">
-                Consultado às {dt.format(new Date(alerts.at)).slice(-5)} · Defesa Civil Nacional (IDAP)
+            {cityAlerts.length === 0 &&
+              (loadingAny || (alerts.status === 'idle' && inmetAlerts.status === 'idle') ? (
+                <p className="text-[12px] text-slate-400">Consultando Defesa Civil e INMET…</p>
+              ) : bothFailed ? (
+                <p className="text-[12px] text-amber-300">Não foi possível consultar os alertas agora.</p>
+              ) : (
+                <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-3 py-2.5 text-[12px] text-emerald-200">
+                  Nenhum alerta ativo para {cityName} neste momento.
+                </div>
+              ))}
+            <div className="space-y-0.5 text-[10px] text-slate-500 font-mono">
+              <p>
+                Defesa Civil (IDAP):{' '}
+                {alerts.status === 'loading'
+                  ? 'consultando…'
+                  : alerts.at
+                  ? `consultado às ${dt.format(new Date(alerts.at)).slice(-5)}`
+                  : alerts.status === 'error'
+                  ? `indisponível (${alerts.error})`
+                  : '—'}
               </p>
-            )}
+              <p>
+                INMET:{' '}
+                {inmetAlerts.status === 'loading'
+                  ? 'consultando…'
+                  : inmetAlerts.at
+                  ? `consultado às ${dt.format(new Date(inmetAlerts.at)).slice(-5)}`
+                  : inmetAlerts.status === 'error'
+                  ? 'indisponível agora'
+                  : '—'}
+              </p>
+            </div>
           </Section>
 
           {/* Risco por desastre */}
@@ -294,7 +337,7 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-cyan-300" />
             <p>
               Fontes: previsão Open-Meteo; alertas oficiais da Defesa Civil (feed nacional IDAP, inclui as Defesas Civis
-              estaduais); radar Defesa Civil SC. Em emergência ligue{' '}
+              estaduais) e avisos meteorológicos do INMET; radar Defesa Civil SC. Em emergência ligue{' '}
               <a href="tel:199" className="inline-flex items-center gap-0.5 text-cyan-300 font-medium">
                 <Phone className="w-3 h-3" />
                 199
