@@ -39,7 +39,7 @@ export const NEARBY_CITIES = [
 
 const BASEMAP_OPTIONS: { id: 'osm' | 'dark' | 'satellite' | 'topo'; label: string; title: string }[] = [
   { id: 'osm', label: 'Ruas', title: 'OpenStreetMap — ruas e limites' },
-  { id: 'dark', label: 'Escuro', title: 'CARTO Dark Matter — alto contraste para o radar' },
+  { id: 'dark', label: 'Escuro', title: 'Esri Dark Gray — alto contraste para o radar' },
   { id: 'satellite', label: 'Satélite', title: 'Esri World Imagery' },
   { id: 'topo', label: 'Relevo', title: 'Esri Topográfico' },
 ];
@@ -76,10 +76,11 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         };
       case 'dark':
         return {
-          url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-          attribution: '&copy; CartoDB &copy; OpenStreetMap',
+          // CARTO passou a exigir chave de API; Esri Dark Gray é livre e sem chave
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          attribution: '&copy; Esri',
           maxZoom: 19,
-          subdomains: 'abcd',
+          maxNativeZoom: 16,
         };
       case 'satellite':
         return {
@@ -227,6 +228,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
     const cfg = getTileConfig(baseMapType);
     const newBase = L.tileLayer(cfg.url, {
       maxZoom: cfg.maxZoom,
+      maxNativeZoom: (cfg as any).maxNativeZoom,
       subdomains: (cfg as any).subdomains || 'abc',
     }).addTo(mapInstance);
 

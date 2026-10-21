@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Play, Pause, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
 
-// Monitoramento por satélite: GOES-19 (GOES-East), servido pelo NASA GIBS (WMTS público, sem chave).
-// Horários disponíveis consultados no próprio GIBS (DescribeDomains) — nenhuma data é inventada.
+// Monitoramento por satélite: GOES-19 (GOES-East). Horários consultados na própria fonte —
+// nenhuma data é inventada.
 
 export type MonitorMode = 'radar' | 'satelite';
 
@@ -39,28 +40,41 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
   </div>
 );
 
+// Fontes (ambas públicas, sem chave):
+//  1. RealEarth (SSEC/CIMSS, Univ. de Wisconsin) — GOES-19 disco completo, chega ~10 min após a imagem.
+//  2. NASA GIBS — mesmo satélite, porém publica com mais atraso; usado como reserva.
+// Só entram horários cuja imagem já está completa sobre a região do radar (teste de blocos),
+// para nunca mostrar uma imagem "pela metade".
+const REALEARTH = 'https://realearth.ssec.wisc.edu';
 const GIBS = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best';
+
 const PRODUCTS = {
   ir: {
-    layer: 'GOES-East_ABI_Band13_Clean_Infrared',
-    tms: 'GoogleMapsCompatible_Level6',
-    maxNativeZoom: 6,
     label: 'Infravermelho',
     title: 'Banda 13 (infravermelho limpo) — mostra nuvens de dia e de noite',
+    realearth: 'G19-ABI-FD-BAND13',
+    gibs: { layer: 'GOES-East_ABI_Band13_Clean_Infrared', tms: 'GoogleMapsCompatible_Level6', maxNativeZoom: 6 },
+    maxNativeZoom: 7,
   },
   vis: {
-    layer: 'GOES-East_ABI_Band2_Red_Visible_1km',
-    tms: 'GoogleMapsCompatible_Level7',
-    maxNativeZoom: 7,
     label: 'Visível',
     title: 'Banda 2 (visível) — só tem imagem durante o dia',
+    realearth: 'G19-ABI-FD-BAND02',
+    gibs: { layer: 'GOES-East_ABI_Band2_Red_Visible_1km', tms: 'GoogleMapsCompatible_Level7', maxNativeZoom: 7 },
+    maxNativeZoom: 8,
   },
 } as const;
 type ProductId = keyof typeof PRODUCTS;
+type SourceId = 'realearth' | 'gibs';
+const SOURCE_LABEL: Record<SourceId, string> = {
+  realearth: 'GOES-19 · SSEC RealEarth',
+  gibs: 'GOES-19 · NASA GIBS / NOAA',
+};
 
 const FRAME_COUNT = 12; // 2 horas, imagens a cada 10 min
-const REFRESH_MS = 5 * 60 * 1000;
+const REFRESH_MS = 2 * 60 * 1000;
 const STALE_MIN = 60;
+const RADAR_CENTER: [number, number] = [-27.0968, -52.618];
 
 const brt = new Intl.DateTimeFormat('pt-BR', {
   timeZone: 'America/Sao_Paulo',
@@ -97,26 +111,115 @@ function expandDomain(domain: string): number[] {
   return Array.from(new Set(out)).sort((x, y) => x - y);
 }
 
-async function fetchAvailableTimes(product: ProductId): Promise<number[]> {
-  const { layer, tms } = PRODUCTS[product];
+/** GET de texto: fetch normal; no APK, se o WebView bloquear, usa o HTTP nativo do Capacitor. */
+async function getText(url: string): Promise<string> {
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.text();
+  } catch (err) {
+    if (Capacitor.isNativePlatform()) {
+      const res = await CapacitorHttp.get({ url, responseType: 'text', connectTimeout: 10000, readTimeout: 15000 });
+      if (res.status < 200 || res.status >= 300) throw new Error(`HTTP ${res.status}`);
+      return typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
+    }
+    throw err;
+  }
+}
+
+/** "20261021.133020" -> timestamp UTC */
+function parseRealEarthTime(s: string): number {
+  const m = s.match(/^(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})$/);
+  return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]) : NaN;
+}
+const pad = (n: number) => String(n).padStart(2, '0');
+function realEarthStamp(t: number): string {
+  const d = new Date(t);
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}/${pad(d.getUTCHours())}${pad(
+    d.getUTCMinutes()
+  )}${pad(d.getUTCSeconds())}`;
+}
+
+async function listTimes(source: SourceId, product: ProductId): Promise<number[]> {
+  const p = PRODUCTS[product];
+  if (source === 'realearth') {
+    const txt = await getText(`${REALEARTH}/api/times?products=${p.realearth}`);
+    const json = JSON.parse(txt);
+    const raw: string[] = json?.[p.realearth] || [];
+    return raw.map(parseRealEarthTime).filter((t) => !isNaN(t)).sort((a, b) => a - b);
+  }
   const end = new Date();
   const start = new Date(end.getTime() - 4 * 3600 * 1000);
   const iso = (d: Date) => d.toISOString().slice(0, 19) + 'Z';
-  const url =
+  const xml = await getText(
     `${GIBS}/wmts.cgi?SERVICE=WMTS&REQUEST=DescribeDomains&VERSION=1.0.0` +
-    `&LAYER=${layer}&TILEMATRIXSET=${tms}&TIME=${iso(start)}/${iso(end)}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`GIBS retornou HTTP ${res.status}`);
-  const xml = await res.text();
+      `&LAYER=${p.gibs.layer}&TILEMATRIXSET=${p.gibs.tms}&TIME=${iso(start)}/${iso(end)}`
+  );
   const domain = xml.match(/<Domain>([^<]*)<\/Domain>/)?.[1] ?? '';
-  return expandDomain(domain).slice(-FRAME_COUNT);
+  return expandDomain(domain);
 }
 
-const tileUrl = (product: ProductId, t: number) => {
-  const { layer, tms } = PRODUCTS[product];
+function tileUrl(source: SourceId, product: ProductId, t: number): string {
+  const p = PRODUCTS[product];
+  if (source === 'realearth') {
+    return `${REALEARTH}/tiles/${p.realearth}/${realEarthStamp(t)}/{z}/{x}/{y}.png`;
+  }
   const time = new Date(t).toISOString().slice(0, 19) + 'Z';
-  return `${GIBS}/${layer}/default/${time}/${tms}/{z}/{y}/{x}.png`;
-};
+  return `${GIBS}/${p.gibs.layer}/default/${time}/${p.gibs.tms}/{z}/{y}/{x}.png`;
+}
+
+function loadImage(url: string, timeoutMs = 10000): Promise<boolean> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      img.src = '';
+      resolve(false);
+    }, timeoutMs);
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(img.naturalWidth > 0);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      resolve(false);
+    };
+    img.src = url;
+  });
+}
+
+/** A imagem desse horário já está completa sobre a região do radar? (3×3 blocos no zoom 5) */
+async function isFrameComplete(source: SourceId, product: ProductId, t: number): Promise<boolean> {
+  const tpl = tileUrl(source, product, t);
+  const z = 5;
+  const n = 2 ** z;
+  const cx = Math.floor(((RADAR_CENTER[1] + 180) / 360) * n);
+  const latRad = (RADAR_CENTER[0] * Math.PI) / 180;
+  const cy = Math.floor(((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n);
+  const jobs: Promise<boolean>[] = [];
+  for (let dx = -1; dx <= 1; dx++) {
+    for (let dy = -1; dy <= 1; dy++) {
+      const url = tpl.replace('{z}', String(z)).replace('{x}', String(cx + dx)).replace('{y}', String(cy + dy));
+      jobs.push(loadImage(url));
+    }
+  }
+  const results = await Promise.all(jobs);
+  return results.every(Boolean);
+}
+
+/** Lista os últimos horários publicados e descarta os que ainda não estão completos. */
+async function fetchReadyTimes(source: SourceId, product: ProductId): Promise<number[]> {
+  const all = (await listTimes(source, product)).filter((t) => Date.now() - t < 6 * 3600 * 1000);
+  // do mais novo para o mais antigo, até achar o primeiro horário completo (no máx. 6 tentativas)
+  let lastReady = -1;
+  for (let i = all.length - 1, tries = 0; i >= 0 && tries < 6; i--, tries++) {
+    if (await isFrameComplete(source, product, all[i])) {
+      lastReady = i;
+      break;
+    }
+  }
+  if (lastReady < 0) return [];
+  return all.slice(0, lastReady + 1).slice(-FRAME_COUNT);
+}
 
 export const SatelliteView: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +229,7 @@ export const SatelliteView: React.FC = () => {
 
   const [product, setProduct] = useState<ProductId>('ir');
   const [times, setTimes] = useState<number[]>([]);
+  const [source, setSource] = useState<SourceId>('realearth');
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
@@ -136,23 +240,45 @@ export const SatelliteView: React.FC = () => {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = L.map(containerRef.current, {
-      center: [-27.1, -52.6],
-      zoom: 5,
+      center: RADAR_CENTER,
+      zoom: 6,
       minZoom: 3,
-      maxZoom: 9,
+      maxZoom: 10,
       zoomControl: false,
       attributionControl: false,
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd' }).addTo(map);
+    // Mapa base escuro + nomes/limites por cima das nuvens (Esri, sem chave de API)
+    const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas';
+    L.tileLayer(`${ESRI}/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`, { maxNativeZoom: 16 }).addTo(map);
     map.createPane('labels');
     const labelsPane = map.getPane('labels');
     if (labelsPane) {
       labelsPane.style.zIndex = '650';
       labelsPane.style.pointerEvents = 'none';
     }
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
+    L.tileLayer(`${ESRI}/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}`, {
+      maxNativeZoom: 16,
       pane: 'labels',
+    }).addTo(map);
+    // Referência do radar de Chapecó (alcance de 250 km) para comparar com o satélite
+    L.circle(RADAR_CENTER, {
+      radius: 250000,
+      pane: 'labels',
+      color: '#22d3ee',
+      weight: 1.5,
+      opacity: 0.7,
+      dashArray: '4 6',
+      fill: false,
+      interactive: false,
+    }).addTo(map);
+    L.circleMarker(RADAR_CENTER, {
+      radius: 4,
+      pane: 'labels',
+      color: '#082f49',
+      weight: 1.5,
+      fillColor: '#22d3ee',
+      fillOpacity: 1,
+      interactive: false,
     }).addTo(map);
     mapRef.current = map;
     return () => {
@@ -164,8 +290,24 @@ export const SatelliteView: React.FC = () => {
   const loadTimes = useCallback(async () => {
     setStatus((s) => (s === 'ok' ? s : 'loading'));
     try {
-      const list = await fetchAvailableTimes(product);
-      if (list.length === 0) throw new Error('Nenhuma imagem recente publicada pelo satélite.');
+      // Fonte mais rápida primeiro; se falhar ou estiver atrás, usa a reserva
+      let best: { src: SourceId; list: number[] } | null = null;
+      let lastErr: any = null;
+      for (const src of ['realearth', 'gibs'] as SourceId[]) {
+        try {
+          const list = await fetchReadyTimes(src, product);
+          if (list.length && (!best || list[list.length - 1] > best.list[best.list.length - 1])) {
+            best = { src, list };
+          }
+          // RealEarth recente (< 30 min) já é o melhor possível; não precisa consultar o GIBS
+          if (src === 'realearth' && list.length && Date.now() - list[list.length - 1] < 30 * 60000) break;
+        } catch (err) {
+          lastErr = err;
+        }
+      }
+      if (!best) throw lastErr || new Error('Nenhuma imagem recente publicada pelo satélite.');
+      const { src, list } = best;
+      setSource(src);
       setTimes((prev) => (prev.join() === list.join() ? prev : list));
       setStatus('ok');
     } catch (err: any) {
@@ -190,9 +332,9 @@ export const SatelliteView: React.FC = () => {
     layersRef.current.forEach((l) => map.removeLayer(l));
     errorCountRef.current = times.map(() => 0);
     layersRef.current = times.map((t, i) => {
-      const layer = L.tileLayer(tileUrl(product, t), {
-        maxNativeZoom: PRODUCTS[product].maxNativeZoom,
-        maxZoom: 9,
+      const layer = L.tileLayer(tileUrl(source, product, t), {
+        maxNativeZoom: source === 'gibs' ? PRODUCTS[product].gibs.maxNativeZoom : PRODUCTS[product].maxNativeZoom,
+        maxZoom: 10,
         opacity: 0,
         zIndex: 300,
       });
@@ -204,7 +346,7 @@ export const SatelliteView: React.FC = () => {
     });
     setIndex(Math.max(0, times.length - 1));
     setIsPlaying(false);
-  }, [times, product]);
+  }, [times, product, source]);
 
   // Mostra só o horário selecionado
   useEffect(() => {
@@ -328,8 +470,8 @@ export const SatelliteView: React.FC = () => {
             ))}
           </div>
           <span className="font-mono text-[10px] text-slate-500 text-right leading-tight">
-            GOES-19 · NASA GIBS / NOAA
-            <br />© CARTO · © OpenStreetMap
+            {SOURCE_LABEL[source]}
+            <br />© Esri
           </span>
         </div>
       </div>

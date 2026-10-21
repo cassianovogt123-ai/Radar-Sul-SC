@@ -45,7 +45,7 @@ const CHAPECO_RADAR_META: RadarMetadata = {
 
 const BASEMAP_CREDITS: Record<'osm' | 'dark' | 'satellite' | 'topo', string> = {
   osm: '© OpenStreetMap contributors',
-  dark: '© CARTO · © OpenStreetMap',
+  dark: '© Esri',
   satellite: '© Esri · Maxar · Earthstar Geographics',
   topo: '© Esri',
 };
