@@ -283,6 +283,7 @@ export default function App() {
           opacity={opacity}
           radarMeta={CHAPECO_RADAR_META}
           isSweepActive={isSweepActive}
+          isSoundEnabled={isAudioEnabled}
           baseMapType={baseMapType}
           onChangeBaseMap={setBaseMapType}
         />

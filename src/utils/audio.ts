@@ -126,3 +126,37 @@ export function playApproachAlertChime(volume: number = 0.75): boolean {
   }
 }
 
+
+/**
+ * "Ping" de sonar baixo e suave, tocado quando o feixe passa sobre uma nuvem.
+ * Seno puro com ataque e decaimento lentos — discreto, não compete com os alertas.
+ * intensity (0..1) deixa o ping um pouco mais presente em ecos mais fortes.
+ */
+export function playSonarPing(intensity: number = 0.5): boolean {
+  try {
+    if (!isAudioUnlocked()) return false;
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    const k = Math.max(0, Math.min(1, intensity));
+    const peak = 0.05 + 0.07 * k; // bem baixo
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(620 + 120 * k, now);
+    osc.frequency.exponentialRampToValueAtTime(560 + 100 * k, now + 0.6);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(peak, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.7);
+    return true;
+  } catch (err) {
+    console.warn('Failed to play sonar ping:', err);
+    return false;
+  }
+}

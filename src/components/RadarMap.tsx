@@ -11,6 +11,7 @@ interface RadarMapProps {
   opacity: number;
   radarMeta: RadarMetadata;
   isSweepActive: boolean;
+  isSoundEnabled?: boolean;
   baseMapType: 'osm' | 'dark' | 'satellite' | 'topo';
   onChangeBaseMap: (type: 'osm' | 'dark' | 'satellite' | 'topo') => void;
   municipalityThreats?: Record<string, MunicipalityProximityStatus>;
@@ -47,6 +48,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   opacity,
   radarMeta,
   isSweepActive,
+  isSoundEnabled = false,
   baseMapType,
   onChangeBaseMap,
   municipalityThreats,
@@ -274,6 +276,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         echoImageUrl={currentFrame?.imageUrl ?? null}
         echoBounds={radarMeta.leafletBounds}
         echoOpacity={opacity / 100}
+        soundEnabled={isSoundEnabled}
       />
 
       {/* 3. Map HUD (top-right): zoom + recenter */}
