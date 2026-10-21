@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { makeRadarPngTransparent } from './server/pngTransparent.ts';
+import { parseCapFeed, CapAlert } from './src/services/capAlerts.ts';
 
 dotenv.config();
 
@@ -447,6 +448,23 @@ function broadcastOnlineCount() {
     onlineCount: Math.max(1, chatWsClients.size)
   });
 }
+
+// Alertas oficiais da Defesa Civil (feed nacional IDAP, CAP 1.2).
+// O feed tem ~10 MB e não libera acesso direto do navegador: o servidor baixa,
+// filtra SC/PR/RS e devolve só os alertas ativos (poucos KB).
+let defesaCivilCache: { at: number; alerts: CapAlert[] } | null = null;
+app.get('/api/alertas/defesa-civil', async (_req: Request, res: Response) => {
+  try {
+    if (!defesaCivilCache || Date.now() - defesaCivilCache.at > 5 * 60 * 1000) {
+      const r = await fetch('https://idapfile.mdr.gov.br/idap/api/rss/cap', { signal: AbortSignal.timeout(60000) });
+      if (!r.ok) throw new Error(`IDAP retornou HTTP ${r.status}`);
+      defesaCivilCache = { at: Date.now(), alerts: parseCapFeed(await r.text()) };
+    }
+    res.json({ success: true, fetchedAt: defesaCivilCache.at, alerts: defesaCivilCache.alerts });
+  } catch (err: any) {
+    res.status(502).json({ success: false, message: err?.message || 'Falha ao consultar a Defesa Civil' });
+  }
+});
 
 // REST: Get recent chat messages
 app.get('/api/chat/messages', (_req: Request, res: Response) => {

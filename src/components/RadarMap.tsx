@@ -5,6 +5,14 @@ import { RadarSweepCanvas } from './RadarSweepCanvas';
 import { Crosshair, Plus, Minus } from 'lucide-react';
 
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
+import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast';
+
+const RAIN_COLOR: Record<RainLevel, string> = {
+  sem_chuva: '#94a3b8',
+  leve: '#38bdf8',
+  moderada: '#facc15',
+  forte: '#f43f5e',
+};
 
 interface RadarMapProps {
   currentFrame: RadarFrame | null;
@@ -17,7 +25,9 @@ interface RadarMapProps {
   baseMapType: 'osm' | 'dark' | 'satellite' | 'topo';
   onChangeBaseMap: (type: 'osm' | 'dark' | 'satellite' | 'topo') => void;
   municipalityThreats?: Record<string, MunicipalityProximityStatus>;
+  cityForecasts?: Record<string, CityForecast>;
   onSelectMunicipality?: (cityName: string) => void;
+  isChatOpen?: boolean;
 }
 
 // Confirmed municipalities in the radar coverage zone
@@ -56,7 +66,9 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   baseMapType,
   onChangeBaseMap,
   municipalityThreats,
+  cityForecasts,
   onSelectMunicipality,
+  isChatOpen = false,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
@@ -215,13 +227,20 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       marker.on('click', () => {
         onSelectMunicipality?.(city.name);
       });
+      const fc = cityForecasts?.[city.name];
+      const rainRow = fc
+        ? `<div class="pop-row"><b>Chuva (próx. 6 h)</b><span style="color:${RAIN_COLOR[fc.rainLevel]};font-weight:600">${
+            RAIN_LEVEL_LABEL[fc.rainLevel]
+          } · ${fc.rainProbability6h}%</span></div>`
+        : `<div class="pop-row"><b>Chuva (próx. 6 h)</b><span>carregando…</span></div>`;
       marker.bindTooltip(`
         <div class="pop-title">${city.name} · ${city.state}</div>
-        <div class="pop-row"><b>Nível</b><span>${status?.threatTitle || 'Normal'}</span></div>
-        <div style="color:#94a3b8;margin-top:4px;max-width:220px">${status?.threatDescription || 'Clique para ver detalhes'}</div>
+        ${rainRow}
+        <div class="pop-row"><b>Radar agora</b><span>${status?.threatTitle || 'Normal'}</span></div>
+        <div style="color:#94a3b8;margin-top:4px;max-width:220px">Clique para ver detalhes e alertas</div>
       `, { direction: 'top', offset: [0, -10] });
     });
-  }, [mapInstance, municipalityThreats, onSelectMunicipality]);
+  }, [mapInstance, municipalityThreats, cityForecasts, onSelectMunicipality]);
 
   // Update base tile layer on style change
   useEffect(() => {
@@ -290,7 +309,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       />
 
       {/* 3. Map HUD (top-right): zoom + recenter */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-[500] glass rounded-xl p-1 flex flex-col">
+      <div className={`absolute top-3 right-3 sm:top-4 z-[500] glass rounded-xl p-1 flex flex-col transition-[right] duration-200 ${isChatOpen ? 'sm:right-[25rem]' : 'sm:right-4'}`}>
         <button
           onClick={() => mapInstance?.zoomIn()}
           className="btn btn-icon border-transparent bg-transparent"

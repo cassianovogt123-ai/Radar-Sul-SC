@@ -6,6 +6,9 @@ import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData } from './services/radarDirect';
+import { CityForecast, fetchCityForecasts } from './services/forecast';
+import { CapAlert } from './services/capAlerts';
+import { fetchDefesaCivilAlerts } from './services/defesaCivilAlerts';
 import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
@@ -145,6 +148,15 @@ export default function App() {
   const [municipalityThreats, setMunicipalityThreats] = useState<Record<string, MunicipalityProximityStatus>>({});
   const [selectedMunicipality, setSelectedMunicipality] = useState<string | null>(null);
 
+  // Previsão de chuva por município (Open-Meteo) — atualiza a cada 30 min
+  const [cityForecasts, setCityForecasts] = useState<Record<string, CityForecast>>({});
+  // Alertas oficiais da Defesa Civil — baixados ao abrir os detalhes (cache de 15 min)
+  const [dcAlerts, setDcAlerts] = useState<{ status: 'idle' | 'loading' | 'ok' | 'error'; alerts: CapAlert[]; at: number | null; error?: string }>({
+    status: 'idle',
+    alerts: [],
+    at: null,
+  });
+
   const previousCellsRef = useRef<RainCell[]>([]);
   const previousTimestampRef = useRef<number | null>(null);
   const lastApproachAlertTimestampRef = useRef<number>(0);
@@ -201,6 +213,99 @@ export default function App() {
 
     previousAnalysisRef.current = analysis;
   }, []);
+
+  // Células de chuva do radar -> nível de ameaça por município
+  const updateMunicipalityThreats = useCallback(async (frame: RadarFrame) => {
+    if (!frame.imageUrl) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    const loaded = await new Promise<boolean>((resolve) => {
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = frame.imageUrl as string;
+    });
+    if (!loaded) return;
+    let cells: RainCell[] = [];
+    try {
+      cells = extractCellsFromImage(img, CHAPECO_RADAR_META, DBZ_PRECIPITATION_THRESHOLD);
+    } catch {
+      return; // imagem sem permissão de leitura
+    }
+    const prevTs = previousTimestampRef.current;
+    if (prevTs !== null && frame.timestamp > prevTs) {
+      cells = trackCellsBetweenFrames(cells, previousCellsRef.current, (frame.timestamp - prevTs) / 60000);
+    }
+    if (prevTs === null || frame.timestamp > prevTs) {
+      previousCellsRef.current = cells;
+      previousTimestampRef.current = frame.timestamp;
+    }
+    const isOutdated = frame.ageMinutes > 45;
+    const next: Record<string, MunicipalityProximityStatus> = {};
+    for (const city of NEARBY_CITIES) {
+      next[city.name] = evaluateMunicipalityThreat(
+        city.name,
+        city.state,
+        city.coords,
+        cells,
+        frame.brtDisplay,
+        isOutdated
+      );
+    }
+    setMunicipalityThreats(next);
+
+    // Som de aproximação: só quando alguma cidade SOBE para laranja/vermelho (no máx. 1 a cada 10 min)
+    const order: ThreatLevel[] = ['verde', 'amarelo', 'laranja', 'vermelho'];
+    const escalated = Object.values(next).some((st) => {
+      const before = lastAlertLevelsRef.current[st.cityName] ?? 'verde';
+      return order.indexOf(st.threatLevel) > order.indexOf(before) && order.indexOf(st.threatLevel) >= 2;
+    });
+    lastAlertLevelsRef.current = Object.fromEntries(Object.values(next).map((st) => [st.cityName, st.threatLevel]));
+    if (
+      escalated &&
+      isAudioEnabledRef.current &&
+      !isOutdated &&
+      Date.now() - lastApproachAlertTimestampRef.current > 10 * 60 * 1000
+    ) {
+      lastApproachAlertTimestampRef.current = Date.now();
+      playApproachAlertChime(0.8);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentFrame) updateMunicipalityThreats(currentFrame);
+  }, [currentFrame?.filename, currentFrame?.imageUrl, updateMunicipalityThreats]);
+
+  useEffect(() => {
+    let alive = true;
+    const load = () =>
+      fetchCityForecasts(NEARBY_CITIES)
+        .then((f) => alive && setCityForecasts(f))
+        .catch((err) => console.warn('Previsão indisponível:', err));
+    load();
+    const id = setInterval(load, 30 * 60 * 1000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
+
+  const loadDefesaCivilAlerts = useCallback(async (force = false) => {
+    setDcAlerts((s) => ({ ...s, status: s.status === 'ok' && !force ? 'ok' : 'loading', error: undefined }));
+    try {
+      const { alerts, at } = await fetchDefesaCivilAlerts(force);
+      setDcAlerts({ status: 'ok', alerts, at });
+    } catch (err: any) {
+      setDcAlerts((s) => ({ ...s, status: 'error', error: err?.message || 'Falha ao consultar a Defesa Civil' }));
+    }
+  }, []);
+
+  const openMunicipality = useCallback(
+    (name: string) => {
+      setSelectedMunicipality(name);
+      loadDefesaCivilAlerts();
+    },
+    [loadDefesaCivilAlerts]
+  );
 
   // Fetch latest radar scan from Defesa Civil SC SIFAP
   const fetchLatestRadar = useCallback(async (isManual = false) => {
@@ -369,10 +474,14 @@ export default function App() {
           sweepSpeedRpm={SWEEP_SPEEDS[sweepSpeedIdx].rpm}
           baseMapType={baseMapType}
           onChangeBaseMap={setBaseMapType}
+          municipalityThreats={municipalityThreats}
+          cityForecasts={cityForecasts}
+          onSelectMunicipality={openMunicipality}
+          isChatOpen={isChatOpen}
         />
 
         {/* Bottom overlay: legend (left) + controls (right); stacks on mobile */}
-        <div className="pointer-events-none absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-[500] flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className={`pointer-events-none absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-[500] flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between transition-[right] duration-200 ${isChatOpen ? 'sm:right-[25rem]' : ''}`}>
           <div className="pointer-events-auto">
             <DbzLegend />
           </div>
@@ -517,6 +626,24 @@ export default function App() {
           <span className="truncate">{BASEMAP_CREDITS[baseMapType]}</span>
         </div>
       </footer>
+
+      {/* Detalhes do município: radar + previsão + alertas da Defesa Civil */}
+      {selectedMunicipality && (() => {
+        const city = NEARBY_CITIES.find((c) => c.name === selectedMunicipality);
+        if (!city) return null;
+        return (
+          <MunicipalityDetailModal
+            cityName={city.name}
+            state={city.state}
+            coords={city.coords}
+            status={municipalityThreats[city.name] ?? null}
+            forecast={cityForecasts[city.name] ?? null}
+            alerts={dcAlerts}
+            onRetryAlerts={() => loadDefesaCivilAlerts(true)}
+            onClose={() => setSelectedMunicipality(null)}
+          />
+        );
+      })()}
 
       {/* 4. Community chat drawer */}
       <CommunityChat

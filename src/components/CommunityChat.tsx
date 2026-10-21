@@ -157,7 +157,7 @@ export const CommunityChat: React.FC<CommunityChatProps> = ({
   const visibleMessages = messages.filter((m) => !blockedUsers.includes(m.userId));
 
   return (
-    <aside className="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-slate-950/95 backdrop-blur-md border-l border-slate-800 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200 text-slate-200">
+    <aside className="fixed inset-y-0 right-0 z-[750] w-full sm:w-96 bg-slate-950/95 backdrop-blur-md border-l border-slate-800 flex flex-col shadow-2xl animate-in slide-in-from-right duration-200 text-slate-200">
       {/* 1. Header */}
       <div className="h-14 px-4 border-b border-slate-800 flex items-center justify-between shrink-0 bg-slate-900/80">
         <div className="flex items-center gap-2">
