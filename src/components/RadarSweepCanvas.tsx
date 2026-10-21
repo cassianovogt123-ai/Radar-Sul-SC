@@ -13,9 +13,10 @@ interface RadarSweepCanvasProps {
   echoOpacity?: number; // 0..1
 }
 
-// Quanto da volta o eco leva para apagar depois que o feixe passa.
-// O restante (FADE_DEG..360) fica totalmente oculto, à frente da linha.
-const ECHO_FADE_DEG = 320;
+// A nuvem só aparece no rastro logo atrás da linha do sonar e some em
+// seguida. Fora dessa faixa (inclusive à frente da linha) fica oculta.
+// Ex.: 50° ≈ 2,8 s visível por volta a 3 RPM.
+const ECHO_FADE_DEG = 50;
 
 export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   map,
