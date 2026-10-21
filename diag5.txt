@@ -1,0 +1,96 @@
+gzip: 10225533 bytes  200
+X-Cache-Status: HIT
+X-Feed-Cache: NGINX - 5 minutes
+HTTP/1.1 403 Forbidden
+Date: Wed, 21 Oct 2026 16:28:06 GMT
+Content-Type: text/html
+Content-Length: 146
+Connection: keep-alive
+X-Feed-Cache: NGINX - 5 minutes
+
+?uf=SC -> 200 10225533
+/SC -> 404 146
+?estado=SC -> 200 10225533
+?limit=5 -> 200 10225533
+https://idapfile.mdr.gov.br/idap/api/rss -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://idapfile.mdr.gov.br/idap/api/ -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://idapfile.mdr.gov.br/idap/api/rss/cap/uf/SC -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://idapfile.mdr.gov.br/idap/api/alertas -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://idapfile.mdr.gov.br/idap/swagger-ui.html -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://idapfile.mdr.gov.br/idap/v3/api-docs -> 404 text/html 146
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+=== INMET
+https://apiprevmet3.inmet.gov.br/avisos/ativos -> 000  0 err=Recv failure: Connection reset by peer
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://apiprevmet3.inmet.gov.br/avisos/rss -> 000  0 err=Recv failure: Connection reset by peer
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+https://alertas2.inmet.gov.br/ -> 000  0 err=Recv failure: Connection reset by peer
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
