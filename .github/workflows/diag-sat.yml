@@ -9,46 +9,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: GIBS checks
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci && npx vite build
+      - name: Screenshot satélite
         run: |
-          exec > >(tee -a diag.txt) 2>&1
-          set +e
-          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ); START=$(date -u -d '-4 hours' +%Y-%m-%dT%H:%M:%SZ)
-          echo "NOW=$NOW"
-          for L in "GOES-East_ABI_Band13_Clean_Infrared GoogleMapsCompatible_Level6" "GOES-East_ABI_Band2_Red_Visible_1km GoogleMapsCompatible_Level7" "GOES-East_ABI_GeoColor GoogleMapsCompatible_Level7"; do
-            set -- $L
-            echo "=== DescribeDomains $1 $2"
-            curl -s -D - "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/wmts.cgi?SERVICE=WMTS&REQUEST=DescribeDomains&VERSION=1.0.0&LAYER=$1&TILEMATRIXSET=$2&TIME=$START/$NOW" -H "Origin: https://localhost" | head -c 1500; echo
-          done
-          echo "=== capabilities GOES-East layers (3857 best)"
-          curl -s "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml" -o cap.xml; ls -la cap.xml
-          python3 - <<'PY'
-          import re
-          x=open('cap.xml').read()
-          for m in re.finditer(r'<Layer>(.*?)</Layer>', x, re.S):
-              b=m.group(1); i=re.search(r'<ows:Identifier>(.*?)</ows:Identifier>',b).group(1)
-              if 'GOES-East' in i or 'GOES-West' in i:
-                  tms=re.findall(r'<TileMatrixSet>(.*?)</TileMatrixSet>',b); fmt=re.findall(r'<Format>(.*?)</Format>',b)
-                  d=re.search(r'<Default>(.*?)</Default>',b); val=re.findall(r'<Value>(.*?)</Value>',b)
-                  tpl=re.findall(r'template="(.*?)"',b)
-                  print(i, tms, fmt, 'default=',d.group(1) if d else None, 'lastval=', val[-1][-60:] if val else None); print('   ', tpl[:1])
-          PY
-          echo "=== tile test (latest default)"
-          for z in "5/18/11" "6/37/22"; do
-            curl -s -o t.png -w "%{http_code} %{content_type} %{size_download}\n" "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/GOES-East_ABI_Band13_Clean_Infrared/default/default/GoogleMapsCompatible_Level6/$z.png"
-          done
-      - name: RealEarth checks
+          cd dist && (python3 -m http.server 4173 >/dev/null 2>&1 &) && cd ..
+          mkdir -p /tmp/pp && cd /tmp/pp && npm init -y >/dev/null && npm i puppeteer-core >/dev/null
+          cat > s.js <<'JS'
+          const p=require('puppeteer-core');
+          (async()=>{const b=await p.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
+          const pg=await b.newPage(); await pg.setViewport({width:430,height:860,deviceScaleFactor:1});
+          const log=[]; pg.on('console',m=>log.push(m.text())); pg.on('requestfailed',r=>log.push('FAIL '+r.url().slice(0,160)+' '+r.failure().errorText));
+          pg.on('response',r=>{if(/gibs/.test(r.url())) log.push(r.status()+' '+r.url().slice(0,200));});
+          await pg.goto('http://localhost:4173/',{waitUntil:'networkidle2',timeout:60000}).catch(e=>log.push('goto '+e.message));
+          await pg.evaluate(()=>[...document.querySelectorAll('button')].find(x=>/Satélite GOES/.test(x.textContent)).click());
+          await new Promise(r=>setTimeout(r,20000));
+          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_phone.png'});
+          await pg.setViewport({width:1280,height:800}); await new Promise(r=>setTimeout(r,8000));
+          await pg.screenshot({path:process.env.GITHUB_WORKSPACE+'/sat_desktop.png'});
+          require('fs').writeFileSync(process.env.GITHUB_WORKSPACE+'/sat_log.txt',log.join('\n')); await b.close();})();
+          JS
+          node s.js
+      - name: Salvar
         run: |
-          exec > >(tee -a diag.txt) 2>&1
-          set +e
-          curl -s -D - "https://realearth.ssec.wisc.edu/api/products?search=G19" -H "Origin: https://localhost" | head -c 3000; echo
-          curl -s "https://realearth.ssec.wisc.edu/api/products?search=FD-BAND13" | head -c 2000; echo
-      - name: NOAA STAR CDN
-        run: |
-          exec > >(tee -a diag.txt) 2>&1
-          curl -s -I "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/ssa/13/latest.jpg" | head -12
-      - name: Salvar resultado
-        run: |
-          sleep 1
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add diag.txt; git commit -m "diag result [skip ci]"; git push
+          git add -f sat_phone.png sat_desktop.png sat_log.txt; git commit -m "diag shots [skip ci]"; git push
