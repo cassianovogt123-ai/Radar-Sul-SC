@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
-import { playSonarPing, getAudioOutputLatency } from '../utils/audio';
+import { playSonarPing, perfToAudioTime } from '../utils/audio';
 import { estimateDbzFromRgb, DBZ_PRECIPITATION_THRESHOLD } from '../utils/echoAnalyzer';
 
 interface RadarSweepCanvasProps {
@@ -17,17 +17,34 @@ interface RadarSweepCanvasProps {
   soundEnabled?: boolean;
 }
 
+// A nuvem só aparece no rastro logo atrás da linha do sonar e some em
+// seguida. Fora dessa faixa (inclusive à frente da linha) fica oculta.
+// Ex.: 50° ≈ 2,8 s visível por volta a 3 RPM.
+const ECHO_FADE_DEG = 50;
+
+/** Resolução angular da detecção de nuvens (0,5°). */
+const PING_BINS = 720;
+
+interface PingEvent {
+  bin: number; // ângulo (em bins de 0,5°) onde a linha toca a formação pela 1ª vez
+  intensity: number; // 0..1
+}
+
+const mercY = (latDeg: number) =>
+  (Math.log(Math.tan(Math.PI / 4 + (latDeg * Math.PI) / 360)) * 180) / Math.PI;
+
 /**
- * Perfil angular dos ecos: para cada grau (0 = leste, sentido horário na tela),
- * a intensidade 0..1 do eco mais forte naquela direção; 0 = sem nuvem.
- * Ângulos calculados em km para bater com a direção do feixe no mapa.
+ * Encontra cada formação de nuvem do jeito que ela é DESENHADA na tela
+ * (mesma projeção do mapa) e devolve o ângulo exato em que a linha do sonar
+ * encosta nela pela primeira vez. Uma formação = um ping, mesmo que outra
+ * nuvem esteja na mesma direção em outra distância.
  */
-function buildEchoProfile(
+function buildPingEvents(
   img: HTMLImageElement,
   bounds: [[number, number], [number, number]],
   radar: [number, number],
   rangeKm: number,
-): Float32Array | null {
+): PingEvent[] | null {
   try {
     const w = img.naturalWidth;
     const h = img.naturalHeight;
@@ -44,50 +61,97 @@ function buildEchoProfile(
     const minLat = Math.min(bounds[0][0], bounds[1][0]);
     const maxLon = Math.max(bounds[0][1], bounds[1][1]);
     const minLon = Math.min(bounds[0][1], bounds[1][1]);
-    const kmPerPxY = ((maxLat - minLat) * 110.85) / h;
-    const kmPerPxX = ((maxLon - minLon) * 111.32 * Math.cos((radar[0] * Math.PI) / 180)) / w;
-    const rcx = ((radar[1] - minLon) / (maxLon - minLon)) * w;
-    const rcy = ((maxLat - radar[0]) / (maxLat - minLat)) * h;
+    const yTop = mercY(maxLat);
+    const yBot = mercY(minLat);
+    const x0 = radar[1];
+    const y0 = mercY(radar[0]);
+    // mesmo raio que o canvas usa para o disco do radar
+    const rho = mercY(radar[0] + rangeKm / 110.85) - y0;
 
-    const counts = new Uint16Array(360);
-    const maxDbz = new Float32Array(360);
-    const step = w * h > 1_500_000 ? 2 : 1;
-    for (let y = 0; y < h; y += step) {
-      const dyKm = (y - rcy) * kmPerPxY;
-      for (let x = 0; x < w; x += step) {
-        const i = (y * w + x) * 4;
+    const R = 125; // anéis de distância (~2 km cada)
+    const A = PING_BINS;
+    const grid = new Float32Array(A * R); // 0 = sem nuvem; >0 = dBZ
+    for (let a = 0; a < A; a++) {
+      const th = ((a + 0.5) / A) * 2 * Math.PI; // ângulo de tela, horário a partir do leste
+      const ct = Math.cos(th);
+      const st = Math.sin(th);
+      for (let r = 1; r < R; r++) {
+        const d = ((r + 0.5) / R) * rho;
+        const X = x0 + d * ct;
+        const Y = y0 - d * st; // tela: y para baixo
+        const px = Math.floor(((X - minLon) / (maxLon - minLon)) * w);
+        const py = Math.floor(((yTop - Y) / (yTop - yBot)) * h);
+        if (px < 0 || py < 0 || px >= w || py >= h) continue;
+        const i = (py * w + px) * 4;
         if (data[i + 3] <= 40) continue;
-        const dxKm = (x - rcx) * kmPerPxX;
-        const dist = Math.hypot(dxKm, dyKm);
-        if (dist > rangeKm || dist < 3) continue;
         const dbz = estimateDbzFromRgb(data[i], data[i + 1], data[i + 2]);
-        if (dbz < DBZ_PRECIPITATION_THRESHOLD) continue;
-        let a = (Math.atan2(dyKm, dxKm) * 180) / Math.PI;
-        if (a < 0) a += 360;
-        const bin = Math.floor(a) % 360;
-        counts[bin]++;
-        if (dbz > maxDbz[bin]) maxDbz[bin] = dbz;
+        if (dbz >= DBZ_PRECIPITATION_THRESHOLD) grid[a * R + r] = dbz;
       }
     }
 
-    const profile = new Float32Array(360);
-    const minPixels = step === 1 ? 4 : 2; // ignora ruído isolado
-    for (let b = 0; b < 360; b++) {
-      if (counts[b] >= minPixels) {
-        profile[b] = Math.max(0.05, Math.min(1, (maxDbz[b] - 10) / 50));
+    // Formações = regiões conectadas na grade polar (o ângulo dá a volta em 360°)
+    const seen = new Uint8Array(A * R);
+    const events: PingEvent[] = [];
+    const stack: number[] = [];
+    const occupied = new Uint8Array(A);
+    for (let start = 0; start < A * R; start++) {
+      if (!grid[start] || seen[start]) continue;
+      occupied.fill(0);
+      let cells = 0;
+      let maxDbz = 0;
+      stack.push(start);
+      seen[start] = 1;
+      while (stack.length) {
+        const k = stack.pop() as number;
+        const a = Math.floor(k / R);
+        const r = k % R;
+        cells++;
+        occupied[a] = 1;
+        if (grid[k] > maxDbz) maxDbz = grid[k];
+        const nb = [((a + 1) % A) * R + r, ((a + A - 1) % A) * R + r, r + 1 < R ? k + 1 : -1, r > 1 ? k - 1 : -1];
+        for (const n of nb) {
+          if (n >= 0 && grid[n] && !seen[n]) {
+            seen[n] = 1;
+            stack.push(n);
+          }
+        }
+      }
+      if (cells < 3) continue; // ignora ruído isolado
+      // início no sentido do feixe = logo depois do maior trecho angular vazio
+      let bestGap = -1;
+      let bestStart = 0;
+      let run = 0;
+      for (let i = 0; i < 2 * A; i++) {
+        if (!occupied[i % A]) {
+          run++;
+        } else {
+          if (run > bestGap) {
+            bestGap = run;
+            bestStart = i % A;
+          }
+          run = 0;
+        }
+      }
+      events.push({ bin: bestStart, intensity: Math.max(0.05, Math.min(1, (maxDbz - 10) / 50)) });
+    }
+
+    // formações que começam quase no mesmo ângulo viram um só ping (o mais forte)
+    events.sort((x, y) => x.bin - y.bin);
+    const merged: PingEvent[] = [];
+    for (const ev of events) {
+      const last = merged[merged.length - 1];
+      if (last && ev.bin - last.bin <= 2) {
+        last.intensity = Math.max(last.intensity, ev.intensity);
+      } else {
+        merged.push({ ...ev });
       }
     }
-    return profile;
+    return merged;
   } catch {
     // imagem sem permissão de leitura (CORS): sem som, o resto segue normal
     return null;
   }
 }
-
-// A nuvem só aparece no rastro logo atrás da linha do sonar e some em
-// seguida. Fora dessa faixa (inclusive à frente da linha) fica oculta.
-// Ex.: 50° ≈ 2,8 s visível por volta a 3 RPM.
-const ECHO_FADE_DEG = 50;
 
 export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   map,
@@ -100,12 +164,13 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
   echoOpacity = 1,
   soundEnabled = false,
 }) => {
-  const echoProfileRef = useRef<Float32Array | null>(null);
+  const pingEventsRef = useRef<PingEvent[] | null>(null);
   const soundEnabledRef = useRef<boolean>(soundEnabled);
   soundEnabledRef.current = soundEnabled;
   // Ângulo acumulado (sem voltar a 0) para agendar os pings com antecedência
   const absAngleRef = useRef<number>(0);
   const lastScheduledAbsRef = useRef<number>(0);
+  const pendingPingsRef = useRef<Array<{ evAbs: number; cancel: () => boolean }>>([]);
   const echoImgRef = useRef<HTMLImageElement | null>(null);
   const echoCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -119,9 +184,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
     img.decoding = 'async';
     img.onload = () => {
       echoImgRef.current = img;
-      echoProfileRef.current = echoBounds
-        ? buildEchoProfile(img, echoBounds, radarCoords, rangeKm)
-        : null;
+      pingEventsRef.current = echoBounds ? buildPingEvents(img, echoBounds, radarCoords, rangeKm) : null;
     };
     img.src = echoImageUrl;
     return () => {
@@ -169,28 +232,37 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
         angleRef.current = absAngleRef.current % 360;
 
         // Ping sincronizado com a linha: olha um pouco à frente do feixe e agenda
-        // o som para sair no instante exato em que a linha chega à borda da nuvem,
-        // descontando o atraso de áudio do aparelho. Vale para qualquer velocidade.
-        const profile = echoProfileRef.current;
-        if (soundEnabledRef.current && profile && degPerSec > 0) {
-          const latency = getAudioOutputLatency();
-          const lookaheadDeg = degPerSec * (latency + 0.12);
-          const abs = absAngleRef.current;
-          if (lastScheduledAbsRef.current > abs + 360) lastScheduledAbsRef.current = abs;
-          const firstDeg = Math.max(Math.floor(abs) + 1, Math.floor(lastScheduledAbsRef.current) + 1);
-          const lastDeg = Math.floor(abs + lookaheadDeg);
-          for (let d = firstDeg; d <= lastDeg; d++) {
-            const bin = ((d % 360) + 360) % 360;
-            const prevBin = (bin + 359) % 360;
-            if (profile[bin] > 0 && profile[prevBin] === 0) {
-              const secsUntilLine = (d - abs) / degPerSec;
-              playSonarPing(profile[bin], secsUntilLine - latency);
-              lastScheduledAbsRef.current = d;
+        // o som para sair do alto-falante no instante exato em que a linha encosta
+        // na formação (relógio de saída do próprio aparelho). Qualquer velocidade.
+        const events = pingEventsRef.current;
+        const abs = absAngleRef.current;
+        if (soundEnabledRef.current && events && events.length && degPerSec > 0) {
+          const horizon = abs + degPerSec * 0.45;
+          const from = Math.max(abs, lastScheduledAbsRef.current);
+          if (horizon > from) {
+            const turn0 = Math.floor(from / 360);
+            const turn1 = Math.floor(horizon / 360);
+            const pending: Array<{ evAbs: number; cancel: () => boolean }> = [];
+            for (let turn = turn0; turn <= turn1; turn++) {
+              for (const ev of events) {
+                const evAbs = turn * 360 + (ev.bin * 360) / PING_BINS;
+                if (evAbs > from && evAbs <= horizon) {
+                  // instante (relógio da tela) em que a linha chega à formação
+                  const atPerf = time + ((evAbs - abs) / degPerSec) * 1000;
+                  const cancel = playSonarPing(ev.intensity, perfToAudioTime(atPerf));
+                  if (cancel) pending.push({ evAbs, cancel });
+                }
+              }
             }
+            if (pending.length) {
+              pendingPingsRef.current = pendingPingsRef.current
+                .filter((p) => p.evAbs > abs - 30)
+                .concat(pending);
+            }
+            lastScheduledAbsRef.current = horizon;
           }
-          if (lastDeg > lastScheduledAbsRef.current) lastScheduledAbsRef.current = lastDeg;
         } else {
-          lastScheduledAbsRef.current = absAngleRef.current;
+          lastScheduledAbsRef.current = abs;
         }
       }
 
@@ -394,6 +466,15 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
       }
+      // velocidade mudou / feixe pausado: cancela os pings que ainda não tocaram
+      // e volta a agendá-los (com a nova velocidade) no próximo quadro.
+      // Os que já começaram a tocar não são repetidos.
+      for (const p of pendingPingsRef.current) {
+        if (p.cancel()) {
+          lastScheduledAbsRef.current = Math.min(lastScheduledAbsRef.current, p.evAbs - 1e-6);
+        }
+      }
+      pendingPingsRef.current = [];
       map.off('resize', handleResize);
     };
   }, [map, radarCoords, rangeKm, isSweepActive, sweepSpeedRpm, echoBounds, echoOpacity]);

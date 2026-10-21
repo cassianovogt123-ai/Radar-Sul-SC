@@ -63,7 +63,10 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   const cityMarkersGroupRef = useRef<L.LayerGroup | null>(null);
 
   // Confirmed radar coordinates: Loteamento Desbravador, Chapecó / SC
-  const RADAR_COORDS: [number, number] = [radarMeta.coordinates.lat, radarMeta.coordinates.lon];
+  const RADAR_COORDS = React.useMemo<[number, number]>(
+    () => [radarMeta.coordinates.lat, radarMeta.coordinates.lon],
+    [radarMeta.coordinates.lat, radarMeta.coordinates.lon]
+  );
 
   // Tile layer URLs dictionary
   const getTileConfig = (type: 'osm' | 'dark' | 'satellite' | 'topo') => {
