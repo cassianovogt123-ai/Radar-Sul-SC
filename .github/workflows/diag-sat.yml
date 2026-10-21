@@ -2,12 +2,16 @@ name: diag-satelite
 on:
   push:
     branches: [diag-satelite]
+permissions:
+  contents: write
 jobs:
   diag:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: GIBS checks
         run: |
+          exec > >(tee -a diag.txt) 2>&1
           set +e
           NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ); START=$(date -u -d '-4 hours' +%Y-%m-%dT%H:%M:%SZ)
           echo "NOW=$NOW"
@@ -35,9 +39,16 @@ jobs:
           done
       - name: RealEarth checks
         run: |
+          exec > >(tee -a diag.txt) 2>&1
           set +e
           curl -s -D - "https://realearth.ssec.wisc.edu/api/products?search=G19" -H "Origin: https://localhost" | head -c 3000; echo
           curl -s "https://realearth.ssec.wisc.edu/api/products?search=FD-BAND13" | head -c 2000; echo
       - name: NOAA STAR CDN
         run: |
+          exec > >(tee -a diag.txt) 2>&1
           curl -s -I "https://cdn.star.nesdis.noaa.gov/GOES19/ABI/SECTOR/ssa/13/latest.jpg" | head -12
+      - name: Salvar resultado
+        run: |
+          sleep 1
+          git config user.name diag; git config user.email diag@users.noreply.github.com
+          git add diag.txt; git commit -m "diag result [skip ci]"; git push
