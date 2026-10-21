@@ -9,6 +9,7 @@ import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
 import { NEARBY_CITIES } from './components/RadarMap';
+import { MonitorMode, MonitorModeSelector, SatelliteView } from './components/SatelliteView';
 import {
   analyzeRadarEchoesReal,
   EchoAnalysisResult,
@@ -57,6 +58,7 @@ export default function App() {
   const [baseMapType, setBaseMapType] = useState<'osm' | 'dark' | 'satellite' | 'topo'>('osm');
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState<boolean>(false);
+  const [monitorMode, setMonitorMode] = useState<MonitorMode>('radar');
 
   // Proximity & Rain Cell Threat Monitoring State
   const [municipalityThreats, setMunicipalityThreats] = useState<Record<string, MunicipalityProximityStatus>>({});
@@ -321,6 +323,9 @@ export default function App() {
             </label>
           </div>
         </div>
+
+        {monitorMode === 'satelite' && <SatelliteView />}
+        <MonitorModeSelector value={monitorMode} onChange={setMonitorMode} />
       </main>
 
       {/* 3. Footer */}
