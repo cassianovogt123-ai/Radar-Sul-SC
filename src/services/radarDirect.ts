@@ -146,6 +146,30 @@ function parseSifapFilename(filename: string) {
 
 const imageCache = new Map<string, string>();
 
+// Última lista de arquivos recebida (ordem cronológica) — usada para achar a varredura anterior
+let lastDirectList: { radar: string; prod: string; files: string[] } | null = null;
+let lastBackendFrames: any[] = [];
+
+async function getDirectImage(radar: string, prod: string, name: string): Promise<string> {
+  let imageUrl = imageCache.get(name);
+  if (!imageUrl) {
+    const raw = await getImageSrc(
+      `${SIFAP_BASE}/getImagem?prod=${encodeURIComponent(prod)}&radar=${encodeURIComponent(radar)}&file=${encodeURIComponent(name)}`
+    );
+    try {
+      imageUrl = await makeTransparent(raw);
+    } catch {
+      imageUrl = raw;
+    }
+    imageCache.set(name, imageUrl);
+    // mantém só as últimas imagens na memória
+    while (imageCache.size > 6) {
+      imageCache.delete(imageCache.keys().next().value as string);
+    }
+  }
+  return imageUrl;
+}
+
 async function fetchLatestDirect(radar: string, prod: string) {
   const list = await getJson(
     `${SIFAP_BASE}/getUltimasImagens?prod=${encodeURIComponent(prod)}&radar=${encodeURIComponent(radar)}&data=`
@@ -153,27 +177,34 @@ async function fetchLatestDirect(radar: string, prod: string) {
   if (!Array.isArray(list) || list.length === 0) {
     return { success: false, message: 'Nenhuma observação recente retornada pela Defesa Civil SC.' };
   }
-  const latestName = [...list].sort().pop() as string;
+  const sorted = [...list].sort() as string[];
+  lastDirectList = { radar, prod, files: sorted };
+  const latestName = sorted[sorted.length - 1];
   const latestFrame: any = parseSifapFilename(latestName);
-
-  let imageUrl = imageCache.get(latestName);
-  if (!imageUrl) {
-    const raw = await getImageSrc(
-      `${SIFAP_BASE}/getImagem?prod=${encodeURIComponent(prod)}&radar=${encodeURIComponent(radar)}&file=${encodeURIComponent(latestName)}`
-    );
-    try {
-      imageUrl = await makeTransparent(raw);
-    } catch {
-      imageUrl = raw;
-    }
-    imageCache.set(latestName, imageUrl);
-    // mantém só as últimas imagens na memória
-    while (imageCache.size > 6) {
-      imageCache.delete(imageCache.keys().next().value as string);
-    }
-  }
-  latestFrame.imageUrl = imageUrl;
+  latestFrame.imageUrl = await getDirectImage(radar, prod, latestName);
   return { success: true, latestFrame, frameCount: list.length };
+}
+
+/**
+ * Varredura imediatamente anterior a `latestFilename` (usada só para medir o movimento
+ * dos ecos na previsão imediata). Não altera a varredura atual exibida no mapa.
+ */
+export async function fetchPreviousRadarFrame(latestFilename: string): Promise<any | null> {
+  if (DIRECT_MODE) {
+    if (!lastDirectList) return null;
+    const idx = lastDirectList.files.indexOf(latestFilename);
+    if (idx <= 0) return null;
+    const name = lastDirectList.files[idx - 1];
+    const frame: any = parseSifapFilename(name);
+    frame.imageUrl = await getDirectImage(lastDirectList.radar, lastDirectList.prod, name);
+    return frame;
+  }
+  const idx = lastBackendFrames.findIndex((f) => f?.filename === latestFilename);
+  if (idx <= 0) return null;
+  const prev = { ...lastBackendFrames[idx - 1] };
+  if (!prev.imageUrl) return null;
+  prev.imageUrl = apiUrl(prev.imageUrl);
+  return prev;
 }
 
 /** Busca a varredura mais recente — direto na Defesa Civil (app) ou via backend (web). */
@@ -183,6 +214,7 @@ export async function fetchLatestRadarData(radar = 'CHP', prod = '0'): Promise<a
   const res = await fetch(apiUrl(`/api/radar/sc/latest?radar=${radar}&prod=${prod}`));
   if (!res.ok) throw new Error(`Servidor retornou status ${res.status}`);
   const data = await res.json();
+  lastBackendFrames = Array.isArray(data?.frames) ? data.frames : [];
   if (data?.latestFrame?.imageUrl) {
     data.latestFrame.imageUrl = apiUrl(data.latestFrame.imageUrl);
   }

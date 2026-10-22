@@ -5,7 +5,9 @@ import { RadarFrame, RadarMetadata, ConnectionStatus } from './types/radar';
 import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare } from 'lucide-react';
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
-import { fetchLatestRadarData } from './services/radarDirect';
+import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
+import { buildNowcast, NowcastResult } from './utils/nowcast';
+import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
 import { CapAlert } from './services/capAlerts';
 import { fetchDefesaCivilAlerts } from './services/defesaCivilAlerts';
@@ -163,6 +165,12 @@ export default function App() {
     at: null,
   });
 
+  // Previsão imediata (nowcast): camada separada; a varredura real de Chapecó não é alterada
+  const [nowcast, setNowcast] = useState<NowcastResult | null>(null);
+  const [isNowcastComputing, setIsNowcastComputing] = useState<boolean>(false);
+  const [nowcastLead, setNowcastLead] = useState<number>(0);
+  const nowcastFrame = nowcast?.ok ? nowcast.frames.find((f) => f.leadMin === nowcastLead) ?? null : null;
+
   const previousCellsRef = useRef<RainCell[]>([]);
   const previousTimestampRef = useRef<number | null>(null);
   const lastApproachAlertTimestampRef = useRef<number>(0);
@@ -280,6 +288,43 @@ export default function App() {
   useEffect(() => {
     if (currentFrame) updateMunicipalityThreats(currentFrame);
   }, [currentFrame?.filename, currentFrame?.imageUrl, updateMunicipalityThreats]);
+
+  // Recalcula a previsão imediata a cada nova varredura (só com dados recentes)
+  useEffect(() => {
+    const frame = currentFrame;
+    if (!frame?.imageUrl || !frame.filename) return;
+    if (frame.ageMinutes > 45) {
+      setNowcast({ ok: false, reason: 'Varredura desatualizada: previsão suspensa.' });
+      setNowcastLead(0);
+      return;
+    }
+    let alive = true;
+    setIsNowcastComputing(true);
+    (async () => {
+      try {
+        const prev = await fetchPreviousRadarFrame(frame.filename as string).catch(() => null);
+        const result = await buildNowcast(
+          { imageUrl: frame.imageUrl as string, timestamp: frame.timestamp },
+          prev?.imageUrl ? { imageUrl: prev.imageUrl, timestamp: prev.timestamp } : null,
+          CHAPECO_RADAR_META
+        );
+        if (!alive) return;
+        setNowcast(result);
+        if (!result.ok) setNowcastLead(0);
+      } catch (err) {
+        console.warn('Previsão imediata indisponível:', err);
+        if (alive) {
+          setNowcast({ ok: false, reason: 'Não foi possível calcular a previsão agora.' });
+          setNowcastLead(0);
+        }
+      } finally {
+        if (alive) setIsNowcastComputing(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [currentFrame?.filename, currentFrame?.imageUrl]);
 
   useEffect(() => {
     let alive = true;
@@ -492,6 +537,8 @@ export default function App() {
           cityForecasts={cityForecasts}
           onSelectMunicipality={openMunicipality}
           isChatOpen={isChatOpen}
+          nowcastImageUrl={nowcastFrame?.imageUrl ?? null}
+          nowcastLabel={nowcastFrame ? formatNowcastLabel(nowcastFrame.leadMin, nowcastFrame.validAt) : null}
         />
 
         {/* Bottom overlay: legend (left) + controls (right); stacks on mobile */}
@@ -600,6 +647,13 @@ export default function App() {
               )}
             </div>
 
+            <NowcastControl
+              result={nowcast}
+              isComputing={isNowcastComputing}
+              leadMin={nowcastFrame ? nowcastLead : 0}
+              onChangeLead={setNowcastLead}
+            />
+
             <label className="flex items-center gap-2 sm:gap-2.5 pr-1 sm:pr-2" title="Opacidade dos ecos">
               <span className="eyebrow hidden sm:inline">Ecos</span>
               <input
@@ -608,11 +662,11 @@ export default function App() {
                 max={100}
                 value={opacity}
                 onChange={(e) => setOpacity(Number(e.target.value))}
-                className="range-cyan w-16 min-[400px]:w-20 sm:w-28"
+                className="range-cyan w-12 min-[400px]:w-20 sm:w-28"
                 style={{ ['--fill' as string]: `${((opacity - 10) / 90) * 100}%` }}
                 aria-label="Opacidade dos ecos do radar"
               />
-              <span className="font-mono text-[11px] text-slate-300 tabular-nums w-8 text-right">
+              <span className="hidden min-[400px]:inline font-mono text-[11px] text-slate-300 tabular-nums w-8 text-right">
                 {opacity}%
               </span>
             </label>
