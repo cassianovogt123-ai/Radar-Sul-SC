@@ -1,0 +1,22 @@
+# Versão web do VogtSonar Sul (para iPhone: Safari → Compartilhar → Adicionar à Tela de Início).
+# No Render: New → Blueprint → escolher este repositório. Plano gratuito.
+services:
+  - type: web
+    name: vogtsonar-sul
+    runtime: node
+    plan: free
+    region: virginia
+    branch: main
+    autoDeploy: true
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/radar/sources
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: ELECTRON_SKIP_BINARY_DOWNLOAD
+        value: "1"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"

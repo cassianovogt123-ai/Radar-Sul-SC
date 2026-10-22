@@ -12,6 +12,14 @@ let inflight: Promise<CapAlert[]> | null = null;
 
 async function download(): Promise<CapAlert[]> {
   if (!DIRECT_MODE) {
+    // Versão web (ex.: iPhone pela Tela de Início): o INMET só atende acessos do Brasil,
+    // e o servidor pode estar fora do país. Tenta primeiro direto do aparelho do usuário.
+    try {
+      const direct = await fetch(INMET_ALERTS_URL, { signal: AbortSignal.timeout(12000) });
+      if (direct.ok) return normalizeInmet(await direct.json());
+    } catch {
+      /* sem acesso direto (bloqueio do navegador ou fora do Brasil): usa o servidor */
+    }
     const res = await fetch(apiUrl('/api/alertas/inmet'));
     if (!res.ok) throw new Error(`Servidor retornou HTTP ${res.status}`);
     return (await res.json()).alerts as CapAlert[];
