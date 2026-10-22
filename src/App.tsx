@@ -439,7 +439,7 @@ export default function App() {
     : null;
 
   return (
-    <div className="flex flex-col h-dvh w-screen bg-[#050b18] text-slate-100 font-sans overflow-hidden select-none">
+    <div className="flex flex-col h-dvh w-screen bg-[#050b18] text-slate-100 font-sans overflow-hidden select-none pb-[env(safe-area-inset-bottom)]">
       {/* 1. Top bar */}
       <header className="relative z-30 shrink-0 h-[calc(3.5rem+env(safe-area-inset-top))] px-3 sm:px-5 flex items-center justify-between gap-3 border-b border-white/[0.07] bg-[#050b18]/90 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
         <div className="flex items-center gap-3 min-w-0">

@@ -12,6 +12,17 @@ Depois de configurado (passo abaixo), os arquivos ficam sempre neste endereço d
 No celular: abra o link, baixe o APK, toque nele e permita "instalar apps desconhecidos".
 No Windows: se aparecer "O Windows protegeu o computador", clique em **Mais informações → Executar assim mesmo** (o app não tem assinatura paga da Microsoft).
 
+## iPhone (versão web, sem custo da Apple)
+O iPhone não instala APK. A versão web roda no Safari e pode ir para a Tela de Início como um app.
+
+1. Em **render.com**, entre com a conta do GitHub (plano gratuito).
+2. **New → Blueprint** → escolha este repositório → **Apply**. O arquivo `render.yaml` já tem tudo configurado.
+3. Em ~5 min sai um endereço como `https://vogtsonar-sul.onrender.com`. Cada novo envio para `main` atualiza o site sozinho.
+4. No iPhone: abra o endereço no **Safari** → botão **Compartilhar** → **Adicionar à Tela de Início**.
+
+Plano gratuito: depois de 15 min sem ninguém usando, o servidor "dorme" e o primeiro acesso demora ~1 min.
+Os avisos do INMET são buscados direto do iPhone (o INMET só atende acessos do Brasil).
+
 ## Como gerar (GitHub Actions — sem instalar nada)
 1. Crie uma conta em github.com e um repositório novo (pode ser público).
 2. Na página do repositório: **Add file → Upload files** e arraste **todo o conteúdo** desta pasta (incluindo a pasta `.github`). Clique em **Commit changes**.
