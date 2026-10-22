@@ -1,0 +1,165 @@
+/* Animações do Pingo, o gatinho da prevenção (SVG). */
+.pingo {
+  display: block;
+  overflow: visible;
+}
+.pingo * {
+  transform-box: view-box;
+}
+
+/* Flutuar sempre, bem de leve */
+.pingo-bob {
+  animation: pingo-bob 3.2s ease-in-out infinite alternate;
+}
+.pingo-tail {
+  transform-origin: 80px 126px;
+  animation: pingo-tail-idle 2.8s ease-in-out infinite alternate;
+}
+.pingo-eyes {
+  transform-origin: 60px 71px;
+}
+.pingo-arm-l {
+  transform-origin: 40px 101px;
+}
+.pingo-head {
+  transform-origin: 60px 96px;
+}
+.pingo-jump {
+  transform-origin: 60px 146px;
+}
+.pingo-umbrella {
+  transform-origin: 88px 96px;
+}
+.pingo-canopy {
+  transform-origin: 88px 10px;
+}
+.pingo-drop {
+  opacity: 0;
+}
+
+/* Ações */
+.pingo.is-blink .pingo-eyes {
+  animation: pingo-blink 0.55s ease-in-out 2;
+}
+.pingo.is-tail .pingo-tail {
+  animation: pingo-tail 0.5s ease-in-out 4 alternate;
+}
+.pingo.is-wave .pingo-arm-l {
+  animation: pingo-wave 1.7s ease-in-out 1;
+}
+.pingo.is-jump .pingo-jump,
+.pingo.is-celebrate .pingo-jump {
+  animation: pingo-jump 0.9s cubic-bezier(0.3, 0.7, 0.4, 1) 1;
+}
+.pingo.is-celebrate .pingo-jump {
+  animation-iteration-count: 2;
+}
+.pingo.is-twirl .pingo-canopy,
+.pingo.is-celebrate .pingo-canopy {
+  animation: pingo-twirl 0.7s ease-in-out 2;
+}
+.pingo.is-tilt .pingo-umbrella {
+  animation: pingo-tilt 1.6s ease-in-out 1;
+}
+.pingo.is-tilt .pingo-head {
+  animation: pingo-head-tilt 1.6s ease-in-out 1;
+}
+.pingo.is-shake .pingo-head {
+  animation: pingo-shake 0.5s ease-in-out 1;
+}
+.pingo.is-rain .pingo-drop {
+  animation: pingo-drop 0.75s ease-in 3;
+}
+.pingo.is-rain .pingo-umbrella {
+  animation: pingo-rain-bump 0.75s ease-in-out 3;
+}
+
+@keyframes pingo-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-4px); }
+}
+@keyframes pingo-tail-idle {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(5deg); }
+}
+@keyframes pingo-tail {
+  from { transform: rotate(-16deg); }
+  to { transform: rotate(18deg); }
+}
+@keyframes pingo-blink {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+@keyframes pingo-wave {
+  0% { transform: rotate(0deg); }
+  22% { transform: rotate(142deg); }
+  36% { transform: rotate(118deg); }
+  50% { transform: rotate(150deg); }
+  64% { transform: rotate(118deg); }
+  78% { transform: rotate(142deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes pingo-jump {
+  0% { transform: translateY(0) scale(1, 1); }
+  15% { transform: translateY(0) scale(1.06, 0.9); }
+  45% { transform: translateY(-20px) scale(0.97, 1.04); }
+  75% { transform: translateY(0) scale(1.05, 0.93); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes pingo-twirl {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(-1); }
+}
+@keyframes pingo-tilt {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(13deg); }
+  65% { transform: rotate(-9deg); }
+}
+@keyframes pingo-head-tilt {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(-9deg); }
+  70% { transform: rotate(4deg); }
+}
+@keyframes pingo-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-7deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(3deg); }
+}
+@keyframes pingo-drop {
+  0% { opacity: 0; transform: translateY(-6px); }
+  25% { opacity: 1; }
+  80% { opacity: 1; transform: translateY(16px); }
+  100% { opacity: 0; transform: translateY(18px); }
+}
+@keyframes pingo-rain-bump {
+  0%, 100% { transform: rotate(0deg); }
+  70% { transform: rotate(1.5deg) translateY(1px); }
+}
+
+/* Balão de fala e chacoalhar de item errado */
+.pingo-bubble-in {
+  animation: pingo-bubble-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.25) both;
+}
+@keyframes pingo-bubble-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+.pingo-nope {
+  animation: pingo-nope 0.42s ease-in-out;
+}
+@keyframes pingo-nope {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pingo *,
+  .pingo-bubble-in,
+  .pingo-nope {
+    animation: none !important;
+  }
+}

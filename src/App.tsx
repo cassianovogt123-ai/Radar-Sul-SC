@@ -15,6 +15,7 @@ import { fetchInmetAlerts } from './services/inmetAlerts';
 import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
+import { PingoFloater } from './components/mascot/PingoFloater';
 import { NEARBY_CITIES } from './components/RadarMap';
 import { MonitorMode, MonitorModeSelector, SatelliteView } from './components/SatelliteView';
 import {
@@ -675,6 +676,9 @@ export default function App() {
 
         {monitorMode === 'satelite' && <SatelliteView />}
         <MonitorModeSelector value={monitorMode} onChange={setMonitorMode} />
+
+        {/* Pingo: mascote educativo de prevenção de desastres */}
+        <PingoFloater />
       </main>
 
       {/* 3. Footer */}
