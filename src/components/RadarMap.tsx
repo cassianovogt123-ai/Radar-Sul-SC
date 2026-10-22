@@ -28,6 +28,10 @@ interface RadarMapProps {
   cityForecasts?: Record<string, CityForecast>;
   onSelectMunicipality?: (cityName: string) => void;
   isChatOpen?: boolean;
+  /** Quadro de previsão imediata em exibição (null = mostrar a varredura real) */
+  nowcastImageUrl?: string | null;
+  /** Texto do selo "PREVISÃO" no topo do mapa */
+  nowcastLabel?: string | null;
 }
 
 // Confirmed municipalities in the radar coverage zone
@@ -69,11 +73,15 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   cityForecasts,
   onSelectMunicipality,
   isChatOpen = false,
+  nowcastImageUrl = null,
+  nowcastLabel = null,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
   const baseTileLayerRef = useRef<L.TileLayer | null>(null);
   const imageOverlayRef = useRef<L.ImageOverlay | null>(null);
+  const nowcastOverlayRef = useRef<L.ImageOverlay | null>(null);
+  const isNowcast = !!nowcastImageUrl;
   const cityMarkersGroupRef = useRef<L.LayerGroup | null>(null);
 
   // Confirmed radar coordinates: Loteamento Desbravador, Chapecó / SC
@@ -272,7 +280,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
 
     // Com o feixe girando, os ecos são desenhados pelo RadarSweepCanvas,
     // revelados somente onde a linha do sonar já passou.
-    if (currentFrame?.imageUrl && !isSweepActive) {
+    if (currentFrame?.imageUrl && !isSweepActive && !isNowcast) {
       const bounds = radarMeta.leafletBounds;
       const overlay = L.imageOverlay(currentFrame.imageUrl, bounds, {
         opacity: opacity / 100,
@@ -282,7 +290,24 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       }).addTo(mapInstance);
       imageOverlayRef.current = overlay;
     }
-  }, [currentFrame, opacity, radarMeta, mapInstance, isSweepActive]);
+  }, [currentFrame, opacity, radarMeta, mapInstance, isSweepActive, isNowcast]);
+
+  // Previsão imediata: camada à parte, que substitui a varredura real só enquanto está selecionada
+  useEffect(() => {
+    if (!mapInstance) return;
+    if (nowcastOverlayRef.current) {
+      mapInstance.removeLayer(nowcastOverlayRef.current);
+      nowcastOverlayRef.current = null;
+    }
+    if (nowcastImageUrl) {
+      nowcastOverlayRef.current = L.imageOverlay(nowcastImageUrl, radarMeta.leafletBounds, {
+        opacity: opacity / 100,
+        zIndex: 210,
+        interactive: false,
+        className: 'radar-pixelated',
+      }).addTo(mapInstance);
+    }
+  }, [nowcastImageUrl, opacity, radarMeta, mapInstance]);
 
   // Recenter helper
   const handleRecenter = () => {
@@ -302,12 +327,21 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         rangeKm={radarMeta.rangeKm || 250}
         isSweepActive={isSweepActive}
         sweepSpeedRpm={sweepSpeedRpm}
-        echoImageUrl={currentFrame?.imageUrl ?? null}
+        echoImageUrl={isNowcast ? null : currentFrame?.imageUrl ?? null}
         echoBounds={radarMeta.leafletBounds}
         echoOpacity={opacity / 100}
-        soundEnabled={isSoundEnabled}
+        soundEnabled={isSoundEnabled && !isNowcast}
         soundVolume={soundVolume}
       />
+
+      {/* Selo de previsão: deixa claro que o mapa NÃO mostra a observação real */}
+      {isNowcast && nowcastLabel && (
+        <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500] max-w-[calc(100%-2rem)]">
+          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
+            {nowcastLabel}
+          </div>
+        </div>
+      )}
 
       {/* 3. Map HUD (top-right): zoom + recenter */}
       <div className={`absolute top-3 right-3 sm:top-4 z-[500] glass rounded-xl p-1 flex flex-col transition-[right] duration-200 ${isChatOpen ? 'sm:right-[25rem]' : 'sm:right-4'}`}>
