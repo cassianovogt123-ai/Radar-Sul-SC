@@ -47,7 +47,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
 //  2. NASA GIBS — mesmo satélite, porém publica com mais atraso; usado como reserva.
 // Só entram horários cuja imagem já está completa sobre a região do radar (teste de blocos),
 // para nunca mostrar uma imagem "pela metade".
-const REALEARTH = 'https://realearth.ssec.wisc.edu';
+export const REALEARTH = 'https://realearth.ssec.wisc.edu';
 const GIBS = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best';
 
 const PRODUCTS = {
@@ -114,7 +114,7 @@ function expandDomain(domain: string): number[] {
 }
 
 /** GET de texto: fetch normal; no APK, se o WebView bloquear, usa o HTTP nativo do Capacitor. */
-async function getText(url: string): Promise<string> {
+export async function getText(url: string): Promise<string> {
   try {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -130,12 +130,12 @@ async function getText(url: string): Promise<string> {
 }
 
 /** "20261021.133020" -> timestamp UTC */
-function parseRealEarthTime(s: string): number {
+export function parseRealEarthTime(s: string): number {
   const m = s.match(/^(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})$/);
   return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]) : NaN;
 }
 const pad = (n: number) => String(n).padStart(2, '0');
-function realEarthStamp(t: number): string {
+export function realEarthStamp(t: number): string {
   const d = new Date(t);
   return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}/${pad(d.getUTCHours())}${pad(
     d.getUTCMinutes()
