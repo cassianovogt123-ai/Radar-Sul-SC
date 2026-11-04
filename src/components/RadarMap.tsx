@@ -86,7 +86,24 @@ export const RadarMap: React.FC<RadarMapProps> = ({
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
-  const lightningAt = useLightningLayer(mapInstance);
+  // Raios: começa desligado (o usuário liga no botão ⚡); a escolha fica salva no aparelho
+  const [showLightning, setShowLightning] = useState(() => {
+    try {
+      return localStorage.getItem('lightningOn') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const toggleLightning = () =>
+    setShowLightning((v) => {
+      try {
+        localStorage.setItem('lightningOn', v ? '0' : '1');
+      } catch {
+        /* sem armazenamento: vale só nesta sessão */
+      }
+      return !v;
+    });
+  const lightningAt = useLightningLayer(mapInstance, showLightning);
   const baseTileLayerRef = useRef<L.TileLayer | null>(null);
   const imageOverlayRef = useRef<L.ImageOverlay | null>(null);
   const nowcastOverlayRef = useRef<L.ImageOverlay | null>(null);
@@ -389,11 +406,22 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         </div>
       )}
 
-      {!isNowcast && lightningAt && (
-        <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500]">
-          <div className="rounded-full border border-yellow-300/40 bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] text-yellow-200 shadow-lg whitespace-nowrap">
-            ⚡ Raios GOES · últimos 5 min · {new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(lightningAt))}
-          </div>
+      {!isNowcast && (
+        <div className="absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500]">
+          <button
+            onClick={toggleLightning}
+            aria-pressed={showLightning}
+            title={showLightning ? 'Esconder os raios' : 'Mostrar os raios detectados pelo satélite'}
+            className={`rounded-full border bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] shadow-lg whitespace-nowrap cursor-pointer ${
+              showLightning ? 'border-yellow-300/50 text-yellow-200' : 'border-white/15 text-slate-400'
+            }`}
+          >
+            ⚡ Raios {showLightning
+              ? lightningAt
+                ? `· últimos 5 min · ${new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(lightningAt))} · ocultar`
+                : '· nenhum agora · ocultar'
+              : '· mostrar'}
+          </button>
         </div>
       )}
 

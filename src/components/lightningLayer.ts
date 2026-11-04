@@ -8,16 +8,19 @@ const PRODUCT = 'glmgroupdensity';
 const MINUTES = 5; // o produto sai a cada 1 min; empilha os últimos 5
 const STALE_MS = 20 * 60000;
 
-export function useLightningLayer(map: L.Map | null): number | null {
+export function useLightningLayer(map: L.Map | null, enabled: boolean): number | null {
   const [latest, setLatest] = useState<number | null>(null);
   useEffect(() => {
-    if (!map) return;
+    if (!map || !enabled) {
+      setLatest(null);
+      return;
+    }
     if (!map.getPane('lightning')) {
       const pane = map.createPane('lightning');
       pane.style.zIndex = '450';
       pane.style.pointerEvents = 'none';
       // a fonte pinta os raios de amarelo, igual aos 45 dBZ do radar: vira branco com brilho para não confundir
-      pane.style.filter = 'grayscale(1) brightness(3) drop-shadow(0 0 3px rgba(250, 204, 21, 0.95))';
+      pane.style.filter = 'grayscale(1) brightness(3) drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 3px rgba(250, 204, 21, 0.95))';
     }
     let layers: L.TileLayer[] = [];
     let alive = true;
@@ -51,6 +54,6 @@ export function useLightningLayer(map: L.Map | null): number | null {
       clearInterval(id);
       layers.forEach((l) => map.removeLayer(l));
     };
-  }, [map]);
+  }, [map, enabled]);
   return latest;
 }
