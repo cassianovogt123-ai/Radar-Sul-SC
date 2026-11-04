@@ -1,38 +1,12 @@
-AKCAN-boundary | Alaska-western Canada LightningCast sector | ['Other'] | maxzoom 7 | type shape mvt | last ['20230905.174000', '20240601.120000', '20240601.121000']
-LCMETEOGRAMS | Aviation - lightning dashboards | ['Other'] | maxzoom 7 | type shape shape | last ['20260522.135153', '20260522.173153', '20260615.201406']
-CURRENTNIFC | Current Fire Incidents: lightning dashboards | ['Other'] | maxzoom 7 | type shape shape | last ['20261104.172003', '20261104.172504', '20261104.173003']
-STADIUMS | DSS and Stadiums - lightning dashboards | ['Other'] | maxzoom 7 | type shape shape | last ['20260312.201835', '20260615.201410', '20260831.121001']
-G16-GLM-FOV | G16-GLM-FOV | ['Other'] | maxzoom 7 | type shape shape | last ['20231002.143000']
-G17-GLM-FOV | G17-GLM-FOV | ['Other'] | maxzoom 7 | type shape shape | last ['20231002.144700']
-G18-LC-plax-corr-RadF | GOES-18 LightningCast parallax-corrected Full Disk | ['Other'] | maxzoom 7 | type shape shape | last None
-GOESEastGLMFEDRadC | GOES-East GLM FED CONUS | ['Lightning'] | maxzoom 7 | type raster tile | last ['20261104.172900', '20261104.173000', '20261104.173100']
-GOESEastGLMFEDRadC-ARCHIVE | GOES-East GLM FED CONUS (Archive) | ['Other'] | maxzoom 7 | type raster tile | last ['20210630.214600', '20210630.215100', '20210630.215600']
-GOESEastGLMMFARadC | GOES-East GLM MFA CONUS | ['Other'] | maxzoom 7 | type raster tile | last ['20241004.200500']
-GOESEastGLMTOERadC | GOES-East GLM TOE CONUS | ['Other'] | maxzoom 7 | type raster tile | last ['20241004.200500']
-GOESWestGLMFEDRadC | GOES-West GLM FED CONUS | ['Lightning'] | maxzoom 7 | type raster tile | last ['20261104.172800', '20261104.172900', '20261104.173000']
-GOESWestGLMFEDRadC-ARCHIVE | GOES-West GLM FED PACUS (Archive) | ['Other'] | maxzoom 7 | type raster tile | last ['20210630.214600', '20210630.215100', '20210630.215600']
-GOESWestGLMFED-USSAMOA | GOES-West GLM FED U.S. Samoa | ['Other'] | maxzoom 7 | type raster tile | last ['20261104.172900', '20261104.173000', '20261104.173100']
-GUAM-boundary | Guam LightningCast sector | ['Other'] | maxzoom 7 | type shape mvt | last ['20230905.180000', '20240401.174000', '20240601.120000']
-PLTG-10fl-60min-GOESEastRadC | LightningCast 10fl-60min GOES-East CONUS | ['Other'] | maxzoom 7 | type shape shape | last ['20240910.141617', '20240910.142117', '20240910.142617']
-LC-G16-RadC | LightningCast G16 CONUS (Archived) | ['Other'] | maxzoom 7 | type shape shape | last ['20210630.214617', '20210630.215117', '20210630.215617']
-LC-G17-RadC | LightningCast G17 CONUS (Archived) | ['Other'] | maxzoom 7 | type shape shape | last ['20210630.214617', '20210630.215117', '20210630.215617']
-PLTGGOESEastRadM2Gridded | LightningCast GOES-East RadM2 Gridded | ['Other'] | maxzoom 7 | type raster tile | last ['20240424.140500', '20240424.140600', '20240424.140700']
-PLTGGOESTestRadC | LightningCast GOES-Test CONUS | ['Other'] | maxzoom 7 | type shape mvt | last ['20250320.125616', '20250320.130116', '20250320.130616']
-PLTGGOESWestRadFAKCAN | LightningCast GOES-West Alaska/Western Canada | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.170021', '20261104.171021', '20261104.172021']
-PLTGGOESWestRadFUSSAMOA | LightningCast GOES-West American Samoa | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.170021', '20261104.171021', '20261104.172021']
-PLTGGOESWestRadC | LightningCast GOES-West CONUS | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.171618', '20261104.172118', '20261104.172618']
-PLTGGOESWestRadM1 | LightningCast GOES-West MESO1 | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.172826', '20261104.172926', '20261104.173029']
-PLTGGOESWestRadM2 | LightningCast GOES-West MESO2 | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.172856', '20261104.172956', '20261104.173056']
-PLTGAHIJAPANFLDKGUAM | LightningCast Himawari Guam | ['Other'] | maxzoom 7 | type shape mvt | last ['20261104.165000', '20261104.170000', '20261104.171000']
-PLTGGOESEastRadC | LightningCast v1 GOES-East CONUS | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.171617', '20261104.172117', '20261104.172617']
-PLTGGOESEastRadF | LightningCast v1 GOES-East FD (OCONUS) | ['Lightning'] | maxzoom 7 | type shape mvt | last ['20261104.170021', '20261104.171021', '20261104.172021']
-PLTGGOESEastRadM1 | LightningCast v1 GOES-East MESO1 | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.172825', '20261104.172925', '20261104.173028']
-PLTGGOESEastRadM2 | LightningCast v1 GOES-East MESO2 | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.172855', '20261104.172955', '20261104.173055']
-PLTG-abi-mrms-GOESEastRadC | LightningCast v2 GOES-East CONUS | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.171617', '20261104.172117', '20261104.172617']
-PLTG-abi-mrms-GOESWestRadC | LightningCast v2 GOES-West CONUS | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.171618', '20261104.172118', '20261104.172618']
-USSAMOA-boundary | U.S. Samoa LightningCast sector | ['Other'] | maxzoom 7 | type shape mvt | last ['20230905.174000', '20230905.175000', '20230905.180000']
-WPC-WSSI-FlashFreeze | WSSI Flash Freeze | ['WPC Forecasts'] | maxzoom 7 | type shape shape | last ['20251019.000000', '20251019.060000', '20251019.120000']
-glmgroupdensity | GOES East GLM Full Disk Group Density | ['Lightning'] | maxzoom 7 | type raster tile | last ['20261104.172400', '20261104.172500', '20261104.172600']
-glmgrouppoints | GOES East GLM Full Disk Group Points | ['Lightning'] | maxzoom 7 | type shape shape | last ['20261104.172900', '20261104.173000', '20261104.173100']
-first G19 GLM: 
-Wed Nov  4 17:31:30 UTC 2026
+{'id': 'glmgroupdensity', 'name': 'GOES East GLM Full Disk Group Density', 'description': 'The Geostationary Lightning Mapper, or GLM, on board Geostationary Operational Environmental Satellite– R Series spacecraft, is the first operational lightning mapper flown on a geostationary satellite. GLM detects the light emitted by lightning at the tops of clouds day and night and collects information such as the frequency, location and extent of lightning discharges. The instrument measures total lightning, both in-cloud and cloud-to-ground, to aid in forecasting developing severe storms and a wide range of high-impact environmental phenomena including hailstorms, microburst winds, tornadoes, hurricanes, ash clouds, and snowstorms.', 'minutes': '60', 'timewindow': '0', 'projection': 'epsg:4326', 'maxzoom': 7, 'scalemin': '0', 'scalemax': '0', 'url': 'https://www.goes-r.gov/education/docs/Factsheet_GLM.pdf'}
+ntimes 1298 ['20261103.172800', '20261103.172900'] ['20261104.172600', '20261104.172700']
+{'id': 'glmgrouppoints', 'name': 'GOES East GLM Full Disk Group Points', 'description': 'The Geostationary Lightning Mapper, or GLM, on board Geostationary Operational Environmental Satellite– R Series spacecraft, is the first operational lightning mapper flown on a geostationary satellite. GLM detects the light emitted by lightning at the tops of clouds day and night and collects information such as the frequency, location and extent of lightning discharges. The instrument measures total lightning, both in-cloud and cloud-to-ground, to aid in forecasting developing severe storms and a wide range of high-impact environmental phenomena including hailstorms, microburst winds, tornadoes, hurricanes, ash clouds, and snowstorms.', 'minutes': '120', 'timewindow': '0', 'projection': 'epsg:4326', 'maxzoom': 7, 'scalemin': '0', 'scalemax': '0', 'url': ''}
+ntimes 2163 ['20261101.173300', '20261101.173400'] ['20261104.173100', '20261104.173200']
+time 20261104.172700
+5/11/18 http 200 image/png 1798
+5/11/17 http 200 image/png 990
+5/10/18 http 200 image/png 269
+6/22/36 http 200 image/png 1801
+6/23/36 http 200 image/png 1020
+4/5/9 http 200 image/png 1424
+3/2/4 http 200 image/png 974
