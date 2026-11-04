@@ -181,3 +181,14 @@ select:focus-visible {
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+
+/* Núcleo de tempestade severa no mapa */
+.severe-core {
+  animation: severe-pulse 1.6s ease-in-out infinite;
+}
+@keyframes severe-pulse {
+  50% { stroke-opacity: 0.25; fill-opacity: 0.12; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .severe-core { animation: none; }
+}

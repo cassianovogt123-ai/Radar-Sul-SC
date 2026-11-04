@@ -6,6 +6,7 @@ import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
+import { loadSevereStorms, SevereCore } from './services/severeStorms';
 import { buildNowcast, NowcastResult } from './utils/nowcast';
 import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
@@ -172,6 +173,9 @@ export default function App() {
   const [nowcastLead, setNowcastLead] = useState<number>(0);
   const nowcastFrame = nowcast?.ok ? nowcast.frames.find((f) => f.leadMin === nowcastLead) ?? null : null;
 
+  // Tempestades severas (≥ 55 dBZ) e o rastro delas nas últimas 2 h
+  const [severe, setSevere] = useState<{ now: SevereCore[]; track: SevereCore[] }>({ now: [], track: [] });
+
   const previousCellsRef = useRef<RainCell[]>([]);
   const previousTimestampRef = useRef<number | null>(null);
   const lastApproachAlertTimestampRef = useRef<number>(0);
@@ -289,6 +293,21 @@ export default function App() {
   useEffect(() => {
     if (currentFrame) updateMunicipalityThreats(currentFrame);
   }, [currentFrame?.filename, currentFrame?.imageUrl, updateMunicipalityThreats]);
+
+  useEffect(() => {
+    const frame = currentFrame;
+    if (!frame?.imageUrl || !frame.filename || frame.ageMinutes > 45) {
+      setSevere({ now: [], track: [] });
+      return;
+    }
+    let alive = true;
+    loadSevereStorms({ filename: frame.filename, imageUrl: frame.imageUrl, timestamp: frame.timestamp }, CHAPECO_RADAR_META)
+      .then((r) => alive && setSevere(r))
+      .catch((err) => console.warn('Tempestades severas indisponíveis:', err));
+    return () => {
+      alive = false;
+    };
+  }, [currentFrame?.filename, currentFrame?.imageUrl]);
 
   // Recalcula a previsão imediata a cada nova varredura (só com dados recentes)
   useEffect(() => {
@@ -540,6 +559,8 @@ export default function App() {
           isChatOpen={isChatOpen}
           nowcastImageUrl={nowcastFrame?.imageUrl ?? null}
           nowcastLabel={nowcastFrame ? formatNowcastLabel(nowcastFrame.leadMin, nowcastFrame.validAt) : null}
+          severeCores={severe.now}
+          severeTrack={severe.track}
         />
 
         {/* Bottom overlay: legend (left) + controls (right); stacks on mobile */}

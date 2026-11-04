@@ -185,23 +185,38 @@ async function fetchLatestDirect(radar: string, prod: string) {
   return { success: true, latestFrame, frameCount: list.length };
 }
 
-/**
- * Varredura imediatamente anterior a `latestFilename` (usada só para medir o movimento
- * dos ecos na previsão imediata). Não altera a varredura atual exibida no mapa.
- */
-export async function fetchPreviousRadarFrame(latestFilename: string): Promise<any | null> {
+/** Nome e horário da varredura `stepsBack` posições antes de `latestFilename` (sem baixar a imagem). */
+export function previousRadarFrameInfo(latestFilename: string, stepsBack = 1): { filename: string; timestamp: number } | null {
   if (DIRECT_MODE) {
     if (!lastDirectList) return null;
     const idx = lastDirectList.files.indexOf(latestFilename);
-    if (idx <= 0) return null;
-    const name = lastDirectList.files[idx - 1];
+    if (idx < stepsBack) return null;
+    const frame: any = parseSifapFilename(lastDirectList.files[idx - stepsBack]);
+    return { filename: frame.filename, timestamp: frame.timestamp };
+  }
+  const idx = lastBackendFrames.findIndex((f) => f?.filename === latestFilename);
+  if (idx < stepsBack) return null;
+  const f = lastBackendFrames[idx - stepsBack];
+  return f?.filename ? { filename: f.filename, timestamp: f.timestamp } : null;
+}
+
+/**
+ * Varredura `stepsBack` posições antes de `latestFilename` (1 = a imediatamente anterior,
+ * usada na previsão imediata). Não altera a varredura atual exibida no mapa.
+ */
+export async function fetchPreviousRadarFrame(latestFilename: string, stepsBack = 1): Promise<any | null> {
+  if (DIRECT_MODE) {
+    if (!lastDirectList) return null;
+    const idx = lastDirectList.files.indexOf(latestFilename);
+    if (idx < stepsBack) return null;
+    const name = lastDirectList.files[idx - stepsBack];
     const frame: any = parseSifapFilename(name);
     frame.imageUrl = await getDirectImage(lastDirectList.radar, lastDirectList.prod, name);
     return frame;
   }
   const idx = lastBackendFrames.findIndex((f) => f?.filename === latestFilename);
-  if (idx <= 0) return null;
-  const prev = { ...lastBackendFrames[idx - 1] };
+  if (idx < stepsBack) return null;
+  const prev = { ...lastBackendFrames[idx - stepsBack] };
   if (!prev.imageUrl) return null;
   prev.imageUrl = apiUrl(prev.imageUrl);
   return prev;
