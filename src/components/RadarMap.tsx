@@ -6,6 +6,7 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast';
+import type { SevereCore } from '../services/severeStorms';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
   sem_chuva: '#94a3b8',
@@ -32,6 +33,10 @@ interface RadarMapProps {
   nowcastImageUrl?: string | null;
   /** Texto do selo "PREVISÃO" no topo do mapa */
   nowcastLabel?: string | null;
+  /** Núcleos de tempestade severa na varredura atual */
+  severeCores?: SevereCore[];
+  /** Por onde esses núcleos passaram nas últimas horas */
+  severeTrack?: SevereCore[];
 }
 
 // Confirmed municipalities in the radar coverage zone
@@ -75,6 +80,8 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   isChatOpen = false,
   nowcastImageUrl = null,
   nowcastLabel = null,
+  severeCores = [],
+  severeTrack = [],
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
@@ -308,6 +315,43 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       }).addTo(mapInstance);
     }
   }, [nowcastImageUrl, opacity, radarMeta, mapInstance]);
+
+  // Tempestades severas: rastro (manchas roxas apagadas) + núcleo atual (círculo pulsante)
+  useEffect(() => {
+    if (!mapInstance) return;
+    const group = L.layerGroup().addTo(mapInstance);
+    const newest = severeTrack.reduce((m, c) => Math.max(m, c.timestamp), 0);
+    for (const c of severeTrack) {
+      const ageMin = (newest - c.timestamp) / 60000;
+      L.circle([c.lat, c.lon], {
+        radius: c.radiusKm * 1000,
+        stroke: false,
+        fillColor: '#c026d3',
+        fillOpacity: Math.max(0.08, 0.3 - ageMin / 500),
+        interactive: false,
+      }).addTo(group);
+    }
+    for (const c of severeCores) {
+      L.circleMarker([c.lat, c.lon], {
+        radius: 11,
+        color: '#f0abfc',
+        weight: 2.5,
+        fillColor: '#a21caf',
+        fillOpacity: 0.35,
+        className: 'severe-core',
+      })
+        .bindTooltip(
+          `<div class="pop-title" style="color:#f0abfc">Tempestade severa</div>
+          <div style="white-space:normal;width:230px">Núcleo ${c.maxDbz >= 65 ? 'acima de 60' : `de ${c.maxDbz}`} dBZ: chuva muito forte, possível granizo e ventania.</div>
+          <div style="white-space:normal;width:230px;color:#94a3b8;margin-top:4px">O radar público mostra só a intensidade da chuva: não confirma tornado. Siga os alertas da Defesa Civil.</div>`,
+          { direction: 'top', offset: [0, -8] }
+        )
+        .addTo(group);
+    }
+    return () => {
+      mapInstance.removeLayer(group);
+    };
+  }, [mapInstance, severeCores, severeTrack]);
 
   // Recenter helper
   const handleRecenter = () => {
