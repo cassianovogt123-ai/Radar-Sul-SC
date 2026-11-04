@@ -725,7 +725,7 @@ export default function App() {
           </div>
         </div>
 
-        {monitorMode === 'satelite' && <SatelliteView />}
+        {monitorMode === 'satelite' && <SatelliteView nowcast={nowcast} nowcastComputing={isNowcastComputing} />}
         <MonitorModeSelector value={monitorMode} onChange={setMonitorMode} />
 
         {/* Pingo: mascote educativo de prevenção de desastres */}
