@@ -12,28 +12,13 @@ jobs:
       - name: Raios
         run: |
           R=https://realearth.ssec.wisc.edu
-          curl -s -m 90 "$R/api/products" -o prods.json
-          python3 -c "
-          import json
-          for p in json.load(open('prods.json')):
-              if p['id'] in ('glmgroupdensity','glmgrouppoints'):
-                  print({k:p.get(k) for k in ['id','name','description','minutes','timewindow','projection','maxzoom','scalemin','scalemax','url']}); print('ntimes',len(p.get('times') or []), (p.get('times') or [])[:2], (p.get('times') or [])[-2:])
-          " > raios.txt
-          t=$(curl -s "$R/api/times?products=glmgroupdensity" | python3 -c "import json,sys;d=json.load(sys.stdin);print(list(d.values())[0][-1])"); echo "time $t" >> raios.txt
+          t=$(curl -s "$R/api/times?products=glmgroupdensity" | python3 -c "import json,sys;d=json.load(sys.stdin);print(list(d.values())[0][-1])")
+          echo "time $t" > raios.txt
           d=${t%%.*}; h=${t##*.}
-          mkdir -p tiles
-          for zxy in 5/11/18 5/11/17 5/10/18 6/22/36 6/23/36 4/5/9 3/2/4; do f=tiles/$(echo $zxy|tr / _).png; curl -s -o $f -w "$zxy http %{http_code} %{content_type} %{size_download}\n" "$R/tiles/glmgroupdensity/$d/$h/$zxy.png" >> raios.txt; done
-          python3 -c "
-          from PIL import Image; import glob
-          for f in sorted(glob.glob('tiles/*.png')):
-              try:
-                  im=Image.open(f).convert('RGBA'); px=[p for p in im.getdata() if p[3]>0]; print(f, im.size, 'opaque px', len(px), 'sample', px[:3])
-              except Exception as e: print(f, 'err', e)
-          " >> raios.txt
-          curl -s "$R/api/legend?products=glmgroupdensity" -o legend.png -w "legend %{http_code} %{content_type}\n" >> raios.txt
-          date -u >> raios.txt
+          for zxy in 5/11/18 6/22/36 4/5/9; do f=t_$(echo $zxy|tr / _).png; curl -s -o $f "$R/tiles/glmgroupdensity/$d/$h/$zxy.png"; echo "== $f $(wc -c < $f)" >> raios.txt; base64 -w0 $f >> raios.txt; echo >> raios.txt; done
+          curl -s -I "$R/tiles/glmgroupdensity/$d/$h/5/11/18.png" | grep -i "access-control\|content-type" >> raios.txt || true
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f raios.txt tiles/*.png legend.png; git commit -m "diag11 [skip ci]"; git push
+          git add -f raios.txt; git commit -m "diag12 [skip ci]"; git push
