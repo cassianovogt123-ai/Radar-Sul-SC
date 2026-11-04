@@ -10,7 +10,8 @@ import { loadSevereStorms, SevereCore } from './services/severeStorms';
 import { buildNowcast, NowcastResult } from './utils/nowcast';
 import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
-import { CapAlert } from './services/capAlerts';
+import { CapAlert, alertCoversCity } from './services/capAlerts';
+import { enableSystemNotifications, notifyIfHidden } from './services/systemNotify';
 import { fetchDefesaCivilAlerts } from './services/defesaCivilAlerts';
 import { fetchInmetAlerts } from './services/inmetAlerts';
 import { CommunityChat } from './components/CommunityChat';
@@ -228,6 +229,7 @@ export default function App() {
     // If a new precipitation activity was detected and audio is enabled, fire ONE short chime
     if (analysis.isNewPrecipitationActivity && isAudioEnabledRef.current) {
       playRadarAlertChime(0.85);
+      notifyIfHidden('VogtSonar Sul: nova chuva no radar', 'O radar de Chapecó detectou nova área de chuva. Abra o app para ver.');
     }
 
     previousAnalysisRef.current = analysis;
@@ -287,6 +289,11 @@ export default function App() {
     ) {
       lastApproachAlertTimestampRef.current = Date.now();
       playApproachAlertChime(0.8);
+      const hot = Object.values(next).filter((st) => order.indexOf(st.threatLevel) >= 2);
+      notifyIfHidden(
+        'VogtSonar Sul: chuva forte se aproximando',
+        hot.map((st) => `${st.cityName}: ${st.threatTitle}`).join(' · ')
+      );
     }
   }, []);
 
@@ -378,6 +385,28 @@ export default function App() {
     ]);
   }, []);
 
+  const seenInmetRef = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    const check = () =>
+      fetchInmetAlerts()
+        .then(({ alerts, at }) => {
+          setInmetAlerts({ status: 'ok', alerts, at });
+          const local = alerts.filter((a) =>
+            NEARBY_CITIES.some((c) => alertCoversCity(a, c.name, c.state, c.coords, c.ibge))
+          );
+          const fresh = seenInmetRef.current ? local.filter((a) => !seenInmetRef.current!.has(a.id)) : [];
+          seenInmetRef.current = new Set(local.map((a) => a.id));
+          if (fresh.length && isAudioEnabledRef.current) {
+            playApproachAlertChime(0.8);
+            notifyIfHidden(`INMET: ${fresh[0].event}`, `${fresh[0].severityLabel ?? ''} · aviso novo para a região. Abra o app para ver.`);
+          }
+        })
+        .catch(() => {});
+    check();
+    const id = setInterval(check, 15 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
+
   const openMunicipality = useCallback(
     (name: string) => {
       setSelectedMunicipality(name);
@@ -430,6 +459,7 @@ export default function App() {
       // Unlocks browser Web Audio API on click/tap gesture
       await unlockAudio();
       setIsAudioEnabled(true);
+      enableSystemNotifications();
       // Play a short confirmation chime so the user verifies speaker volume immediately
       playRadarAlertChime(0.65);
     } else {
@@ -695,7 +725,7 @@ export default function App() {
           </div>
         </div>
 
-        {monitorMode === 'satelite' && <SatelliteView />}
+        {monitorMode === 'satelite' && <SatelliteView nowcast={nowcast} nowcastComputing={isNowcastComputing} />}
         <MonitorModeSelector value={monitorMode} onChange={setMonitorMode} />
 
         {/* Pingo: mascote educativo de prevenção de desastres */}

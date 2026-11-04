@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Play, Pause, RefreshCw, AlertTriangle } from 'lucide-react';
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { NowcastResult } from '../utils/nowcast';
+import { NowcastControl, formatNowcastLabel } from './NowcastControl';
 
 // Monitoramento por satélite: GOES-19 (GOES-East). Horários consultados na própria fonte —
 // nenhuma data é inventada.
@@ -45,7 +47,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
 //  2. NASA GIBS — mesmo satélite, porém publica com mais atraso; usado como reserva.
 // Só entram horários cuja imagem já está completa sobre a região do radar (teste de blocos),
 // para nunca mostrar uma imagem "pela metade".
-const REALEARTH = 'https://realearth.ssec.wisc.edu';
+export const REALEARTH = 'https://realearth.ssec.wisc.edu';
 const GIBS = 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best';
 
 const PRODUCTS = {
@@ -112,7 +114,7 @@ function expandDomain(domain: string): number[] {
 }
 
 /** GET de texto: fetch normal; no APK, se o WebView bloquear, usa o HTTP nativo do Capacitor. */
-async function getText(url: string): Promise<string> {
+export async function getText(url: string): Promise<string> {
   try {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -128,12 +130,12 @@ async function getText(url: string): Promise<string> {
 }
 
 /** "20261021.133020" -> timestamp UTC */
-function parseRealEarthTime(s: string): number {
+export function parseRealEarthTime(s: string): number {
   const m = s.match(/^(\d{4})(\d{2})(\d{2})\.(\d{2})(\d{2})(\d{2})$/);
   return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]) : NaN;
 }
 const pad = (n: number) => String(n).padStart(2, '0');
-function realEarthStamp(t: number): string {
+export function realEarthStamp(t: number): string {
   const d = new Date(t);
   return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}/${pad(d.getUTCHours())}${pad(
     d.getUTCMinutes()
@@ -221,7 +223,13 @@ async function fetchReadyTimes(source: SourceId, product: ProductId): Promise<nu
   return all.slice(0, lastReady + 1).slice(-FRAME_COUNT);
 }
 
-export const SatelliteView: React.FC = () => {
+interface SatelliteViewProps {
+  /** Previsão imediata do radar: o movimento medido nos ecos é aplicado à imagem do satélite */
+  nowcast?: NowcastResult | null;
+  nowcastComputing?: boolean;
+}
+
+export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, nowcastComputing = false }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const layersRef = useRef<L.TileLayer[]>([]);
@@ -235,6 +243,7 @@ export const SatelliteView: React.FC = () => {
   const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading');
   const [errorMsg, setErrorMsg] = useState('');
   const [frameFailed, setFrameFailed] = useState(false);
+  const [lead, setLead] = useState(0);
 
   // Mapa próprio do satélite (independente do mapa do radar)
   useEffect(() => {
@@ -361,6 +370,43 @@ export const SatelliteView: React.FC = () => {
     };
   }, [index, times]);
 
+  // Previsão: desloca a imagem mais recente pelo movimento das nuvens de chuva medido no radar
+  useEffect(() => {
+    const map = mapRef.current;
+    const layer = layersRef.current[times.length - 1];
+    if (!map || !layer) return;
+    const motion = nowcast?.ok ? nowcast.motion : null;
+    const apply = () => {
+      const el = layer.getContainer();
+      if (!el) return;
+      if (!lead || !motion) {
+        el.style.transform = '';
+        return;
+      }
+      const km = (motion.speedKmh * lead) / 60;
+      const rad = (motion.headingDeg * Math.PI) / 180;
+      const lat0 = RADAR_CENTER[0];
+      const to = L.latLng(lat0 + (km * Math.cos(rad)) / 111, RADAR_CENTER[1] + (km * Math.sin(rad)) / (111 * Math.cos((lat0 * Math.PI) / 180)));
+      const d = map.latLngToLayerPoint(to).subtract(map.latLngToLayerPoint(RADAR_CENTER));
+      el.style.transform = `translate(${d.x}px, ${d.y}px)`;
+    };
+    if (lead) {
+      setIsPlaying(false);
+      setIndex(times.length - 1);
+    }
+    apply();
+    map.on('zoomend', apply);
+    return () => {
+      map.off('zoomend', apply);
+      const el = layer.getContainer();
+      if (el) el.style.transform = '';
+    };
+  }, [lead, nowcast, times]);
+
+  useEffect(() => {
+    if (!nowcast?.ok) setLead(0);
+  }, [nowcast]);
+
   // Animação
   useEffect(() => {
     if (!isPlaying || times.length < 2) return;
@@ -388,6 +434,15 @@ export const SatelliteView: React.FC = () => {
               <span>Tentar de novo</span>
             </button>
           </div>
+        </div>
+      )}
+
+      {lead > 0 && nowcast?.ok && (
+        <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[660] max-w-[calc(100%-2rem)] text-center">
+          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
+            {formatNowcastLabel(lead, times[times.length - 1] + lead * 60000)}
+          </div>
+          <div className="mt-1 text-[10px] text-slate-400">Deslocamento das nuvens medido pelo radar de Chapecó</div>
         </div>
       )}
 
@@ -423,7 +478,10 @@ export const SatelliteView: React.FC = () => {
             )}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setIsPlaying(!isPlaying)}
+                onClick={() => {
+                  setLead(0);
+                  setIsPlaying(!isPlaying);
+                }}
                 data-active={isPlaying}
                 className="btn"
                 aria-pressed={isPlaying}
@@ -433,6 +491,7 @@ export const SatelliteView: React.FC = () => {
                 {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 <span>{isPlaying ? 'Pausar' : 'Animar'}</span>
               </button>
+              <NowcastControl result={nowcast} isComputing={nowcastComputing} leadMin={lead} onChangeLead={setLead} />
               <input
                 type="range"
                 min={0}
@@ -440,6 +499,7 @@ export const SatelliteView: React.FC = () => {
                 value={index}
                 onChange={(e) => {
                   setIsPlaying(false);
+                  setLead(0);
                   setIndex(Number(e.target.value));
                 }}
                 className="range-cyan flex-1"

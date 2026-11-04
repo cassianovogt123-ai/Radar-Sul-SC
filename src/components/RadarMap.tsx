@@ -7,6 +7,7 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast';
 import type { SevereCore } from '../services/severeStorms';
+import { useLightningLayer } from './lightningLayer';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
   sem_chuva: '#94a3b8',
@@ -85,6 +86,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+  const lightningAt = useLightningLayer(mapInstance);
   const baseTileLayerRef = useRef<L.TileLayer | null>(null);
   const imageOverlayRef = useRef<L.ImageOverlay | null>(null);
   const nowcastOverlayRef = useRef<L.ImageOverlay | null>(null);
@@ -383,6 +385,14 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500] max-w-[calc(100%-2rem)]">
           <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
             {nowcastLabel}
+          </div>
+        </div>
+      )}
+
+      {!isNowcast && lightningAt && (
+        <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500]">
+          <div className="rounded-full border border-yellow-300/40 bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] text-yellow-200 shadow-lg whitespace-nowrap">
+            ⚡ Raios GOES · últimos 5 min · {new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(lightningAt))}
           </div>
         </div>
       )}
