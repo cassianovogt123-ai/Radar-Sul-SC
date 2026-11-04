@@ -9,20 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Produtos SIFAP
+      - name: Raios
         run: |
-          B="https://sifap.defesacivil.sc.gov.br/radarsc/rest/radar"
-          for r in CHP LON ARA COMP; do for p in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 20; do
-            out=$(curl -sk -m 20 "$B/getUltimasImagens?prod=$p&radar=$r&data=" | head -c 220 | tr '\n' ' ')
-            echo "$r prod=$p -> $out" >> sifap_prods.txt
-          done; done
-          for path in "" getProdutos getRadares produtos radares getListaProdutos; do
-            echo "== /$path" >> sifap_prods.txt; curl -sk -m 20 "$B/$path" | head -c 600 >> sifap_prods.txt; echo >> sifap_prods.txt
-          done
-          echo "== pagina" >> sifap_prods.txt
-          curl -sk -m 20 https://sifap.defesacivil.sc.gov.br/radarsc/ | grep -oiE '(src|href)="[^"]+"|prod[a-z]*[^<]{0,80}' | head -60 >> sifap_prods.txt
+          R=https://realearth.ssec.wisc.edu
+          for q in GLM glm lightning LTG; do echo "== search $q" >> raios.txt; curl -s -m 30 "$R/api/products?search=$q" | head -c 4000 >> raios.txt; echo >> raios.txt; done
+          echo "== gibs" >> raios.txt
+          curl -s -m 60 "https://gibs.earthdata.nasa.gov/wmts/epsg3857/nrt/1.0.0/WMTSCapabilities.xml" | grep -oiE "<ows:Identifier>[^<]*(GLM|Lightning)[^<]*</ows:Identifier>" | sort -u | head -20 >> raios.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f sifap_prods.txt; git commit -m "diag7 [skip ci]"; git push
+          git add -f raios.txt; git commit -m "diag8 [skip ci]"; git push
