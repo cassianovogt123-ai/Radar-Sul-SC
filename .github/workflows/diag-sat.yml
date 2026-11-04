@@ -9,49 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22 }
-      - run: npm ci && npx vite build
-      - name: Servidor + capturas
+      - name: Produtos SIFAP
         run: |
-          (NODE_ENV=production PORT=3000 npx tsx server.ts > srv.log 2>&1 &)
-          sleep 10
-          curl -s -m 90 localhost:3000/api/alertas/defesa-civil | head -c 300 > alerts_head.txt; echo >> alerts_head.txt
-          curl -s -m 30 "localhost:3000/api/radar/sc/latest?radar=CHP&prod=0" | head -c 300 >> alerts_head.txt
-          mkdir -p /tmp/pp && cd /tmp/pp && npm init -y >/dev/null && npm i puppeteer-core >/dev/null
-          cat > s.js <<'JS'
-          const p = require('puppeteer-core'); const W = process.env.GITHUB_WORKSPACE;
-          const sleep = ms => new Promise(r => setTimeout(r, ms));
-          (async () => {
-            const b = await p.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
-            const pg = await b.newPage(); const log = []; pg.on('console', m => log.push(m.text()));
-            const shot = async n => pg.screenshot({ path: W + '/' + n + '.png' });
-            try {
-              await pg.setViewport({ width: 1280, height: 800 });
-              await pg.goto('http://localhost:3000/', { waitUntil: 'networkidle2', timeout: 90000 }).catch(e => log.push('goto ' + e.message));
-              await sleep(8000);
-              const pinPos = name => pg.evaluate(n => { const el = [...document.querySelectorAll('.city-pin')].find(e => e.textContent.includes(n)); if (!el) return null; const r = el.getBoundingClientRect(); return [r.x + 8, r.y + 8]; }, name);
-              let pos = await pinPos('Concórdia');
-              log.push('pin ' + JSON.stringify(pos));
-              await pg.mouse.move(pos[0], pos[1]); await sleep(1000); await shot('t1_tooltip');
-              await pg.mouse.click(pos[0], pos[1]); await sleep(30000); await shot('t2_modal');
-              await pg.evaluate(() => { const d = document.querySelector('[role=dialog] .overflow-y-auto'); if (d) d.scrollTop = d.scrollHeight; }); await sleep(600); await shot('t3_modal_bottom');
-              await pg.evaluate(() => document.querySelector('[role=dialog] button[aria-label=Fechar]').click()); await sleep(600);
-              await pg.evaluate(() => document.querySelector('button[aria-label="Abrir chat regional"]').click()); await sleep(4000); await shot('t4_chat');
-              await pg.evaluate(() => document.querySelector('button[aria-label="Abrir chat regional"]').click()); await sleep(800);
-              await pg.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 }); await sleep(2000);
-              pos = await pinPos('Itapiranga');
-              if (pos) { await pg.mouse.click(pos[0], pos[1]); await sleep(4000); }
-              await shot('t5_phone_modal');
-            } catch (e) { log.push('ERR ' + e.stack); }
-            require('fs').writeFileSync(W + '/t_log.txt', log.join('\n')); await b.close();
-          })();
-          JS
-          node s.js
-          cd $GITHUB_WORKSPACE; tail -20 srv.log >> t_log.txt
+          B="https://sifap.defesacivil.sc.gov.br/radarsc/rest/radar"
+          for r in CHP LON ARA COMP; do for p in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 20; do
+            out=$(curl -sk -m 20 "$B/getUltimasImagens?prod=$p&radar=$r&data=" | head -c 220 | tr '\n' ' ')
+            echo "$r prod=$p -> $out" >> sifap_prods.txt
+          done; done
+          for path in "" getProdutos getRadares produtos radares getListaProdutos; do
+            echo "== /$path" >> sifap_prods.txt; curl -sk -m 20 "$B/$path" | head -c 600 >> sifap_prods.txt; echo >> sifap_prods.txt
+          done
+          echo "== pagina" >> sifap_prods.txt
+          curl -sk -m 20 https://sifap.defesacivil.sc.gov.br/radarsc/ | grep -oiE '(src|href)="[^"]+"|prod[a-z]*[^<]{0,80}' | head -60 >> sifap_prods.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          for f in t1_tooltip.png t2_modal.png t3_modal_bottom.png t4_chat.png t5_phone_modal.png t_log.txt alerts_head.txt; do [ -s $f ] && git add -f $f; done
-          git commit -m "diag6 [skip ci]"; git push
+          git add -f sifap_prods.txt; git commit -m "diag7 [skip ci]"; git push
