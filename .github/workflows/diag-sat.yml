@@ -12,11 +12,22 @@ jobs:
       - name: Raios
         run: |
           R=https://realearth.ssec.wisc.edu
-          for q in GLM glm lightning LTG; do echo "== search $q" >> raios.txt; curl -s -m 30 "$R/api/products?search=$q" | head -c 4000 >> raios.txt; echo >> raios.txt; done
-          echo "== gibs" >> raios.txt
-          curl -s -m 60 "https://gibs.earthdata.nasa.gov/wmts/epsg3857/nrt/1.0.0/WMTSCapabilities.xml" | grep -oiE "<ows:Identifier>[^<]*(GLM|Lightning)[^<]*</ows:Identifier>" | sort -u | head -20 >> raios.txt
+          curl -s -m 90 "$R/api/products" -o prods.json
+          python3 - <<'PY' > raios.txt
+          import json
+          d=json.load(open('prods.json'))
+          for p in d:
+              t=(p.get('id','')+' '+p.get('name','')+' '+' '.join(p.get('categories') or []))
+              if any(k in t.upper() for k in ['GLM','LIGHTN','FLASH']):
+                  tm=p.get('times') or []
+                  print(p['id'],'|',p.get('name'),'|',p.get('categories'),'| maxzoom',p.get('maxzoom'),'| type',p.get('type'),p.get('displaytype'),'| last',tm[-3:] if tm else None)
+          PY
+          id=$(grep -m1 -oE "^G19[^ ]*GLM[^ ]*" raios.txt || true); echo "first G19 GLM: $id" >> raios.txt
+          if [ -n "$id" ]; then t=$(curl -s "$R/api/times?products=$id" | python3 -c "import json,sys;d=json.load(sys.stdin);print(list(d.values())[0][-1])"); echo "time $t" >> raios.txt
+            d=${t%%.*}; h=${t##*.}; curl -s -o tile.png -w "tile http %{http_code} %{content_type} %{size_download}\n" "$R/tiles/$id/$d/$h/5/11/18.png" >> raios.txt; fi
+          date -u >> raios.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f raios.txt; git commit -m "diag8 [skip ci]"; git push
+          git add -f raios.txt tile.png || true; git add -f raios.txt; git commit -m "diag9 [skip ci]"; git push
