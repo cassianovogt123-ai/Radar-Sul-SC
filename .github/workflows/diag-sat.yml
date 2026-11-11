@@ -9,16 +9,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Raios
+      - name: ANA
         run: |
-          R=https://realearth.ssec.wisc.edu
-          t=$(curl -s "$R/api/times?products=glmgroupdensity" | python3 -c "import json,sys;d=json.load(sys.stdin);print(list(d.values())[0][-1])")
-          echo "time $t" > raios.txt
-          d=${t%%.*}; h=${t##*.}
-          for zxy in 5/11/18 6/22/36 4/5/9; do f=t_$(echo $zxy|tr / _).png; curl -s -o $f "$R/tiles/glmgroupdensity/$d/$h/$zxy.png"; echo "== $f $(wc -c < $f)" >> raios.txt; base64 -w0 $f >> raios.txt; echo >> raios.txt; done
-          curl -s -I "$R/tiles/glmgroupdensity/$d/$h/5/11/18.png" | grep -i "access-control\|content-type" >> raios.txt || true
+          A=https://telemetriaws1.ana.gov.br/ServiceANA.asmx
+          curl -s -m 120 "$A/ListaEstacoesTelemetricas?statusEstacoes=0&origem=" -o lista.xml
+          echo "lista bytes $(wc -c < lista.xml)" > ana.txt
+          python3 - >> ana.txt <<'PY'
+          import re
+          x=open('lista.xml',encoding='utf-8',errors='ignore').read()
+          rows=re.findall(r'<Table[^>]*>(.*?)</Table>', x, re.S)
+          print('rows',len(rows))
+          if rows: print('FIELDS', re.findall(r'<(\w+)>', rows[0]))
+          for r in rows:
+              d=dict(re.findall(r'<(\w+)>([^<]*)</\1>', r))
+              try: lat=float(d.get('Latitude','0').replace(',','.')); lon=float(d.get('Longitude','0').replace(',','.'))
+              except: continue
+              if -28.6<lat<-25.6 and -54.2<lon<-51.0:
+                  print({k:d.get(k) for k in d})
+          PY
+          for c in 74100000; do
+            curl -s -m 60 -D hdr.txt "$A/DadosHidrometeorologicos?codEstacao=$c&dataInicio=10/11/2026&dataFim=11/11/2026" -o dados.xml
+            echo "== $c headers" >> ana.txt; grep -i "access-control\|content-type" hdr.txt >> ana.txt
+            head -c 1500 dados.xml >> ana.txt; echo >> ana.txt
+          done
+          curl -s -m 60 "$A/HidroInventario?codEstDE=74100000&codEstATE=74100000&tpEst=&nmEst=&nmRio=&codSubBacia=&codBacia=&nmMunicipio=&nmEstado=&sgResp=&sgOper=&telemetrica=" | head -c 3000 >> ana.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f raios.txt; git commit -m "diag12 [skip ci]"; git push
+          git add -f ana.txt; git commit -m "diag13 [skip ci]"; git push
