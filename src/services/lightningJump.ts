@@ -25,6 +25,7 @@ export interface LightningJump {
   city: string;
   before: number; // área média com raios antes (pixels ≈ km²)
   now: number; // área com raios agora
+  coords: [number, number]; // centro dos raios agora (para marcar no mapa)
 }
 
 const worldPx = (lat: number, lon: number) => {
@@ -70,7 +71,7 @@ async function tileAlpha(stamp: string, tx: number, ty: number): Promise<Uint8Cl
 }
 
 /** Área com raios (pixels ≈ km²) num raio de 30 km da cidade, num horário. */
-async function activity(stamp: string, lat: number, lon: number): Promise<number> {
+async function activity(stamp: string, lat: number, lon: number): Promise<{ count: number; center: [number, number] }> {
   const c = worldPx(lat, lon);
   const kmPerPx = (40075 * Math.cos((lat * Math.PI) / 180)) / (256 * 2 ** Z);
   const r = RADIUS_KM / kmPerPx;
@@ -80,16 +81,26 @@ async function activity(stamp: string, lat: number, lon: number): Promise<number
     for (const tx of new Set([Math.floor((c.x - r) / 256), Math.floor((c.x + r) / 256)]))
       tiles.set(`${tx}/${ty}`, await tileAlpha(stamp, tx, ty));
   let count = 0;
+  let sx = 0;
+  let sy = 0;
   for (let dy = -Math.ceil(r); dy <= r; dy++) {
     for (let dx = -Math.ceil(r); dx <= r; dx++) {
       if (dx * dx + dy * dy > r * r) continue;
       const wx = Math.floor(c.x + dx);
       const wy = Math.floor(c.y + dy);
       const px = tiles.get(`${Math.floor(wx / 256)}/${Math.floor(wy / 256)}`);
-      if (px && px[((wy % 256) * 256 + (wx % 256)) * 4 + 3] > 0) count++;
+      if (px && px[((wy % 256) * 256 + (wx % 256)) * 4 + 3] > 0) {
+        count++;
+        sx += wx;
+        sy += wy;
+      }
     }
   }
-  return count;
+  if (!count) return { count, center: [lat, lon] };
+  // centro dos pixels com raios, de volta para latitude/longitude
+  const n = 256 * 2 ** Z;
+  const cLat = (Math.atan(Math.sinh(Math.PI * (1 - (2 * (sy / count + 0.5)) / n))) * 180) / Math.PI;
+  return { count, center: [cLat, ((sx / count + 0.5) / n) * 360 - 180] };
 }
 
 /** Procura salto de raios perto de cada cidade nos últimos 12 minutos. */
@@ -102,10 +113,10 @@ export async function checkLightningJumps(cities: WatchCity[]): Promise<Lightnin
     .slice(-MINUTES);
   const jumps: LightningJump[] = [];
   for (const city of cities) {
-    const series: number[] = [];
-    for (const t of times) series.push(await activity(realEarthStamp(t), city.coords[0], city.coords[1]));
-    const r = isJump(series);
-    if (r.jump) jumps.push({ city: city.name, before: r.before, now: r.now });
+    const acts = [];
+    for (const t of times) acts.push(await activity(realEarthStamp(t), city.coords[0], city.coords[1]));
+    const r = isJump(acts.map((a) => a.count));
+    if (r.jump) jumps.push({ city: city.name, before: r.before, now: r.now, coords: acts[acts.length - 1].center });
   }
   return jumps;
 }

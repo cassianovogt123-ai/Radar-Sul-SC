@@ -7,6 +7,7 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast';
 import type { SevereCore } from '../services/severeStorms';
+import type { LightningJump } from '../services/lightningJump';
 import { useLightningLayer } from './lightningLayer';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
@@ -38,6 +39,7 @@ interface RadarMapProps {
   severeCores?: SevereCore[];
   /** Por onde esses núcleos passaram nas últimas horas */
   severeTrack?: SevereCore[];
+  lightningJumps?: LightningJump[];
 }
 
 // Confirmed municipalities in the radar coverage zone
@@ -83,6 +85,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   nowcastLabel = null,
   severeCores = [],
   severeTrack = [],
+  lightningJumps = [],
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
@@ -371,6 +374,31 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       mapInstance.removeLayer(group);
     };
   }, [mapInstance, severeCores, severeTrack]);
+
+  // Salto de raios: marca onde os raios dispararam
+  useEffect(() => {
+    if (!mapInstance) return;
+    const group = L.layerGroup().addTo(mapInstance);
+    for (const j of lightningJumps) {
+      L.circleMarker(j.coords, {
+        radius: 13,
+        color: '#fbbf24',
+        weight: 3,
+        fillColor: '#f59e0b',
+        fillOpacity: 0.3,
+        className: 'severe-core',
+      })
+        .bindTooltip(
+          `<div class="pop-title" style="color:#fbbf24">⚡ Salto de raios</div>
+          <div style="white-space:normal;width:220px">Perto de ${j.city}: área com raios ${j.before} → ${j.now} km². Tempestade se intensificando.</div>`,
+          { direction: 'top', offset: [0, -10] }
+        )
+        .addTo(group);
+    }
+    return () => {
+      mapInstance.removeLayer(group);
+    };
+  }, [mapInstance, lightningJumps]);
 
   // Recenter helper
   const handleRecenter = () => {
