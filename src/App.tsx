@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RadarMap } from './components/RadarMap';
 import { DbzLegend } from './components/DbzLegend';
 import { RadarFrame, RadarMetadata, ConnectionStatus } from './types/radar';
-import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare } from 'lucide-react';
+import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare, X } from 'lucide-react';
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
@@ -321,6 +321,7 @@ export default function App() {
     };
   }, [currentFrame?.filename, currentFrame?.imageUrl]);
 
+  const [jumpDismissedAt, setJumpDismissedAt] = useState(0);
   // Salto de raios (satélite): independe do radar, roda a cada 2 min
   useEffect(() => {
     let alive = true;
@@ -633,10 +634,18 @@ export default function App() {
           lightningJumps={lightningJumps}
         />
 
-        {lightningJumps.length > 0 && (
-          <div role="alert" className="absolute top-[9.5rem] lg:top-14 left-1/2 -translate-x-1/2 z-[1000] w-[min(92%,26rem)] rounded-lg border border-amber-400 bg-amber-950 px-3 py-2 text-xs text-amber-100 shadow-lg">
+        {lightningJumps.some((j) => j.at > jumpDismissedAt) && (
+          // abaixo das janelas (detalhes, chat, guia do Pingo); some ao fechar e só volta com um salto novo
+          <div role="alert" className="absolute top-[9.5rem] lg:top-14 left-1/2 -translate-x-1/2 z-[520] w-[min(92%,26rem)] rounded-xl border border-amber-400 bg-amber-950 pl-3 pr-9 py-2 text-xs text-amber-100 shadow-lg">
+            <button
+              onClick={() => setJumpDismissedAt(Date.now())}
+              aria-label="Fechar aviso de salto de raios"
+              className="absolute top-1.5 right-1.5 grid place-items-center w-6 h-6 rounded-full text-amber-200 hover:bg-amber-400/20 cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
             <b className="block text-amber-300">⚡ Salto de raios: tempestade se intensificando</b>
-            {lightningJumps.map((j) => `${j.city} às ${jumpTime(j)} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
+            {lightningJumps.filter((j) => j.at > jumpDismissedAt).map((j) => `${j.city} às ${jumpTime(j)} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
             <span className="block text-amber-200/70">Pode vir granizo e vento forte em 10–30 min. Não é aviso de tornado.</span>
           </div>
         )}
