@@ -26,7 +26,13 @@ export interface LightningJump {
   before: number; // área média com raios antes (pixels ≈ km²)
   now: number; // área com raios agora
   coords: [number, number]; // centro dos raios agora (para marcar no mapa)
+  at: number; // quando foi detectado
 }
+
+export const JUMP_KEEP_MS = 30 * 60000; // marcador e aviso ficam 30 min no mapa
+
+export const jumpTime = (j: LightningJump) =>
+  new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(j.at);
 
 const worldPx = (lat: number, lon: number) => {
   const n = 256 * 2 ** Z;
@@ -116,7 +122,7 @@ export async function checkLightningJumps(cities: WatchCity[]): Promise<Lightnin
     const acts = [];
     for (const t of times) acts.push(await activity(realEarthStamp(t), city.coords[0], city.coords[1]));
     const r = isJump(acts.map((a) => a.count));
-    if (r.jump) jumps.push({ city: city.name, before: r.before, now: r.now, coords: acts[acts.length - 1].center });
+    if (r.jump) jumps.push({ city: city.name, before: r.before, now: r.now, coords: acts[acts.length - 1].center, at: Date.now() });
   }
   return jumps;
 }

@@ -7,7 +7,7 @@ import { Crosshair, Plus, Minus } from 'lucide-react';
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast';
 import type { SevereCore } from '../services/severeStorms';
-import type { LightningJump } from '../services/lightningJump';
+import { jumpTime, type LightningJump } from '../services/lightningJump';
 import { useLightningLayer } from './lightningLayer';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
@@ -338,10 +338,17 @@ export const RadarMap: React.FC<RadarMapProps> = ({
     }
   }, [nowcastImageUrl, opacity, radarMeta, mapInstance]);
 
+  // Avisos ficam numa camada própria acima da imagem do radar (senão as cores do radar cobrem os círculos)
+  const alertRenderer = (map: L.Map) => {
+    if (!map.getPane('alerts')) map.createPane('alerts').style.zIndex = '460';
+    return L.svg({ pane: 'alerts' });
+  };
+
   // Tempestades severas: rastro (manchas roxas apagadas) + núcleo atual (círculo pulsante)
   useEffect(() => {
     if (!mapInstance) return;
     const group = L.layerGroup().addTo(mapInstance);
+    const renderer = alertRenderer(mapInstance);
     const newest = severeTrack.reduce((m, c) => Math.max(m, c.timestamp), 0);
     for (const c of severeTrack) {
       const ageMin = (newest - c.timestamp) / 60000;
@@ -351,6 +358,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         fillColor: '#c026d3',
         fillOpacity: Math.max(0.08, 0.3 - ageMin / 500),
         interactive: false,
+        renderer,
       }).addTo(group);
     }
     for (const c of severeCores) {
@@ -361,6 +369,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         fillColor: '#a21caf',
         fillOpacity: 0.35,
         className: 'severe-core',
+        renderer,
       })
         .bindTooltip(
           `<div class="pop-title" style="color:#f0abfc">Tempestade severa</div>
@@ -379,19 +388,22 @@ export const RadarMap: React.FC<RadarMapProps> = ({
   useEffect(() => {
     if (!mapInstance) return;
     const group = L.layerGroup().addTo(mapInstance);
+    const renderer = alertRenderer(mapInstance);
     for (const j of lightningJumps) {
+      const recent = Date.now() - j.at < 10 * 60000; // pisca nos primeiros 10 min, depois fica fixo
       L.circleMarker(j.coords, {
-        radius: 13,
+        radius: 14,
         color: '#fbbf24',
         weight: 3,
         fillColor: '#f59e0b',
         fillOpacity: 0.3,
-        className: 'severe-core',
+        className: recent ? 'severe-core' : '',
+        renderer,
       })
-        .bindTooltip(
-          `<div class="pop-title" style="color:#fbbf24">⚡ Salto de raios</div>
-          <div style="white-space:normal;width:220px">Perto de ${j.city}: área com raios ${j.before} → ${j.now} km². Tempestade se intensificando.</div>`,
-          { direction: 'top', offset: [0, -10] }
+        .bindTooltip(`⚡ ${jumpTime(j)}`, { permanent: true, direction: 'right', offset: [12, 0], className: 'jump-label' })
+        .bindPopup(
+          `<div class="pop-title" style="color:#fbbf24">⚡ Salto de raios às ${jumpTime(j)}</div>
+          <div style="white-space:normal;width:220px">Perto de ${j.city}: área com raios ${j.before} → ${j.now} km². Tempestade se intensificando.</div>`
         )
         .addTo(group);
     }

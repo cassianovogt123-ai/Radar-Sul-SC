@@ -192,3 +192,15 @@ select:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .severe-core { animation: none; }
 }
+
+/* Etiqueta do salto de raios no mapa */
+.leaflet-tooltip.jump-label {
+  background: #451a03 !important; /* o estilo geral das etiquetas usa !important */
+  border: 1px solid #fbbf24 !important;
+  color: #fde68a !important;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 1px 6px;
+  box-shadow: none;
+}
+.leaflet-tooltip.jump-label::before { display: none; }
