@@ -18,6 +18,7 @@ import { CommunityChat } from './components/CommunityChat';
 import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
 import { PingoFloater } from './components/mascot/PingoFloater';
+import { UpdateGate } from './components/UpdateGate';
 import { NEARBY_CITIES } from './components/RadarMap';
 import { MonitorMode, MonitorModeSelector, SatelliteView } from './components/SatelliteView';
 import {
@@ -730,6 +731,7 @@ export default function App() {
 
         {/* Pingo: mascote educativo de prevenção de desastres */}
         <PingoFloater />
+        <UpdateGate />
       </main>
 
       {/* 3. Footer */}
