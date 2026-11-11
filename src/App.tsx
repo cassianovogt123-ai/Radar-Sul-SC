@@ -7,7 +7,7 @@ import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
 import { loadSevereStorms, SevereCore } from './services/severeStorms';
-import { checkLightningJumps, FAMILY_CITIES, LightningJump } from './services/lightningJump';
+import { checkLightningJumps, FAMILY_CITIES, JUMP_KEEP_MS, jumpTime, LightningJump } from './services/lightningJump';
 import { buildNowcast, NowcastResult } from './utils/nowcast';
 import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
@@ -327,7 +327,11 @@ export default function App() {
       try {
         const jumps = await checkLightningJumps([...NEARBY_CITIES, ...FAMILY_CITIES]);
         if (!alive) return;
-        setLightningJumps(jumps);
+        // o salto dura poucos minutos: mantém os recentes no mapa para dar tempo de achar
+        setLightningJumps((prev) => [
+          ...jumps,
+          ...prev.filter((p) => Date.now() - p.at < JUMP_KEEP_MS && !jumps.some((j) => j.city === p.city)),
+        ]);
         // avisa cada cidade no máx. 1 vez a cada 20 min
         const fresh = jumps.filter((j) => Date.now() - (lastJumpAlertRef.current[j.city] ?? 0) > 20 * 60000);
         fresh.forEach((j) => (lastJumpAlertRef.current[j.city] = Date.now()));
@@ -631,7 +635,7 @@ export default function App() {
         {lightningJumps.length > 0 && (
           <div role="alert" className="absolute top-[9.5rem] lg:top-14 left-1/2 -translate-x-1/2 z-[1000] w-[min(92%,26rem)] rounded-lg border border-amber-400 bg-amber-950 px-3 py-2 text-xs text-amber-100 shadow-lg">
             <b className="block text-amber-300">⚡ Salto de raios: tempestade se intensificando</b>
-            {lightningJumps.map((j) => `${j.city} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
+            {lightningJumps.map((j) => `${j.city} às ${jumpTime(j)} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
             <span className="block text-amber-200/70">Pode vir granizo e vento forte em 10–30 min. Não é aviso de tornado.</span>
           </div>
         )}
