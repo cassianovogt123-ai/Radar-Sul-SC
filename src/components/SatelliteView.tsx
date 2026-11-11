@@ -8,7 +8,7 @@ import { NowcastControl, formatNowcastLabel } from './NowcastControl';
 // Monitoramento por satélite: GOES-19 (GOES-East). Horários consultados na própria fonte —
 // nenhuma data é inventada.
 
-export type MonitorMode = 'radar' | 'satelite';
+export type MonitorMode = 'radar' | 'satelite' | 'rios';
 
 /** Alternância Radar / Satélite (mesmo padrão visual do seletor de mapa base). */
 export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: MonitorMode) => void }> = ({
@@ -23,6 +23,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
     {([
       { id: 'radar', label: 'Radar Chapecó', title: 'Radar meteorológico de Chapecó (Defesa Civil SC)' },
       { id: 'satelite', label: 'Satélite GOES', title: 'Imagens do satélite GOES-19 (NASA GIBS / NOAA)' },
+      { id: 'rios', label: 'Rios', title: 'Nível dos rios, vazão e chuva (ANA / SGB, telemetria)' },
     ] as const).map((opt) => (
       <button
         key={opt.id}
