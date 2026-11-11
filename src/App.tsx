@@ -7,6 +7,7 @@ import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing
 declare const __APP_VERSION__: string;
 import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
 import { loadSevereStorms, SevereCore } from './services/severeStorms';
+import { checkLightningJumps, FAMILY_CITIES, LightningJump } from './services/lightningJump';
 import { buildNowcast, NowcastResult } from './utils/nowcast';
 import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
@@ -176,6 +177,8 @@ export default function App() {
 
   // Tempestades severas (≥ 55 dBZ) e o rastro delas nas últimas 2 h
   const [severe, setSevere] = useState<{ now: SevereCore[]; track: SevereCore[] }>({ now: [], track: [] });
+  const [lightningJumps, setLightningJumps] = useState<LightningJump[]>([]);
+  const lastJumpAlertRef = useRef<Record<string, number>>({});
 
   const previousCellsRef = useRef<RainCell[]>([]);
   const previousTimestampRef = useRef<number | null>(null);
@@ -315,6 +318,36 @@ export default function App() {
       alive = false;
     };
   }, [currentFrame?.filename, currentFrame?.imageUrl]);
+
+  // Salto de raios (satélite): independe do radar, roda a cada 2 min
+  useEffect(() => {
+    let alive = true;
+    const run = async () => {
+      try {
+        const jumps = await checkLightningJumps([...NEARBY_CITIES, ...FAMILY_CITIES]);
+        if (!alive) return;
+        setLightningJumps(jumps);
+        // avisa cada cidade no máx. 1 vez a cada 20 min
+        const fresh = jumps.filter((j) => Date.now() - (lastJumpAlertRef.current[j.city] ?? 0) > 20 * 60000);
+        fresh.forEach((j) => (lastJumpAlertRef.current[j.city] = Date.now()));
+        if (fresh.length && isAudioEnabledRef.current) {
+          playApproachAlertChime(0.8);
+          notifyIfHidden(
+            'VogtSonar Sul: tempestade se intensificando',
+            `Salto de raios perto de ${fresh.map((j) => j.city).join(', ')}. Pode vir granizo e vento forte. Não é aviso de tornado.`
+          );
+        }
+      } catch (err) {
+        console.warn('Salto de raios indisponível:', err);
+      }
+    };
+    run();
+    const id = setInterval(run, 2 * 60000);
+    return () => {
+      alive = false;
+      clearInterval(id);
+    };
+  }, []);
 
   // Recalcula a previsão imediata a cada nova varredura (só com dados recentes)
   useEffect(() => {
@@ -592,6 +625,14 @@ export default function App() {
           severeCores={severe.now}
           severeTrack={severe.track}
         />
+
+        {lightningJumps.length > 0 && (
+          <div role="alert" className="absolute top-3 left-1/2 -translate-x-1/2 z-[600] max-w-[92%] rounded-lg border border-amber-400 bg-amber-950/90 px-3 py-2 text-xs text-amber-100 shadow-lg">
+            <b className="block text-amber-300">⚡ Salto de raios: tempestade se intensificando</b>
+            {lightningJumps.map((j) => `${j.city} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
+            <span className="block text-amber-200/70">Pode vir granizo e vento forte em 10–30 min. Não é aviso de tornado.</span>
+          </div>
+        )}
 
         {/* Bottom overlay: legend (left) + controls (right); stacks on mobile */}
         <div className={`pointer-events-none absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-[500] flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-end sm:justify-between transition-[right] duration-200 ${isChatOpen ? 'sm:right-[25rem]' : ''}`}>
