@@ -26,7 +26,7 @@ export const UpdateGate: React.FC = () => {
       }
     };
     check();
-    const id = setInterval(check, 60 * 60000);
+    const id = setInterval(check, 5 * 60000); // GitHub permite 60 consultas/hora sem login; 12 por hora cabe com folga
     return () => clearInterval(id);
   }, []);
 
