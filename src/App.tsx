@@ -625,10 +625,11 @@ export default function App() {
           nowcastLabel={nowcastFrame ? formatNowcastLabel(nowcastFrame.leadMin, nowcastFrame.validAt) : null}
           severeCores={severe.now}
           severeTrack={severe.track}
+          lightningJumps={lightningJumps}
         />
 
         {lightningJumps.length > 0 && (
-          <div role="alert" className="absolute top-[9.5rem] left-1/2 -translate-x-1/2 z-[1000] w-[min(92%,26rem)] rounded-lg border border-amber-400 bg-amber-950 px-3 py-2 text-xs text-amber-100 shadow-lg">
+          <div role="alert" className="absolute top-[9.5rem] lg:top-14 left-1/2 -translate-x-1/2 z-[1000] w-[min(92%,26rem)] rounded-lg border border-amber-400 bg-amber-950 px-3 py-2 text-xs text-amber-100 shadow-lg">
             <b className="block text-amber-300">⚡ Salto de raios: tempestade se intensificando</b>
             {lightningJumps.map((j) => `${j.city} (área com raios ${j.before} → ${j.now} km²)`).join(' · ')}
             <span className="block text-amber-200/70">Pode vir granizo e vento forte em 10–30 min. Não é aviso de tornado.</span>
