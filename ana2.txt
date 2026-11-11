@@ -1,0 +1,66 @@
+range 10/11/2026 11/11/2026
+02651096 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02651097 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02652116 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02652117 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02652118 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653010 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653067 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653084 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653085 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653086 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653087 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02653088 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02751066 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02751098 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02751099 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02751100 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02752088 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02752089 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+02851072 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+65944900 n 159 nivel 0 chuva 1 vazao 0 | last 2026-11-11 15:30:00    | bytes 44814
+65948000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+65950200 n 161 nivel 159 chuva 161 vazao 159 | last 2026-11-11 16:00:00 265.00 0.00 11.39 | bytes 50620
+65955000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+65981510 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+65990550 n 159 nivel 30 chuva 1 vazao 0 | last 2026-11-11 15:30:00 19.50   | bytes 45146
+72460000 n 488 nivel 488 chuva 488 vazao 0 | last 2026-11-11 16:40:00 61223.00 0.00  | bytes 146990
+72580500 n 489 nivel 489 chuva 488 vazao 0 | last 2026-11-11 16:40:00 63059.00 0.00  | bytes 147279
+72715000 n 161 nivel 152 chuva 158 vazao 152 | last 2026-11-11 16:00:00 182.90 0.00 58.68 | bytes 50429
+72810000 n 161 nivel 161 chuva 161 vazao 161 | last 2026-11-11 16:00:00 147.00 0.00 127.57 | bytes 50827
+72849000 n 137 nivel 126 chuva 128 vazao 126 | last 2026-11-11 16:00:00 240.00 0.00 206.49 | bytes 43057
+72920000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73069960 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73070000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73070040 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73070070 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73070150 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 2842
+73182000 n 489 nivel 0 chuva 489 vazao 0 | last 2026-11-11 16:40:00  0.00  | bytes 140443
+73205750 n 357 nivel 357 chuva 357 vazao 0 | last 2026-11-11 15:40:00 42063.00 0.00  | bytes 107821
+73205800 n 481 nivel 481 chuva 481 vazao 0 | last 2026-11-11 16:40:00 42089.00 0.00  | bytes 144897
+73371000 n 488 nivel 485 chuva 487 vazao 0 | last 2026-11-11 16:40:00 64691.00 0.00  | bytes 146938
+73444700 n 489 nivel 489 chuva 488 vazao 0 | last 2026-11-11 16:40:00 66088.00 0.00  | bytes 147279
+73444750 n 489 nivel 489 chuva 488 vazao 0 | last 2026-11-11 16:40:00 55313.00 0.00  | bytes 147279
+73600020 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73770000 n 160 nivel 160 chuva 160 vazao 160 | last 2026-11-11 15:45:00 245.20 0.00 365.02 | bytes 50518
+73825000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73825330 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+73900000 n 163 nivel 163 chuva 163 vazao 163 | last 2026-11-11 16:30:00 105.00 0.00 18.51 | bytes 51277
+73960000 n 161 nivel 161 chuva 161 vazao 161 | last 2026-11-11 16:00:00 261.00 0.00 534.30 | bytes 50827
+74087500 n 488 nivel 488 chuva 488 vazao 0 | last 2026-11-11 16:40:00 20618.00 0.00  | bytes 146990
+74100000 n 161 nivel 161 chuva 161 vazao 161 | last 2026-11-11 16:00:00 453.00 0.00 4159.78 | bytes 50988
+74100300 n 488 nivel 488 chuva 488 vazao 0 | last 2026-11-11 16:40:00 20495.00 0.00  | bytes 146990
+74186000 n 489 nivel 489 chuva 488 vazao 0 | last 2026-11-11 16:40:00 35366.00 0.00  | bytes 147279
+74189000 n 489 nivel 489 chuva 489 vazao 0 | last 2026-11-11 16:40:00 45233.00 0.00  | bytes 147289
+74240000 n 489 nivel 488 chuva 489 vazao 0 | last 2026-11-11 16:40:00 26234.00 0.00  | bytes 147275
+74295000 n 160 nivel 160 chuva 156 vazao 160 | last 2026-11-11 16:00:00 101.00 0.00 8.74 | bytes 50273
+74300000 n 162 nivel 162 chuva 162 vazao 162 | last 2026-11-11 16:15:00 62.00 0.00 1.09 | bytes 50650
+74329000 n 162 nivel 162 chuva 162 vazao 162 | last 2026-11-11 16:15:00 371.00 0.00 4405.96 | bytes 51298
+74361000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+74460000 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+74462500 n 489 nivel 488 chuva 489 vazao 0 | last 2026-11-11 16:40:00 42745.00 0.00  | bytes 147275
+74500000 n 163 nivel 163 chuva 163 vazao 163 | last 2026-11-11 16:30:00 519.40 0.00 4700.74 | bytes 51608
+75020200 n 489 nivel 489 chuva 489 vazao 0 | last 2026-11-11 16:40:00 39133.00 0.00  | bytes 147289
+75180500 n 0 nivel 0 chuva 0 vazao 0 | last     | bytes 1165
+86342000 n 488 nivel 488 chuva 488 vazao 0 | last 2026-11-11 16:40:00 74351.00 0.00  | bytes 146990
+86529500 n 488 nivel 488 chuva 488 vazao 0 | last 2026-11-11 16:40:00 50303.00 0.00  | bytes 146990
