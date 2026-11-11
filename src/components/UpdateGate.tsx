@@ -32,7 +32,7 @@ export const UpdateGate: React.FC = () => {
 
   if (!latest) return null;
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="upd-title" className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#050b18]/95 p-6">
+    <div role="dialog" aria-modal="true" aria-labelledby="upd-title" className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#1c1442]/95 p-6">
       <div className="max-w-sm w-full rounded-2xl border border-cyan-400/40 bg-slate-900 p-6 text-center shadow-2xl">
         <h2 id="upd-title" className="text-lg font-bold text-cyan-300">Atualização obrigatória</h2>
         <p className="mt-2 text-sm text-slate-300">

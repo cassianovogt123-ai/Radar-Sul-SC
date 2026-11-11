@@ -184,7 +184,7 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
       <div
         role="dialog"
         aria-label={`Detalhes de ${cityName}`}
-        className="bg-[#0a1324] border border-white/10 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] flex flex-col shadow-2xl text-slate-200"
+        className="bg-[#281d5c] border border-white/10 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] flex flex-col shadow-2xl text-slate-200"
       >
         {/* Cabeçalho */}
         <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between gap-3">

@@ -83,8 +83,8 @@ export const HydroView: React.FC = () => {
       const color = tr?.color ?? '#64748b';
       const arrow = tr ? (sum!.trend === 'subindo' ? '▲' : sum!.trend === 'descendo' ? '▼' : '■') : '';
       const html = `<div style="display:flex;align-items:center;gap:6px;transform:translate(-7px,-7px)">
-        <span style="flex:none;display:block;width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #050b18;box-shadow:0 0 0 2px ${color}55"></span>
-        <span style="white-space:nowrap;font:600 11px/1.2 ui-monospace,monospace;color:#e2e8f0;background:#050b18d9;border:1px solid ${s.cod === selected ? '#22d3ee' : '#ffffff22'};border-radius:8px;padding:2px 6px">${s.nome} ${stale ? '<span style="color:#64748b">sem dado</span>' : `${fmtM(sum!.last!.nivelCm)} <span style="color:${color}">${arrow}</span>`}</span>
+        <span style="flex:none;display:block;width:14px;height:14px;border-radius:50%;background:${color};border:2px solid #1c1442;box-shadow:0 0 0 2px ${color}55"></span>
+        <span style="white-space:nowrap;font:600 11px/1.2 inherit;color:#e2e8f0;background:#1c1442d9;border:1px solid ${s.cod === selected ? '#c4b5fd' : '#ffffff22'};border-radius:8px;padding:2px 6px">${s.nome} ${stale ? '<span style="color:#64748b">sem dado</span>' : `${fmtM(sum!.last!.nivelCm)} <span style="color:${color}">${arrow}</span>`}</span>
       </div>`;
       L.marker([s.lat, s.lon], { icon: L.divIcon({ html, className: '', iconSize: [0, 0] }), keyboard: true, title: `${s.nome} – ${s.rio}` })
         .on('click', () => setSelected(s.cod))
@@ -97,7 +97,7 @@ export const HydroView: React.FC = () => {
   const selStation = HYDRO_STATIONS.find((s) => s.cod === selected);
 
   return (
-    <div className="absolute inset-0 z-[600] bg-[#050b18]">
+    <div className="absolute inset-0 z-[600] bg-[#1c1442]">
       <div ref={containerRef} className="absolute inset-0 z-0" />
 
       <div className="absolute inset-x-0 bottom-0 z-[650] p-3 sm:p-4 pointer-events-none flex justify-start">
@@ -199,7 +199,7 @@ const StationDetail: React.FC<{ station: (typeof HYDRO_STATIONS)[number]; sum: H
           {bars.map((b, i) => (
             <rect key={i} x={b.x - 0.8} y={H - b.h} width={1.6} height={b.h} fill="#38bdf8" opacity={0.55} />
           ))}
-          <path d={path} fill="none" stroke="#22d3ee" strokeWidth={1.8} vectorEffect="non-scaling-stroke" />
+          <path d={path} fill="none" stroke="#c4b5fd" strokeWidth={1.8} vectorEffect="non-scaling-stroke" />
         </svg>
       )}
 
