@@ -2,7 +2,7 @@
   "appId": "br.com.radarchapeco",
   "appName": "VogtSonar Sul",
   "webDir": "dist",
-  "backgroundColor": "#050b18",
+  "backgroundColor": "#1c1442",
   "server": { "androidScheme": "https" },
   "android": { "allowMixedContent": false }
 }

@@ -73,7 +73,7 @@ export const NowcastControl: React.FC<NowcastControlProps> = ({ result, isComput
         <div
           role="dialog"
           aria-label="Previsão imediata"
-          className="absolute bottom-full right-0 mb-2 w-80 max-w-full glass bg-[#0a1324]/95 rounded-2xl p-3 flex flex-col gap-3 shadow-xl"
+          className="absolute bottom-full right-0 mb-2 w-80 max-w-full glass bg-[#281d5c]/95 rounded-2xl p-3 flex flex-col gap-3 shadow-xl"
         >
           <div className="leading-tight">
             <span className="block text-[13px] font-medium text-slate-100">Previsão imediata (até 60 min)</span>
@@ -96,7 +96,7 @@ export const NowcastControl: React.FC<NowcastControlProps> = ({ result, isComput
                 className={`h-8 rounded-lg text-[11px] font-mono font-medium transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed ${
                   leadMin === s
                     ? s === 0
-                      ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
+                      ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(196, 181, 253,0.4)]'
                       : 'bg-amber-400/15 text-amber-100 shadow-[inset_0_0_0_1px_rgba(252,211,77,0.5)]'
                     : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}

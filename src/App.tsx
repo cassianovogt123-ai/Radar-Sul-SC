@@ -527,13 +527,13 @@ export default function App() {
     : null;
 
   return (
-    <div className="flex flex-col h-dvh w-screen bg-[#050b18] text-slate-100 font-sans overflow-hidden select-none pb-[env(safe-area-inset-bottom)]">
+    <div className="flex flex-col h-dvh w-screen bg-[#1c1442] text-slate-100 font-sans overflow-hidden select-none pb-[env(safe-area-inset-bottom)]">
       {/* 1. Top bar */}
-      <header className="relative z-30 shrink-0 h-[calc(3.5rem+env(safe-area-inset-top))] px-3 sm:px-5 flex items-center justify-between gap-3 border-b border-white/[0.07] bg-[#050b18]/90 backdrop-blur-xl pt-[env(safe-area-inset-top)]">
+      <header className="relative z-30 shrink-0 h-[calc(3.5rem+env(safe-area-inset-top))] px-3 sm:px-5 flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.04] backdrop-blur-xl pt-[env(safe-area-inset-top)]">
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative grid place-items-center w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400/25 to-sky-600/10 border border-cyan-400/30 shrink-0">
             <Radio className="w-[18px] h-[18px] text-cyan-300" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_2px_rgba(34,211,238,0.6)]" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_2px_rgba(196, 181, 253,0.6)]" />
           </div>
           <div className="min-w-0 leading-tight">
             <h1 className="text-[15px] font-semibold tracking-tight text-white truncate">
@@ -691,7 +691,7 @@ export default function App() {
                 <div
                   role="dialog"
                   aria-label="Som do feixe"
-                  className="absolute bottom-full right-0 mb-2 w-72 max-w-full glass bg-[#0a1324]/95 rounded-2xl p-3 flex flex-col gap-3 shadow-xl"
+                  className="absolute bottom-full right-0 mb-2 w-72 max-w-full glass bg-[#281d5c]/95 rounded-2xl p-3 flex flex-col gap-3 shadow-xl"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="leading-tight">
@@ -783,7 +783,7 @@ export default function App() {
       </main>
 
       {/* 3. Footer */}
-      <footer className="hidden sm:flex shrink-0 h-8 px-5 items-center justify-between gap-4 border-t border-white/[0.07] bg-[#050b18]/90 font-mono text-[11px] text-slate-500">
+      <footer className="hidden sm:flex shrink-0 h-8 px-5 items-center justify-between gap-4 border-t border-white/[0.07] bg-[#1c1442]/90 font-mono text-[11px] text-slate-500">
         <div className="flex items-center gap-2 truncate">
           <span>Alcance 250 km</span>
           <span className="text-slate-700">·</span>
