@@ -12,29 +12,23 @@ jobs:
       - name: ANA
         run: |
           A=https://telemetriaws1.ana.gov.br/ServiceANA.asmx
-          curl -s -m 120 "$A/ListaEstacoesTelemetricas?statusEstacoes=0&origem=" -o lista.xml
-          echo "lista bytes $(wc -c < lista.xml)" > ana.txt
-          python3 - >> ana.txt <<'PY'
-          import re
-          x=open('lista.xml',encoding='utf-8',errors='ignore').read()
-          rows=re.findall(r'<Table[^>]*>(.*?)</Table>', x, re.S)
-          print('rows',len(rows))
-          if rows: print('FIELDS', re.findall(r'<(\w+)>', rows[0]))
-          for r in rows:
-              d=dict(re.findall(r'<(\w+)>([^<]*)</\1>', r))
-              try: lat=float(d.get('Latitude','0').replace(',','.')); lon=float(d.get('Longitude','0').replace(',','.'))
-              except: continue
-              if -28.6<lat<-25.6 and -54.2<lon<-51.0:
-                  print({k:d.get(k) for k in d})
-          PY
-          for c in 74100000; do
-            curl -s -m 60 -D hdr.txt "$A/DadosHidrometeorologicos?codEstacao=$c&dataInicio=10/11/2026&dataFim=11/11/2026" -o dados.xml
-            echo "== $c headers" >> ana.txt; grep -i "access-control\|content-type" hdr.txt >> ana.txt
-            head -c 1500 dados.xml >> ana.txt; echo >> ana.txt
+          d1=$(TZ=America/Sao_Paulo date -d yesterday +%d/%m/%Y); d2=$(TZ=America/Sao_Paulo date +%d/%m/%Y)
+          echo "range $d1 $d2" > ana2.txt
+          for c in 02651096 02651097 02652116 02652117 02652118 02653010 02653067 02653084 02653085 02653086 02653087 02653088 02751066 02751098 02751099 02751100 02752088 02752089 02851072 65944900 65948000 65950200 65955000 65981510 65990550 72460000 72580500 72715000 72810000 72849000 72920000 73069960 73070000 73070040 73070070 73070150 73182000 73205750 73205800 73371000 73444700 73444750 73600020 73770000 73825000 73825330 73900000 73960000 74087500 74100000 74100300 74186000 74189000 74240000 74295000 74300000 74329000 74361000 74460000 74462500 74500000 75020200 75180500 86342000 86529500 ; do
+            curl -s -m 40 "$A/DadosHidrometeorologicos?codEstacao=$c&dataInicio=$d1&dataFim=$d2" -o d.xml
+            python3 -c "
+          import re,sys
+          x=open('d.xml',encoding='utf-8',errors='ignore').read()
+          rows=re.findall(r'<DadosHidrometereologicos [^>]*>(.*?)</DadosHidrometereologicos>',x,re.S)
+          def f(r,t):
+              m=re.search('<'+t+'>([^<]*)</'+t+'>',r); return (m.group(1).strip() if m else '')
+          n=len(rows); lv=sum(1 for r in rows if f(r,'Nivel')); ch=sum(1 for r in rows if f(r,'Chuva')); vz=sum(1 for r in rows if f(r,'Vazao'))
+          last=rows[0] if rows else ''
+          print('$c', 'n',n,'nivel',lv,'chuva',ch,'vazao',vz,'| last',f(last,'DataHora'),f(last,'Nivel'),f(last,'Chuva'),f(last,'Vazao'),'| bytes',len(x))
+          " >> ana2.txt
           done
-          curl -s -m 60 "$A/HidroInventario?codEstDE=74100000&codEstATE=74100000&tpEst=&nmEst=&nmRio=&codSubBacia=&codBacia=&nmMunicipio=&nmEstado=&sgResp=&sgOper=&telemetrica=" | head -c 3000 >> ana.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f ana.txt; git commit -m "diag13 [skip ci]"; git push
+          git add -f ana2.txt; git commit -m "diag14 [skip ci]"; git push
