@@ -146,6 +146,10 @@ export function makeRadarPngTransparent(buffer: Buffer): Buffer {
         if (r <= 5 && g <= 5 && b <= 5) {
           a = 0;
         }
+        // Cinza da paleta da Defesa Civil = eco não meteorológico (relevo, insetos, ruído): não é chuva
+        if (r === g && g === b && r >= 120 && r <= 230) {
+          a = 0;
+        }
 
         const outPx = outRow + 1 + x * 4;
         rgbaData[outPx] = r;
