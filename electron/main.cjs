@@ -2,6 +2,7 @@
 // direto na Defesa Civil SC, sem precisar de servidor.
 const { app, BrowserWindow, session, shell } = require('electron');
 const path = require('path');
+const { startAutoUpdate } = require('./updater.cjs');
 
 const SIFAP_HOST = 'sifap.defesacivil.sc.gov.br';
 
@@ -30,6 +31,7 @@ function createWindow() {
   });
 
   win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  return win;
 }
 
 app.whenReady().then(() => {
@@ -42,7 +44,7 @@ app.whenReady().then(() => {
       callback({ requestHeaders: details.requestHeaders });
     }
   );
-  createWindow();
+  startAutoUpdate(createWindow());
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

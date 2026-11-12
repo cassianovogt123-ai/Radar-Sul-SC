@@ -49,6 +49,7 @@ jobs:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+      VERSION_CODE: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,6 +57,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # o atualizador automático compara esta versão com a release mais nova
+      - run: npm pkg set version=1.0.${{ github.run_number }}
       - run: npm run build:win
       - uses: actions/upload-artifact@v4
         with:
