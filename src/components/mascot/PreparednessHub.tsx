@@ -100,7 +100,7 @@ export const PreparednessHub: React.FC<PreparednessHubProps> = ({ onClose, tipsO
         role="dialog"
         aria-modal="true"
         aria-label="Guia de prevenção de desastres com o Pingo"
-        className="bg-[#281d5c] border border-white/10 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl max-h-[92dvh] sm:h-[min(760px,92dvh)] flex flex-col shadow-2xl text-slate-200 pb-[env(safe-area-inset-bottom)]"
+        className="bg-[#0a1324] border border-white/10 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl max-h-[92dvh] sm:h-[min(760px,92dvh)] flex flex-col shadow-2xl text-slate-200 pb-[env(safe-area-inset-bottom)]"
       >
         {/* Topo */}
         <div className="flex items-center gap-2 px-4 pt-3.5 pb-2">

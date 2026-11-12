@@ -180,8 +180,8 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         <div class="relative flex items-center justify-center">
           <span class="absolute w-9 h-9 rounded-full bg-cyan-400/20 animate-ping"></span>
           <span class="absolute w-7 h-7 rounded-full border border-cyan-300/50"></span>
-          <div class="w-4 h-4 rounded-full bg-cyan-300 border-2 border-[#1c1442] shadow-[0_0_14px_3px_rgba(196, 181, 253,0.7)]"></div>
-          <div class="absolute -top-9 whitespace-nowrap rounded-full border border-cyan-300/40 bg-[#1c1442]/90 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wide text-cyan-200 shadow-lg">
+          <div class="w-4 h-4 rounded-full bg-cyan-300 border-2 border-[#050b18] shadow-[0_0_14px_3px_rgba(34,211,238,0.7)]"></div>
+          <div class="absolute -top-9 whitespace-nowrap rounded-full border border-cyan-300/40 bg-[#050b18]/90 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wide text-cyan-200 shadow-lg">
             RADAR CHAPECÓ
           </div>
         </div>
@@ -249,9 +249,9 @@ export const RadarMap: React.FC<RadarMapProps> = ({
           <div class="relative flex items-center justify-center cursor-pointer">
             <div class="relative flex items-center justify-center">
               ${pulseRing}
-              <div class="w-2.5 h-2.5 rounded-full ${isCenter ? 'bg-amber-400 ring-2 ring-amber-300/60' : threatDotBg} border border-[#1c1442] shadow"></div>
+              <div class="w-2.5 h-2.5 rounded-full ${isCenter ? 'bg-amber-400 ring-2 ring-amber-300/60' : threatDotBg} border border-[#050b18] shadow"></div>
             </div>
-            <div class="absolute top-3.5 whitespace-nowrap rounded-full bg-[#1c1442]/85 backdrop-blur-sm text-[10px] leading-none ${threatText} px-2 py-1 border ${isItapiranga ? 'border-cyan-300/70' : 'border-white/10'} shadow-md">
+            <div class="absolute top-3.5 whitespace-nowrap rounded-full bg-[#050b18]/85 backdrop-blur-sm text-[10px] leading-none ${threatText} px-2 py-1 border ${isItapiranga ? 'border-cyan-300/70' : 'border-white/10'} shadow-md">
               ${city.name} <span class="text-slate-500">${city.state}</span>
             </div>
           </div>
@@ -440,7 +440,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       {/* Selo de previsão: deixa claro que o mapa NÃO mostra a observação real */}
       {isNowcast && nowcastLabel && (
         <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500] max-w-[calc(100%-2rem)]">
-          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#1c1442]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
+          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
             {nowcastLabel}
           </div>
         </div>
@@ -452,7 +452,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
             onClick={toggleLightning}
             aria-pressed={showLightning}
             title={showLightning ? 'Esconder os raios' : 'Mostrar os raios detectados pelo satélite'}
-            className={`rounded-full border bg-[#1c1442]/85 px-2.5 py-1 font-mono text-[10.5px] shadow-lg whitespace-nowrap cursor-pointer ${
+            className={`rounded-full border bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] shadow-lg whitespace-nowrap cursor-pointer ${
               showLightning ? 'border-yellow-300/50 text-yellow-200' : 'border-white/15 text-slate-400'
             }`}
           >
@@ -509,7 +509,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
             title={opt.title}
             className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
               baseMapType === opt.id
-                ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(196, 181, 253,0.4)]'
+                ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
                 : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
