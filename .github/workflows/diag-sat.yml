@@ -9,26 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: ANA
+      - name: SIFAP imagem
         run: |
-          A=https://telemetriaws1.ana.gov.br/ServiceANA.asmx
-          d1=$(TZ=America/Sao_Paulo date -d yesterday +%d/%m/%Y); d2=$(TZ=America/Sao_Paulo date +%d/%m/%Y)
-          echo "range $d1 $d2" > ana2.txt
-          for c in 02651096 02651097 02652116 02652117 02652118 02653010 02653067 02653084 02653085 02653086 02653087 02653088 02751066 02751098 02751099 02751100 02752088 02752089 02851072 65944900 65948000 65950200 65955000 65981510 65990550 72460000 72580500 72715000 72810000 72849000 72920000 73069960 73070000 73070040 73070070 73070150 73182000 73205750 73205800 73371000 73444700 73444750 73600020 73770000 73825000 73825330 73900000 73960000 74087500 74100000 74100300 74186000 74189000 74240000 74295000 74300000 74329000 74361000 74460000 74462500 74500000 75020200 75180500 86342000 86529500 ; do
-            curl -s -m 40 "$A/DadosHidrometeorologicos?codEstacao=$c&dataInicio=$d1&dataFim=$d2" -o d.xml
-            python3 -c "
-          import re,sys
-          x=open('d.xml',encoding='utf-8',errors='ignore').read()
-          rows=re.findall(r'<DadosHidrometereologicos [^>]*>(.*?)</DadosHidrometereologicos>',x,re.S)
-          def f(r,t):
-              m=re.search('<'+t+'>([^<]*)</'+t+'>',r); return (m.group(1).strip() if m else '')
-          n=len(rows); lv=sum(1 for r in rows if f(r,'Nivel')); ch=sum(1 for r in rows if f(r,'Chuva')); vz=sum(1 for r in rows if f(r,'Vazao'))
-          last=rows[0] if rows else ''
-          print('$c', 'n',n,'nivel',lv,'chuva',ch,'vazao',vz,'| last',f(last,'DataHora'),f(last,'Nivel'),f(last,'Chuva'),f(last,'Vazao'),'| bytes',len(x))
-          " >> ana2.txt
+          B="https://sifap.defesacivil.sc.gov.br/radarsc/rest/radar"
+          curl -sk -m 30 "$B/getUltimasImagens?prod=0&radar=CHP&data=" > lista.json
+          head -c 600 lista.json > sifap_img.txt; echo >> sifap_img.txt
+          name=$(python3 -c "import json;d=json.load(open('lista.json'));print(d[-1] if isinstance(d[-1],str) else d[-1].get('nome') or d[-1])")
+          echo "name $name" >> sifap_img.txt
+          for path in "getImagem?prod=0&radar=CHP&file=$name"; do
+            curl -sk -m 30 -o img.bin -w "$path %{http_code} %{content_type} %{size_download}\n" -H "Referer: https://sifap.defesacivil.sc.gov.br/radarsc/" "$B/$path" >> sifap_img.txt
+            if file img.bin | grep -qi image; then echo "== IMG" >> sifap_img.txt; base64 -w0 img.bin >> sifap_img.txt; echo >> sifap_img.txt; break; fi
           done
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f ana2.txt; git commit -m "diag14 [skip ci]"; git push
+          git add -f sifap_img.txt; git commit -m "diag15 [skip ci]"; git push
