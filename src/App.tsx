@@ -8,7 +8,7 @@ declare const __APP_VERSION__: string;
 import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
 import { loadSevereStorms, SevereCore } from './services/severeStorms';
 import { checkLightningJumps, FAMILY_CITIES, JUMP_KEEP_MS, jumpTime, LightningJump } from './services/lightningJump';
-import { buildNowcast, NowcastResult } from './utils/nowcast';
+import { buildNowcast, NowcastResult, snapToEcho } from './utils/nowcast';
 import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
 import { CapAlert, alertCoversCity } from './services/capAlerts';
@@ -322,12 +322,24 @@ export default function App() {
   }, [currentFrame?.filename, currentFrame?.imageUrl]);
 
   const [jumpDismissedAt, setJumpDismissedAt] = useState(0);
+  const radarFrameRef = useRef<RadarFrame | null>(null);
+  radarFrameRef.current = currentFrame;
   // Salto de raios (satélite): independe do radar, roda a cada 2 min
   useEffect(() => {
     let alive = true;
     const run = async () => {
       try {
-        const jumps = await checkLightningJumps([...NEARBY_CITIES, ...FAMILY_CITIES]);
+        let jumps = await checkLightningJumps([...NEARBY_CITIES, ...FAMILY_CITIES]);
+        // confere no radar: marca em cima da chuva forte; raio sem chuva forte a até 20 km é descartado
+        const frame = radarFrameRef.current;
+        if (frame?.imageUrl && frame.ageMinutes <= 20) {
+          const checked = [];
+          for (const j of jumps) {
+            const at = await snapToEcho(frame.imageUrl, CHAPECO_RADAR_META, j.coords).catch(() => j.coords);
+            if (at) checked.push({ ...j, coords: at });
+          }
+          jumps = checked;
+        }
         if (!alive) return;
         // o salto dura poucos minutos: mantém os recentes no mapa para dar tempo de achar
         setLightningJumps((prev) => [
