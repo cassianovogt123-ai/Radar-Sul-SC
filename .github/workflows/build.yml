@@ -40,6 +40,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: VogtSonar-Sul-APK
+          retention-days: 1 # só serve para passar o arquivo para a release; a release guarda a cópia definitiva
           path: VogtSonar-Sul.apk
 
   windows:
@@ -59,6 +60,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: VogtSonar-Sul-Windows
+          retention-days: 1 # só serve para passar o arquivo para a release; a release guarda a cópia definitiva
           path: |
             release/VogtSonar-Sul-Instalador.exe
             release/VogtSonar-Sul-Portatil.exe
