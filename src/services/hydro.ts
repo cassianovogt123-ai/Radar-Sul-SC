@@ -1,6 +1,8 @@
 // Nível dos rios, vazão e chuva das estações telemétricas da Rede Hidrometeorológica Nacional
 // (ANA / Serviço Geológico do Brasil) — a mesma base do app HidroWeb. Dados a cada 15 min.
-// O serviço da ANA libera acesso direto do navegador (CORS), então funciona no APK, web e Windows.
+// No APK o WebView pode barrar a leitura (CORS): o getText refaz o pedido pelo lado nativo.
+
+import { getText } from '../components/SatelliteView';
 
 export interface HydroStation {
   cod: string;
@@ -110,7 +112,6 @@ export function summarize(station: HydroStation, readings: HydroReading[]): Hydr
 export async function fetchHydroStation(station: HydroStation): Promise<HydroSummary> {
   const now = Date.now();
   const url = `${SERVICE}?codEstacao=${station.cod}&dataInicio=${brDate(now - 2 * 86400000)}&dataFim=${brDate(now)}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(30000) });
-  if (!res.ok) throw new Error(`ANA retornou HTTP ${res.status}`);
-  return summarize(station, parseHydroXml(await res.text()));
+  // getText: no APK, se o WebView barrar (CORS), refaz o pedido pelo lado nativo
+  return summarize(station, parseHydroXml(await getText(url)));
 }
