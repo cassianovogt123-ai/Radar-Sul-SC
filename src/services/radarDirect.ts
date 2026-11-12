@@ -85,6 +85,8 @@ function makeTransparent(src: string): Promise<string> {
         const d = imageData.data;
         for (let i = 0; i < d.length; i += 4) {
           if (d[i] <= 5 && d[i + 1] <= 5 && d[i + 2] <= 5) d[i + 3] = 0;
+          // cinza da Defesa Civil = eco que não é chuva (relevo, insetos, ruído perto do radar): esconde
+          else if (d[i] === d[i + 1] && d[i + 1] === d[i + 2] && d[i] >= 120 && d[i] <= 230) d[i + 3] = 0;
         }
         ctx.putImageData(imageData, 0, 0);
         resolve(canvas.toDataURL('image/png'));
