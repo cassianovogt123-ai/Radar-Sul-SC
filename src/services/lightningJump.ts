@@ -87,8 +87,10 @@ async function activity(stamp: string, lat: number, lon: number): Promise<{ coun
     for (const tx of new Set([Math.floor((c.x - r) / 256), Math.floor((c.x + r) / 256)]))
       tiles.set(`${tx}/${ty}`, await tileAlpha(stamp, tx, ty));
   let count = 0;
-  let sx = 0;
-  let sy = 0;
+  // raios agrupados em quadrados de ~6 km: o marcador vai no núcleo mais denso, não na média de tudo
+  // (a média de dois núcleos separados caía no meio, onde não chove)
+  const BIN = 6;
+  const bins = new Map<string, { n: number; sx: number; sy: number }>();
   for (let dy = -Math.ceil(r); dy <= r; dy++) {
     for (let dx = -Math.ceil(r); dx <= r; dx++) {
       if (dx * dx + dy * dy > r * r) continue;
@@ -97,16 +99,22 @@ async function activity(stamp: string, lat: number, lon: number): Promise<{ coun
       const px = tiles.get(`${Math.floor(wx / 256)}/${Math.floor(wy / 256)}`);
       if (px && px[((wy % 256) * 256 + (wx % 256)) * 4 + 3] > 0) {
         count++;
-        sx += wx;
-        sy += wy;
+        const k = `${Math.floor(wx / BIN)}/${Math.floor(wy / BIN)}`;
+        const b = bins.get(k) ?? { n: 0, sx: 0, sy: 0 };
+        b.n++;
+        b.sx += wx;
+        b.sy += wy;
+        bins.set(k, b);
       }
     }
   }
   if (!count) return { count, center: [lat, lon] };
-  // centro dos pixels com raios, de volta para latitude/longitude
+  let top = { n: 0, sx: 0, sy: 0 };
+  for (const b of bins.values()) if (b.n > top.n) top = b;
+  // centro do núcleo mais denso, de volta para latitude/longitude
   const n = 256 * 2 ** Z;
-  const cLat = (Math.atan(Math.sinh(Math.PI * (1 - (2 * (sy / count + 0.5)) / n))) * 180) / Math.PI;
-  return { count, center: [cLat, ((sx / count + 0.5) / n) * 360 - 180] };
+  const cLat = (Math.atan(Math.sinh(Math.PI * (1 - (2 * (top.sy / top.n + 0.5)) / n))) * 180) / Math.PI;
+  return { count, center: [cLat, ((top.sx / top.n + 0.5) / n) * 360 - 180] };
 }
 
 /** Procura salto de raios perto de cada cidade nos últimos 12 minutos. */

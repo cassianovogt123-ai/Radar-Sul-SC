@@ -282,3 +282,42 @@ export async function buildNowcast(
   }
   return { ok: true, motion, frames, baseTimestamp: current.timestamp };
 }
+
+/**
+ * Confere um ponto de raio no radar: devolve a posição do eco mais forte (≥ 30 dBZ) a até 20 km,
+ * null se não há chuva forte perto (raio "solto", não marca), ou o próprio ponto se está fora do alcance.
+ */
+export async function snapToEcho(imageUrl: string, meta: RadarMetadata, at: [number, number]): Promise<[number, number] | null> {
+  const img = await loadImage(imageUrl);
+  if (!img) return at;
+  const width = img.naturalWidth || 859;
+  const height = img.naturalHeight || 758;
+  const { cx, cy, kmPerPxX, kmPerPxY } = geometry(meta, width, height);
+  const x0 = ((at[1] - meta.minLon) / (meta.maxLon - meta.minLon)) * width;
+  const y0 = ((meta.maxLat - at[0]) / (meta.maxLat - meta.minLat)) * height;
+  if (Math.hypot((x0 - cx) * kmPerPxX, (y0 - cy) * kmPerPxY) > MAX_VALID_RADAR_RANGE_KM - 10) return at;
+  const d = readPixels(img, width, height);
+  let best = 0;
+  let bx = 0;
+  let by = 0;
+  const rx = 20 / kmPerPxX;
+  const ry = 20 / kmPerPxY;
+  for (let y = Math.max(0, Math.floor(y0 - ry)); y <= Math.min(height - 1, y0 + ry); y++) {
+    for (let x = Math.max(0, Math.floor(x0 - rx)); x <= Math.min(width - 1, x0 + rx); x++) {
+      if (((x - x0) / rx) ** 2 + ((y - y0) / ry) ** 2 > 1) continue;
+      const i = (y * width + x) * 4;
+      if (d[i + 3] <= 40) continue;
+      const dbz = estimateDbzFromRgb(d[i], d[i + 1], d[i + 2]);
+      if (dbz > best) {
+        best = dbz;
+        bx = x;
+        by = y;
+      }
+    }
+  }
+  if (best < 30) return null;
+  return [
+    meta.maxLat - (by / height) * (meta.maxLat - meta.minLat),
+    meta.minLon + (bx / width) * (meta.maxLon - meta.minLon),
+  ];
+}
