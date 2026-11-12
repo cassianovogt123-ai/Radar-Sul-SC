@@ -401,7 +401,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
 
       // 1. Draw Range Rings (50, 100, 150, 200, 250 km)
       const rings = [50, 100, 150, 200, 250];
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.28)';
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.28)';
       ctx.lineWidth = 1;
 
       rings.forEach((rKm) => {
@@ -412,14 +412,14 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
           ctx.stroke();
 
           // Distance label along the North and East axes
-          ctx.fillStyle = 'rgba(167, 139, 250, 0.7)';
+          ctx.fillStyle = 'rgba(6, 182, 212, 0.7)';
           ctx.font = '10px monospace';
           ctx.fillText(`${rKm} km`, cx + 6, cy - rPx + 11);
         }
       });
 
       // 2. Radial Crosshair Lines (N, S, E, W, NE, NW, SE, SW)
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.2)';
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.2)';
       ctx.setLineDash([3, 4]);
 
       // N-S line
@@ -464,7 +464,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
           ctx.moveTo(cx, cy);
           ctx.arc(cx, cy, radius, sliceStart, sliceEnd);
           ctx.closePath();
-          ctx.fillStyle = `rgba(167, 139, 250, ${alpha})`;
+          ctx.fillStyle = `rgba(6, 182, 212, ${alpha})`;
           ctx.fill();
         }
 
@@ -475,9 +475,9 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(leadX, leadY);
-        ctx.strokeStyle = 'rgba(196, 181, 253, 0.95)';
+        ctx.strokeStyle = 'rgba(34, 211, 238, 0.95)';
         ctx.lineWidth = 1.8;
-        ctx.shadowColor = 'rgba(167, 139, 250, 0.8)';
+        ctx.shadowColor = 'rgba(6, 182, 212, 0.8)';
         ctx.shadowBlur = 6;
         ctx.stroke();
         ctx.shadowBlur = 0; // Reset
@@ -486,7 +486,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       // 4. Center Tower Reticle Marker
       ctx.beginPath();
       ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#c4b5fd';
+      ctx.fillStyle = '#22d3ee';
       ctx.fill();
       ctx.strokeStyle = '#082f49';
       ctx.lineWidth = 1.5;
@@ -497,7 +497,7 @@ export const RadarSweepCanvas: React.FC<RadarSweepCanvasProps> = ({
       // Outer boundary ring of the radar scope
       ctx.beginPath();
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(167, 139, 250, 0.65)';
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.65)';
       ctx.lineWidth = 2;
       ctx.stroke();
 

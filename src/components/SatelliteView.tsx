@@ -33,7 +33,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
         title={opt.title}
         className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
           value === opt.id
-            ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(196, 181, 253,0.4)]'
+            ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
             : 'text-slate-300 hover:text-white hover:bg-white/10'
         }`}
       >
@@ -274,7 +274,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
     L.circle(RADAR_CENTER, {
       radius: 250000,
       pane: 'labels',
-      color: '#c4b5fd',
+      color: '#22d3ee',
       weight: 1.5,
       opacity: 0.7,
       dashArray: '4 6',
@@ -286,7 +286,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
       pane: 'labels',
       color: '#082f49',
       weight: 1.5,
-      fillColor: '#c4b5fd',
+      fillColor: '#22d3ee',
       fillOpacity: 1,
       interactive: false,
     }).addTo(map);
@@ -425,7 +425,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
       <div ref={containerRef} className="w-full h-full z-0" />
 
       {status === 'error' && (
-        <div className="absolute inset-0 z-[650] grid place-items-center p-4 bg-[#1c1442]/80">
+        <div className="absolute inset-0 z-[650] grid place-items-center p-4 bg-[#050b18]/80">
           <div className="glass rounded-2xl p-4 max-w-sm text-center">
             <AlertTriangle className="w-5 h-5 text-amber-300 mx-auto mb-2" />
             <p className="text-sm font-medium text-slate-100 mb-1">Imagens de satélite indisponíveis</p>
@@ -440,7 +440,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
 
       {lead > 0 && nowcast?.ok && (
         <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[660] max-w-[calc(100%-2rem)] text-center">
-          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#1c1442]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
+          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
             {formatNowcastLabel(lead, times[times.length - 1] + lead * 60000)}
           </div>
           <div className="mt-1 text-[10px] text-slate-400">Deslocamento das nuvens medido pelo radar de Chapecó</div>
@@ -522,7 +522,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
                 title={PRODUCTS[id].title}
                 className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                   product === id
-                    ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(196, 181, 253,0.4)]'
+                    ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
                     : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >

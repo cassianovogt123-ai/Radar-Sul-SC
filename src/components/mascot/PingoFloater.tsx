@@ -209,7 +209,7 @@ export const PingoFloater: React.FC = () => {
         {collapsed ? (
           <button
             onClick={expand}
-            className="pointer-events-auto grid place-items-center w-11 h-11 rounded-full border border-amber-300/40 bg-[#281d5c]/90 shadow-lg cursor-pointer hover:border-amber-300/70"
+            className="pointer-events-auto grid place-items-center w-11 h-11 rounded-full border border-amber-300/40 bg-[#0a1324]/90 shadow-lg cursor-pointer hover:border-amber-300/70"
             aria-label="Mostrar o Pingo, gatinho da prevenção"
             title="Mostrar o Pingo"
           >
