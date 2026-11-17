@@ -4,6 +4,7 @@
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { REALEARTH, getText, parseRealEarthTime, realEarthStamp } from '../components/SatelliteView';
 import { isJump } from '../utils/lightningJumpRule';
+import { FAMILY_CITIES as FAMILY_CITY_LIST } from '../cities';
 
 const PRODUCT = 'glmgroupdensity';
 const Z = 7; // zoom nativo máximo do produto (~1,1 km por pixel aqui no Sul)
@@ -15,11 +16,8 @@ export interface WatchCity {
   coords: [number, number];
 }
 
-/** Cidades da família fora da área do radar de Chapecó (o satélite cobre tudo). */
-export const FAMILY_CITIES: WatchCity[] = [
-  { name: 'Lages', coords: [-27.816, -50.326] },
-  { name: 'Santo Augusto', coords: [-27.851, -53.777] },
-];
+/** Cidades da família fora da área do radar de Chapecó (lista em src/cities.ts). */
+export const FAMILY_CITIES: WatchCity[] = FAMILY_CITY_LIST;
 
 export interface LightningJump {
   city: string;

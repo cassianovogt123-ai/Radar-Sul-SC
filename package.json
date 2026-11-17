@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@capacitor/android": "^7.0.0",
+    "@capacitor/background-runner": "^2.3.1",
     "@capacitor/core": "^7.0.0",
     "@capacitor/local-notifications": "^7.0.7",
     "@supabase/supabase-js": "^2.118.0",

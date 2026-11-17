@@ -47,6 +47,9 @@ npm run desktop    # app Windows/Electron local
 ```
 
 ## Limitações
-- O alerta sonoro só toca com o app aberto.
+- O alerta sonoro do radar só toca com o app aberto. Com o app **fechado**, o Android checa os alertas
+  oficiais (Defesa Civil e INMET "Perigo"/"Grande perigo") a cada ~15 min e mostra notificação
+  (`src/background/alertas.ts`). O horário exato depende da economia de bateria do aparelho; para avisos
+  mais pontuais, deixe o VogtSonar Sul "sem restrição" em Configurações → Apps → Bateria.
 - A chave de assinatura (`android/app/radar-release.keystore`) está no projeto para que atualizações
   instalem por cima. Para publicar na Play Store, use uma chave própria e privada.

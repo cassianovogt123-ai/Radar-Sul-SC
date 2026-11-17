@@ -5,14 +5,15 @@ import { RadarFrame, RadarMetadata, ConnectionStatus } from './types/radar';
 import { RefreshCw, Play, Pause, Radio, Volume1, Volume2, VolumeX, MessageSquare, X } from 'lucide-react';
 import { unlockAudio, playRadarAlertChime, playApproachAlertChime, playSonarPing } from './utils/audio';
 declare const __APP_VERSION__: string;
-import { fetchLatestRadarData, fetchPreviousRadarFrame } from './services/radarDirect';
+import { fetchLatestRadarData, fetchPreviousRadarFrame, previousRadarFrameInfo } from './services/radarDirect';
 import { loadSevereStorms, SevereCore } from './services/severeStorms';
+import { loadRadarRainfall, RadarRainfall } from './services/radarRainfall';
 import { checkLightningJumps, FAMILY_CITIES, JUMP_KEEP_MS, jumpTime, LightningJump } from './services/lightningJump';
-import { buildNowcast, NowcastResult, snapToEcho } from './utils/nowcast';
-import { NowcastControl, formatNowcastLabel } from './components/NowcastControl';
+import { buildNowcast, NowcastResult, RainArrival, rainArrival, snapToEcho } from './utils/nowcast';
+import { NowcastControl, formatNowcastLabel, formatPastLabel } from './components/NowcastControl';
 import { CityForecast, fetchCityForecasts } from './services/forecast';
 import { CapAlert, alertCoversCity } from './services/capAlerts';
-import { enableSystemNotifications, notifyIfHidden } from './services/systemNotify';
+import { enableSystemNotifications, ensureExtremeChannel, notifyIfHidden } from './services/systemNotify';
 import { fetchDefesaCivilAlerts } from './services/defesaCivilAlerts';
 import { fetchInmetAlerts } from './services/inmetAlerts';
 import { CommunityChat } from './components/CommunityChat';
@@ -176,9 +177,16 @@ export default function App() {
   const [isNowcastComputing, setIsNowcastComputing] = useState<boolean>(false);
   const [nowcastLead, setNowcastLead] = useState<number>(0);
   const nowcastFrame = nowcast?.ok ? nowcast.frames.find((f) => f.leadMin === nowcastLead) ?? null : null;
+  // Linha do tempo: varreduras reais da última hora (passo negativo = minutos atrás → posição na lista)
+  const [pastSteps, setPastSteps] = useState<{ min: number; k: number }[]>([]);
+  const [pastFrame, setPastFrame] = useState<{ min: number; imageUrl: string; timestamp: number } | null>(null);
+  const [rainArrivalCenter, setRainArrivalCenter] = useState<RainArrival | null>(null);
+  const shownPast = nowcastLead < 0 && pastFrame?.min === nowcastLead ? pastFrame : null;
+  const timelineLead = nowcastLead > 0 ? (nowcastFrame ? nowcastLead : 0) : nowcastLead;
 
   // Tempestades severas (≥ 55 dBZ) e o rastro delas nas últimas 2 h
   const [severe, setSevere] = useState<{ now: SevereCore[]; track: SevereCore[] }>({ now: [], track: [] });
+  const [radarRain, setRadarRain] = useState<RadarRainfall | null>(null);
   const [lightningJumps, setLightningJumps] = useState<LightningJump[]>([]);
   const lastJumpAlertRef = useRef<Record<string, number>>({});
 
@@ -315,11 +323,67 @@ export default function App() {
     let alive = true;
     loadSevereStorms({ filename: frame.filename, imageUrl: frame.imageUrl, timestamp: frame.timestamp }, CHAPECO_RADAR_META)
       .then((r) => alive && setSevere(r))
-      .catch((err) => console.warn('Tempestades severas indisponíveis:', err));
+      .catch((err) => console.warn('Tempestades severas indisponíveis:', err))
+      // chuva acumulada estimada: depois dos núcleos, para não disputar a rede com eles
+      .then(() =>
+        alive
+          ? loadRadarRainfall({ filename: frame.filename!, imageUrl: frame.imageUrl!, timestamp: frame.timestamp }, CHAPECO_RADAR_META, NEARBY_CITIES)
+          : null
+      )
+      .then((r) => alive && r && setRadarRain(r))
+      .catch((err) => console.warn('Chuva acumulada indisponível:', err));
     return () => {
       alive = false;
     };
   }, [currentFrame?.filename, currentFrame?.imageUrl]);
+
+  // Passos do passado na linha do tempo (só nomes/horários; a imagem só baixa quando escolhida)
+  useEffect(() => {
+    const frame = currentFrame;
+    if (!frame?.filename) {
+      setPastSteps([]);
+      return;
+    }
+    const steps: { min: number; k: number }[] = [];
+    for (let k = 1; k <= 15; k++) {
+      const info = previousRadarFrameInfo(frame.filename, k);
+      if (!info) break;
+      const min = -Math.round((frame.timestamp - info.timestamp) / 60000);
+      if (min < -62) break;
+      if (min < 0 && !steps.some((s) => s.min === min)) steps.unshift({ min, k });
+    }
+    setPastSteps(steps);
+  }, [currentFrame?.filename]);
+
+  useEffect(() => {
+    const step = pastSteps.find((s) => s.min === nowcastLead);
+    const name = currentFrame?.filename;
+    if (!step || !name) return;
+    let alive = true;
+    fetchPreviousRadarFrame(name, step.k)
+      .then((f) => alive && f?.imageUrl && setPastFrame({ min: step.min, imageUrl: f.imageUrl, timestamp: f.timestamp }))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [nowcastLead, pastSteps, currentFrame?.filename]);
+
+  // "Quando chega a chuva" em Chapecó: varredura atual + quadros da previsão imediata
+  useEffect(() => {
+    const url = currentFrame?.imageUrl;
+    if (!url || (currentFrame?.ageMinutes ?? 0) > 45) {
+      setRainArrivalCenter(null);
+      return;
+    }
+    let alive = true;
+    const center = NEARBY_CITIES.find((c) => c.isCenter) ?? NEARBY_CITIES[0];
+    rainArrival(url, nowcast, CHAPECO_RADAR_META, center.coords)
+      .then((r) => alive && setRainArrivalCenter(r))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [currentFrame?.imageUrl, nowcast]);
 
   const [jumpDismissedAt, setJumpDismissedAt] = useState(0);
   const radarFrameRef = useRef<RadarFrame | null>(null);
@@ -505,6 +569,11 @@ export default function App() {
     return () => clearInterval(interval);
   }, [fetchLatestRadar]);
 
+  // Canal do "Alerta extremo" precisa existir antes do aviso com o app fechado disparar
+  useEffect(() => {
+    ensureExtremeChannel();
+  }, []);
+
   // Toggle Audio with user interaction required by modern browsers
   const handleToggleAudio = async () => {
     if (!isAudioEnabled) {
@@ -639,8 +708,14 @@ export default function App() {
           cityForecasts={cityForecasts}
           onSelectMunicipality={openMunicipality}
           isChatOpen={isChatOpen}
-          nowcastImageUrl={nowcastFrame?.imageUrl ?? null}
-          nowcastLabel={nowcastFrame ? formatNowcastLabel(nowcastFrame.leadMin, nowcastFrame.validAt) : null}
+          nowcastImageUrl={nowcastFrame?.imageUrl ?? shownPast?.imageUrl ?? null}
+          nowcastLabel={
+            nowcastFrame
+              ? formatNowcastLabel(nowcastFrame.leadMin, nowcastFrame.validAt)
+              : shownPast
+              ? formatPastLabel(-shownPast.min, shownPast.timestamp)
+              : null
+          }
           severeCores={severe.now}
           severeTrack={severe.track}
           lightningJumps={lightningJumps}
@@ -771,8 +846,12 @@ export default function App() {
             <NowcastControl
               result={nowcast}
               isComputing={isNowcastComputing}
-              leadMin={nowcastFrame ? nowcastLead : 0}
+              leadMin={timelineLead}
               onChangeLead={setNowcastLead}
+              pastSteps={pastSteps.map((s) => s.min)}
+              cityName={(NEARBY_CITIES.find((c) => c.isCenter) ?? NEARBY_CITIES[0]).name}
+              arrival={rainArrivalCenter}
+              forecast={cityForecasts[(NEARBY_CITIES.find((c) => c.isCenter) ?? NEARBY_CITIES[0]).name] ?? null}
             />
 
             <label className="flex items-center gap-2 sm:gap-2.5 pr-1 sm:pr-2" title="Opacidade dos ecos">
@@ -832,6 +911,7 @@ export default function App() {
             coords={city.coords}
             status={municipalityThreats[city.name] ?? null}
             forecast={cityForecasts[city.name] ?? null}
+            radarRain={radarRain}
             ibge={city.ibge}
             alerts={dcAlerts}
             inmetAlerts={inmetAlerts}

@@ -11,6 +11,7 @@ import {
   maxRisk,
 } from '../services/forecast';
 import { CapAlert, SEVERITY_INFO, alertCoversCity, hazardsOfAlert, sortAlerts } from '../services/capAlerts';
+import { RadarRainfall } from '../services/radarRainfall';
 
 type AlertState = { status: 'idle' | 'loading' | 'ok' | 'error'; alerts: CapAlert[]; at: number | null; error?: string };
 
@@ -21,6 +22,7 @@ interface MunicipalityDetailModalProps {
   ibge?: string;
   status: MunicipalityProximityStatus | null;
   forecast: CityForecast | null;
+  radarRain?: RadarRainfall | null;
   alerts: AlertState;
   inmetAlerts: AlertState;
   onRetryAlerts: () => void;
@@ -145,6 +147,7 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
   ibge,
   status,
   forecast,
+  radarRain = null,
   alerts,
   inmetAlerts,
   onRetryAlerts,
@@ -233,6 +236,42 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
               </div>
             ) : (
               <p className="text-[12px] text-slate-400">Carregando previsão…</p>
+            )}
+          </Section>
+
+          {/* Chuva que já caiu (estimada pelo radar) */}
+          <Section icon={<Radar className="w-4 h-4 text-cyan-300" />} title="Chuva que já caiu (radar)">
+            {radarRain?.sums[cityName] ? (
+              <div className="space-y-2">
+                <div className="grid grid-cols-4 gap-2">
+                  {(
+                    [
+                      ['1 h', radarRain.sums[cityName].h1, 60],
+                      ['3 h', radarRain.sums[cityName].h3, 180],
+                      ['6 h', radarRain.sums[cityName].h6, 360],
+                      ['24 h', radarRain.sums[cityName].h24, 1440],
+                    ] as [string, number, number][]
+                  ).map(([k, v, need]) => (
+                    <div key={k} className="rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-2">
+                      <p className="text-[10px] uppercase tracking-wide text-slate-500">{k}</p>
+                      <p className="font-mono text-[13px] text-slate-100 tabular-nums">
+                        {v.toLocaleString('pt-BR')} mm{radarRain.coverageMin < need * 0.8 ? '*' : ''}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[11px] text-slate-400">
+                  Agora: {radarRain.sums[cityName].rateNow.toLocaleString('pt-BR')} mm/h
+                  {forecast ? ` · modelo (Open-Meteo) nos últimos 3 dias: ${forecast.past72h} mm` : ''}.
+                </p>
+                <p className="text-[10px] text-slate-500">
+                  Estimativa a partir das cores do radar de Chapecó (Marshall-Palmer), não é pluviômetro.
+                  {radarRain.coverageMin < 1440 * 0.8 &&
+                    ` * O app soma só as varreduras que já viu (${Math.round(radarRain.coverageMin / 6) / 10} h até agora); com o app em uso a janela de 24 h se completa.`}
+                </p>
+              </div>
+            ) : (
+              <p className="text-[12px] text-slate-400">Calculando a partir das varreduras do radar…</p>
             )}
           </Section>
 
