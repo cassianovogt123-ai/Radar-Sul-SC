@@ -225,13 +225,13 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
               <span>
                 {isMyCity ? (
                   <>
-                    <b className="font-medium">Sua cidade.</b> O celular avisa quando há tempestade severa aqui ou a até
-                    25 km, mesmo com o app fechado.
+                    <b className="font-medium">Sua cidade.</b> As notificações do celular (alertas da Defesa Civil e do
+                    INMET, tempestade severa a até 25 km, salto de raios) são só daqui, mesmo com o app fechado.
                   </>
                 ) : (
                   <>
-                    <b className="font-medium">Avisar tempestade severa aqui.</b> Troca a sua cidade: só ela recebe
-                    esse aviso no celular.
+                    <b className="font-medium">Receber avisos desta cidade.</b> Troca a sua cidade: só ela gera
+                    notificações no celular.
                   </>
                 )}
               </span>

@@ -51,7 +51,8 @@ npm run desktop    # app Windows/Electron local
   oficiais (Defesa Civil e INMET "Perigo"/"Grande perigo") a cada ~15 min e mostra notificação
   (`src/background/alertas.ts`). Na mesma rodada ele baixa a última varredura do radar de Chapecó e avisa
   quando há tempestade severa (núcleo ≥ 55 dBZ) na cidade do usuário ou a até 25 km dela
-  (escolhida em detalhes do município → "Avisar tempestade severa aqui"; padrão Itapiranga) (`src/background/tempestades.ts`). O horário exato depende da economia de bateria do aparelho; para avisos
+  (escolhida em detalhes do município → "Receber avisos desta cidade"; padrão Itapiranga). Todas as
+  notificações (alertas oficiais, tempestade severa, salto de raios, chuva forte) são só dessa cidade (`src/background/tempestades.ts`). O horário exato depende da economia de bateria do aparelho; para avisos
   mais pontuais, deixe o VogtSonar Sul "sem restrição" em Configurações → Apps → Bateria.
 - A chave de assinatura (`android/app/radar-release.keystore`) está no projeto para que atualizações
   instalem por cima. Para publicar na Play Store, use uma chave própria e privada.
