@@ -7,7 +7,8 @@ import { getText } from './SatelliteView';
 
 declare const __APP_VERSION__: string;
 const REPO = 'cassianovogt123-ai/Radar-Sul-SC';
-const APK_URL = `https://github.com/${REPO}/releases/latest/download/VogtSonar-Sul.apk`;
+// link da versão exata: o "latest" podia vir do cache do celular e baixar o APK antigo (loop de atualização)
+const apkUrl = (v: string) => `https://github.com/${REPO}/releases/download/v${v}/VogtSonar-Sul.apk`;
 
 const build = (v: string) => Number(String(v).split('.').pop()); // "1.0.42" / "v1.0.42" -> 42
 
@@ -39,7 +40,7 @@ export const UpdateGate: React.FC = () => {
           A versão <b>{latest}</b> do VogtSonar Sul está disponível. Você está na {__APP_VERSION__}.
         </p>
         <a
-          href={APK_URL}
+          href={apkUrl(latest)}
           className="mt-5 block rounded-xl bg-cyan-500 px-4 py-3 font-semibold text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-200"
         >
           Baixar e instalar
