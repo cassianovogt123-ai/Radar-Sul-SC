@@ -3,6 +3,20 @@
   "appName": "VogtSonar Sul",
   "webDir": "dist",
   "backgroundColor": "#050b18",
-  "server": { "androidScheme": "https" },
-  "android": { "allowMixedContent": false }
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "BackgroundRunner": {
+      "label": "br.com.radarchapeco.alertas",
+      "src": "runners/alertas.js",
+      "event": "checarAlertas",
+      "repeat": true,
+      "interval": 15,
+      "autoStart": true
+    }
+  }
 }

@@ -321,3 +321,48 @@ export async function snapToEcho(imageUrl: string, meta: RadarMetadata, at: [num
     meta.minLon + (bx / width) * (meta.maxLon - meta.minLon),
   ];
 }
+
+/**
+ * Tem chuva (≥ 25 dBZ, chuva fraca a moderada) a até `radiusKm` do ponto?
+ * Funciona na varredura real e nos quadros previstos (listrados, por isso o alfa baixo aceito).
+ */
+export async function rainNearPoint(imageUrl: string, meta: RadarMetadata, at: [number, number], radiusKm = 4): Promise<boolean> {
+  const img = await loadImage(imageUrl);
+  if (!img) return false;
+  const width = img.naturalWidth || 859;
+  const height = img.naturalHeight || 758;
+  const { kmPerPxX, kmPerPxY } = geometry(meta, width, height);
+  const x0 = ((at[1] - meta.minLon) / (meta.maxLon - meta.minLon)) * width;
+  const y0 = ((meta.maxLat - at[0]) / (meta.maxLat - meta.minLat)) * height;
+  const d = readPixels(img, width, height);
+  const rx = radiusKm / kmPerPxX;
+  const ry = radiusKm / kmPerPxY;
+  let hits = 0;
+  for (let y = Math.max(0, Math.floor(y0 - ry)); y <= Math.min(height - 1, y0 + ry); y++) {
+    for (let x = Math.max(0, Math.floor(x0 - rx)); x <= Math.min(width - 1, x0 + rx); x++) {
+      if (((x - x0) / rx) ** 2 + ((y - y0) / ry) ** 2 > 1) continue;
+      const i = (y * width + x) * 4;
+      if (d[i + 3] <= 20 || (d[i] === d[i + 1] && d[i + 1] === d[i + 2])) continue;
+      if (estimateDbzFromRgb(d[i], d[i + 1], d[i + 2]) >= 25 && ++hits >= 3) return true;
+    }
+  }
+  return false;
+}
+
+export type RainArrival = { kind: 'agora' } | { kind: 'radar'; leadMin: number; validAt: number } | { kind: 'nenhuma' };
+
+/** Quando a chuva chega ao ponto: chovendo agora, no 1º quadro previsto com chuva, ou nada na próxima hora. */
+export async function rainArrival(
+  currentImageUrl: string,
+  nowcast: NowcastResult | null,
+  meta: RadarMetadata,
+  at: [number, number]
+): Promise<RainArrival> {
+  if (await rainNearPoint(currentImageUrl, meta, at)) return { kind: 'agora' };
+  if (nowcast?.ok) {
+    for (const f of nowcast.frames) {
+      if (await rainNearPoint(f.imageUrl, meta, at)) return { kind: 'radar', leadMin: f.leadMin, validAt: f.validAt };
+    }
+  }
+  return { kind: 'nenhuma' };
+}

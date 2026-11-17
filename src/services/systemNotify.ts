@@ -11,6 +11,7 @@ export async function enableSystemNotifications(): Promise<void> {
   if (!native) return;
   try {
     await LocalNotifications.requestPermissions();
+    await ensureExtremeChannel();
   } catch {
     /* sem permissão: segue só com o som dentro do app */
   }
@@ -20,4 +21,27 @@ export async function enableSystemNotifications(): Promise<void> {
 export function notifyIfHidden(title: string, body: string): void {
   if (!native || !document.hidden) return;
   LocalNotifications.schedule({ notifications: [{ id: nextId++, title, body }] }).catch(() => {});
+}
+
+/**
+ * Canal "Alerta extremo" (Android 8+): usado pelo aviso com o app fechado
+ * (src/background/alertas.ts) quando a Defesa Civil ou o INMET emitem alerta de severidade extrema.
+ * Importância máxima = aparece por cima da tela, com som e vibração.
+ */
+export async function ensureExtremeChannel(): Promise<void> {
+  if (!native || Capacitor.getPlatform() !== 'android') return;
+  try {
+    await LocalNotifications.createChannel({
+      id: 'alerta-extremo',
+      name: 'Alerta extremo',
+      description: 'Alertas oficiais de severidade extrema (Defesa Civil / INMET), mesmo com o app fechado',
+      importance: 5,
+      visibility: 1,
+      vibration: true,
+      lights: true,
+      lightColor: '#FF1744',
+    });
+  } catch {
+    /* sem canal: o aviso extremo cai no canal padrão */
+  }
 }

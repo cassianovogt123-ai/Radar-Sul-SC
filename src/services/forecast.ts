@@ -23,6 +23,8 @@ export interface CityForecast {
   /** Horário (local) em que a chuva mais forte é esperada nas próximas 24 h */
   peakTime: string | null;
   risks: Record<HazardId, RiskLevel>;
+  /** Chuva hora a hora nas próximas 24 h (linha do tempo) */
+  hourly24?: { hour: string; mm: number; prob: number }[];
   updatedAt: number;
 }
 
@@ -103,6 +105,7 @@ function summarize(loc: OpenMeteoLocation, nowMs: number): CityForecast {
   let thunder = false,
     hail = false,
     peakTime: string | null = null;
+  const hourly24: { hour: string; mm: number; prob: number }[] = [];
   for (let i = 0; i < h.time.length; i++) {
     const t = toMs(h.time[i]);
     const p = h.precipitation[i] ?? 0;
@@ -120,6 +123,7 @@ function summarize(loc: OpenMeteoLocation, nowMs: number): CityForecast {
       prob24 = Math.max(prob24, prob);
       if (code >= 95) thunder = true;
       if (code === 96 || code === 99) hail = true;
+      if (hoursAhead > -1 && hourly24.length < 24) hourly24.push({ hour: h.time[i].slice(11, 13), mm: +p.toFixed(1), prob: Math.round(prob) });
       if (hoursAhead < 6) {
         sum6 += p;
         rate6 = Math.max(rate6, p);
@@ -140,7 +144,7 @@ function summarize(loc: OpenMeteoLocation, nowMs: number): CityForecast {
     maxProb24h: Math.round(prob24),
     peakTime: rate24 >= 0.2 ? peakTime : null,
   };
-  return { ...base, rainLevel: classifyRain(rate6), risks: computeRisks(base), updatedAt: nowMs };
+  return { ...base, rainLevel: classifyRain(rate6), risks: computeRisks(base), hourly24, updatedAt: nowMs };
 }
 
 /** Busca a previsão de todas as cidades de uma vez. Chave do resultado = nome da cidade. */

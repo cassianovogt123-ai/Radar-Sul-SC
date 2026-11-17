@@ -9,6 +9,7 @@ import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast'
 import type { SevereCore } from '../services/severeStorms';
 import { jumpTime, type LightningJump } from '../services/lightningJump';
 import { useLightningLayer } from './lightningLayer';
+import { NEARBY_CITIES } from '../cities';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
   sem_chuva: '#94a3b8',
@@ -42,23 +43,8 @@ interface RadarMapProps {
   lightningJumps?: LightningJump[];
 }
 
-// Confirmed municipalities in the radar coverage zone
-export const NEARBY_CITIES = [
-  { name: 'Chapecó', ibge: '4204202', coords: [-27.1004, -52.6152] as [number, number], state: 'SC', isCenter: true },
-  { name: 'Xaxim', ibge: '4219705', coords: [-26.9596, -52.5374] as [number, number], state: 'SC' },
-  { name: 'Xanxerê', ibge: '4219507', coords: [-26.8747, -52.4036] as [number, number], state: 'SC' },
-  { name: 'Concórdia', ibge: '4204301', coords: [-27.2335, -52.026] as [number, number], state: 'SC' },
-  { name: 'Seara', ibge: '4217501', coords: [-27.1564, -52.299] as [number, number], state: 'SC' },
-  { name: 'Pinhalzinho', ibge: '4212908', coords: [-26.8495, -52.9913] as [number, number], state: 'SC' },
-  { name: 'Maravilha', ibge: '4210506', coords: [-26.7665, -53.1737] as [number, number], state: 'SC' },
-  { name: 'São Miguel do Oeste', ibge: '4217204', coords: [-26.7242, -53.5163] as [number, number], state: 'SC' },
-  { name: 'Itapiranga', ibge: '4208401', coords: [-27.1659, -53.7166] as [number, number], state: 'SC' },
-  { name: 'Nonoai', ibge: '4312708', coords: [-27.3689, -52.7756] as [number, number], state: 'RS' },
-  { name: 'Erechim', ibge: '4307005', coords: [-27.6364, -52.2697] as [number, number], state: 'RS' },
-  { name: 'Passo Fundo', ibge: '4314100', coords: [-28.2576, -52.4091] as [number, number], state: 'RS' },
-  { name: 'Pato Branco', ibge: '4118501', coords: [-26.2292, -52.6706] as [number, number], state: 'PR' },
-  { name: 'Francisco Beltrão', ibge: '4108403', coords: [-26.0817, -53.0535] as [number, number], state: 'PR' },
-];
+// Lista das cidades em src/cities.ts (também usada pelo aviso em segundo plano, que não carrega o mapa)
+export { NEARBY_CITIES };
 
 const BASEMAP_OPTIONS: { id: 'osm' | 'dark' | 'satellite' | 'topo'; label: string; title: string }[] = [
   { id: 'osm', label: 'Ruas', title: 'OpenStreetMap — ruas e limites' },
@@ -437,10 +423,16 @@ export const RadarMap: React.FC<RadarMapProps> = ({
         soundVolume={soundVolume}
       />
 
-      {/* Selo de previsão: deixa claro que o mapa NÃO mostra a observação real */}
+      {/* Selo de previsão / passado: deixa claro que o mapa NÃO mostra a varredura mais recente */}
       {isNowcast && nowcastLabel && (
         <div className="pointer-events-none absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500] max-w-[calc(100%-2rem)]">
-          <div className="rounded-full border border-dashed border-amber-300/70 bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-amber-200 shadow-lg truncate">
+          <div
+            className={`rounded-full border bg-[#050b18]/90 px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide shadow-lg truncate ${
+              nowcastLabel.startsWith('OBSERVADO')
+                ? 'border-sky-300/70 text-sky-200' // varredura real do passado (linha do tempo)
+                : 'border-dashed border-amber-300/70 text-amber-200'
+            }`}
+          >
             {nowcastLabel}
           </div>
         </div>
