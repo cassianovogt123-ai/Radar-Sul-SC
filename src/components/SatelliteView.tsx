@@ -8,7 +8,7 @@ import { NowcastControl, formatNowcastLabel } from './NowcastControl';
 // Monitoramento por satélite: GOES-19 (GOES-East). Horários consultados na própria fonte —
 // nenhuma data é inventada.
 
-export type MonitorMode = 'radar' | 'satelite' | 'rios';
+export type MonitorMode = 'radar' | 'satelite' | 'rios' | 'copernicus';
 
 /** Alternância Radar / Satélite (mesmo padrão visual do seletor de mapa base). */
 export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: MonitorMode) => void }> = ({
@@ -24,6 +24,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
       { id: 'radar', label: 'Radar Chapecó', title: 'Radar meteorológico de Chapecó (Defesa Civil SC)' },
       { id: 'satelite', label: 'Satélite GOES', title: 'Imagens do satélite GOES-19 (NASA GIBS / NOAA)' },
       { id: 'rios', label: 'Rios', title: 'Nível dos rios, vazão e chuva (ANA / SGB, telemetria)' },
+      { id: 'copernicus', label: 'Copernicus', title: 'Copernicus Browser (ESA): imagens Sentinel mais recentes e anteriores' },
     ] as const).map((opt) => (
       <button
         key={opt.id}
@@ -31,7 +32,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
         aria-checked={value === opt.id}
         onClick={() => onChange(opt.id)}
         title={opt.title}
-        className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+        className={`h-8 px-2 sm:px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
           value === opt.id
             ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
             : 'text-slate-300 hover:text-white hover:bg-white/10'
@@ -520,7 +521,7 @@ export const SatelliteView: React.FC<SatelliteViewProps> = ({ nowcast = null, no
                 aria-checked={product === id}
                 onClick={() => setProduct(id)}
                 title={PRODUCTS[id].title}
-                className={`h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                className={`h-8 px-2 sm:px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                   product === id
                     ? 'bg-cyan-400/20 text-cyan-100 shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4)]'
                     : 'text-slate-300 hover:text-white hover:bg-white/10'
