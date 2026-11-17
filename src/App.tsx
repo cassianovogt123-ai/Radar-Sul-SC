@@ -225,8 +225,7 @@ export default function App() {
 
     // If a new precipitation activity was detected and audio is enabled, fire ONE short chime
     if (analysis.isNewPrecipitationActivity && isAudioEnabledRef.current) {
-      playRadarAlertChime(0.85);
-      notifyIfHidden('VogtSonar Sul: nova chuva no radar', 'O radar de Chapecó detectou nova área de chuva. Abra o app para ver.');
+      playRadarAlertChime(0.85); // chuva nova em qualquer ponto do radar: só o som, sem notificação (não é da cidade do usuário)
     }
 
     previousAnalysisRef.current = analysis;
@@ -273,7 +272,7 @@ export default function App() {
 
     // Som de aproximação: só quando alguma cidade SOBE para laranja/vermelho (no máx. 1 a cada 10 min)
     const order: ThreatLevel[] = ['verde', 'amarelo', 'laranja', 'vermelho'];
-    const escalated = Object.values(next).some((st) => {
+    const escalated = Object.values(next).filter((st) => st.cityName === getMyCity()).some((st) => {
       const before = lastAlertLevelsRef.current[st.cityName] ?? 'verde';
       return order.indexOf(st.threatLevel) > order.indexOf(before) && order.indexOf(st.threatLevel) >= 2;
     });
@@ -286,7 +285,7 @@ export default function App() {
     ) {
       lastApproachAlertTimestampRef.current = Date.now();
       playApproachAlertChime(0.8);
-      const hot = Object.values(next).filter((st) => order.indexOf(st.threatLevel) >= 2);
+      const hot = Object.values(next).filter((st) => st.cityName === getMyCity() && order.indexOf(st.threatLevel) >= 2);
       notifyIfHidden(
         'VogtSonar Sul: chuva forte se aproximando',
         hot.map((st) => `${st.cityName}: ${st.threatTitle}`).join(' · ')
@@ -395,7 +394,7 @@ export default function App() {
           ...prev.filter((p) => Date.now() - p.at < JUMP_KEEP_MS && !jumps.some((j) => j.city === p.city)),
         ]);
         // avisa cada cidade no máx. 1 vez a cada 20 min
-        const fresh = jumps.filter((j) => Date.now() - (lastJumpAlertRef.current[j.city] ?? 0) > 20 * 60000);
+        const fresh = jumps.filter((j) => j.city === getMyCity() && Date.now() - (lastJumpAlertRef.current[j.city] ?? 0) > 20 * 60000);
         fresh.forEach((j) => (lastJumpAlertRef.current[j.city] = Date.now()));
         if (fresh.length && isAudioEnabledRef.current) {
           playApproachAlertChime(0.8);
@@ -492,7 +491,7 @@ export default function App() {
         .then(({ alerts, at }) => {
           setInmetAlerts({ status: 'ok', alerts, at });
           const local = alerts.filter((a) =>
-            NEARBY_CITIES.some((c) => alertCoversCity(a, c.name, c.state, c.coords, c.ibge))
+            NEARBY_CITIES.some((c) => c.name === getMyCity() && alertCoversCity(a, c.name, c.state, c.coords, c.ibge))
           );
           const fresh = seenInmetRef.current ? local.filter((a) => !seenInmetRef.current!.has(a.id)) : [];
           seenInmetRef.current = new Set(local.map((a) => a.id));

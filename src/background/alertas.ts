@@ -2,7 +2,8 @@
 // JavaScript sem tela que o Android acorda a cada ~15 min (o horário exato quem decide é o
 // sistema, para poupar bateria). Consulta os alertas oficiais e dispara a notificação.
 //
-// - Defesa Civil (IDAP): qualquer alerta que cubra uma das cidades monitoradas (radar + família).
+// - Só a cidade do usuário (escolhida no app; padrão Itapiranga).
+// - Defesa Civil (IDAP): qualquer alerta que cubra essa cidade.
 // - INMET: só "Perigo" e "Grande perigo" (o "Perigo potencial" cobre centenas de cidades
 //   quase todo dia e viraria ruído com o app fechado; com o app aberto ele continua avisando).
 // - Severidade extrema vai pelo canal "Alerta extremo" (som e vibração fortes).
@@ -29,21 +30,22 @@ const FIRST_RUN_WINDOW_MS = 2 * 3600000; // na 1ª execução, só avisa o que s
 const MAX_AGE_MS = 12 * 3600000;
 export const EXTREME_CHANNEL = 'alerta-extremo';
 
-const coversWatched = (a: CapAlert) => WATCHED.some((c) => alertCoversCity(a, c.name, c.state, c.coords, c.ibge));
-
 const citiesOf = (a: CapAlert) =>
   WATCHED.filter((c) => alertCoversCity(a, c.name, c.state, c.coords, c.ibge)).map((c) => c.name);
 
-/** Escolhe o que notificar: alertas novos (não vistos) que cobrem as cidades monitoradas. */
+/** Escolhe o que notificar: alertas novos (não vistos) que cobrem a cidade do usuário. */
 export function pickNew(
   dc: CapAlert[],
   inmet: CapAlert[],
   seen: Record<string, number> | null,
-  now = Date.now()
+  now = Date.now(),
+  mine = 'Itapiranga'
 ): CapAlert[] {
+  const city = WATCHED.filter((c) => c.name === mine);
+  const covers = (a: CapAlert) => city.some((c) => alertCoversCity(a, c.name, c.state, c.coords, c.ibge));
   const relevant = [
-    ...dc.filter(coversWatched),
-    ...inmet.filter((a) => (a.severity === 'Severe' || a.severity === 'Extreme') && coversWatched(a)),
+    ...dc.filter(covers),
+    ...inmet.filter((a) => (a.severity === 'Severe' || a.severity === 'Extreme') && covers(a)),
   ];
   return relevant.filter((a) => {
     if (seen && a.id in seen) return false;
@@ -117,7 +119,7 @@ addEventListener('checarAlertas', async (resolve, reject) => {
     ]);
     if (!ok) return resolve(); // sem internet: tenta de novo na próxima rodada
     const seen = readSeen();
-    const fresh = pickNew(dc, inmet, seen, now);
+    const fresh = pickNew(dc, inmet, seen, now, CapacitorKV.get(MY_CITY_KEY)?.value || 'Itapiranga');
     if (fresh.length) {
       let id = Math.floor(now / 1000) % 1000000;
       CapacitorNotifications.schedule(fresh.slice(0, 3).map((a) => notificationFor(a, id++)));
