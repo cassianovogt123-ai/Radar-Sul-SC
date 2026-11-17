@@ -24,6 +24,7 @@ import { HydroView } from './components/HydroView';
 import { UpdateGate } from './components/UpdateGate';
 import { NEARBY_CITIES } from './components/RadarMap';
 import { CHAPECO_RADAR_META } from './cities';
+import { getMyCity, setMyCity as saveMyCity, syncMyCity } from './services/myCity';
 import { MonitorMode, MonitorModeSelector, SatelliteView } from './components/SatelliteView';
 import {
   analyzeRadarEchoesReal,
@@ -555,7 +556,11 @@ export default function App() {
   // Canal do "Alerta extremo" precisa existir antes do aviso com o app fechado disparar
   useEffect(() => {
     ensureExtremeChannel();
+    syncMyCity(); // garante que o aviso em segundo plano sabe a cidade (padrão Itapiranga)
   }, []);
+
+  // Cidade do usuário: só ela recebe o aviso de tempestade severa com o app fechado
+  const [myCity, setMyCityState] = useState<string>(getMyCity);
 
   // Toggle Audio with user interaction required by modern browsers
   const handleToggleAudio = async () => {
@@ -899,6 +904,11 @@ export default function App() {
             alerts={dcAlerts}
             inmetAlerts={inmetAlerts}
             onRetryAlerts={() => loadDefesaCivilAlerts(true)}
+            isMyCity={myCity === city.name}
+            onSetMyCity={() => {
+              saveMyCity(city.name);
+              setMyCityState(city.name);
+            }}
             onClose={() => setSelectedMunicipality(null)}
           />
         );
