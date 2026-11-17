@@ -24,7 +24,7 @@ export const MonitorModeSelector: React.FC<{ value: MonitorMode; onChange: (m: M
       { id: 'radar', label: 'Radar Chapecó', title: 'Radar meteorológico de Chapecó (Defesa Civil SC)' },
       { id: 'satelite', label: 'Satélite GOES', title: 'Imagens do satélite GOES-19 (NASA GIBS / NOAA)' },
       { id: 'rios', label: 'Rios', title: 'Nível dos rios, vazão e chuva (ANA / SGB, telemetria)' },
-      { id: 'copernicus', label: 'Copernicus', title: 'Copernicus Browser (ESA): imagens Sentinel mais recentes e anteriores' },
+      { id: 'copernicus', label: 'Sentinel', title: 'Imagens Sentinel-2 e Landsat (30 m) por data, com % de nuvem' },
     ] as const).map((opt) => (
       <button
         key={opt.id}
