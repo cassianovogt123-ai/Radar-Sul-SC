@@ -1,3 +1,24 @@
+import type { RadarMetadata } from './types/radar';
+
+/** Radar de Chapecó: posição e limites da imagem da Defesa Civil SC. */
+export const CHAPECO_RADAR_META: RadarMetadata = {
+  code: 'CHP',
+  name: 'Radar Meteorológico de Chapecó (Oeste SC)',
+  operator: 'Defesa Civil de Santa Catarina / Epagri CIRAM',
+  location: 'Rua Balduíno Battisti, Loteamento Desbravador, Chapecó - SC',
+  coordinates: { lat: -27.0968, lon: -52.618 },
+  band: 'Banda S/C Doppler Polarimétrico',
+  rangeKm: 250,
+  minLon: -55.0710069,
+  minLat: -29.2106056,
+  maxLon: -50.1335368,
+  maxLat: -24.8625699,
+  leafletBounds: [
+    [-29.2106056, -55.0710069],
+    [-24.8625699, -50.1335368],
+  ],
+};
+
 // Cidades monitoradas na área do radar de Chapecó (coordenadas e códigos oficiais do IBGE).
 export const NEARBY_CITIES = [
   { name: 'Chapecó', ibge: '4204202', coords: [-27.1004, -52.6152] as [number, number], state: 'SC', isCenter: true },

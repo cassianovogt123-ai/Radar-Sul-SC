@@ -11,6 +11,7 @@
 import { alertCoversCity, parseCapFeed, type CapAlert } from '../services/capAlerts';
 import { INMET_ALERTS_URL, normalizeInmet } from '../services/inmetParser';
 import { FAMILY_CITIES, NEARBY_CITIES } from '../cities';
+import { latestSevereCores, pickStormNotices, stormNotification, type Seen } from './tempestades';
 
 // cidades da área do radar + cidades da família (mesmas do aviso de salto de raios)
 const WATCHED: { name: string; state: string; coords: [number, number]; ibge?: string }[] = [...NEARBY_CITIES, ...FAMILY_CITIES];
@@ -21,6 +22,8 @@ declare const CapacitorNotifications: { schedule(n: Record<string, unknown>[]): 
 
 const IDAP_FEED_URL = 'https://idapfile.mdr.gov.br/idap/api/rss/cap';
 const SEEN_KEY = 'alertasVistos';
+const STORM_KEY = 'tempestadesAvisadas';
+const STORM_FILE_KEY = 'tempestadeUltimaVarredura';
 const FIRST_RUN_WINDOW_MS = 2 * 3600000; // na 1ª execução, só avisa o que saiu nas últimas 2 h
 const MAX_AGE_MS = 12 * 3600000;
 export const EXTREME_CHANNEL = 'alerta-extremo';
@@ -79,9 +82,30 @@ function readSeen(): Record<string, number> | null {
   }
 }
 
+/** Tempestade severa (≥ 55 dBZ) no município ou a até 25 km, pela última varredura do radar. */
+async function checarTempestades(now: number) {
+  const scan = await latestSevereCores(now);
+  if (!scan || CapacitorKV.get(STORM_FILE_KEY)?.value === scan.file) return; // sem dado novo
+  let seen: Seen = {};
+  try {
+    seen = JSON.parse(CapacitorKV.get(STORM_KEY)?.value || '{}');
+  } catch {
+    /* começa do zero */
+  }
+  const r = pickStormNotices(scan.cores, WATCHED, seen, now);
+  if (r.notices.length) {
+    const base = 1000000 + (Math.floor(now / 1000) % 1000000);
+    CapacitorNotifications.schedule(r.notices.slice(0, 3).map((n, i) => stormNotification(n, base + i, EXTREME_CHANNEL)));
+  }
+  CapacitorKV.set(STORM_KEY, JSON.stringify(r.seen));
+  CapacitorKV.set(STORM_FILE_KEY, scan.file);
+}
+
 addEventListener('checarAlertas', async (resolve, reject) => {
   try {
     const now = Date.now();
+    // radar primeiro e à parte: se a Defesa Civil SC cair, os alertas oficiais seguem
+    await checarTempestades(now).catch(() => {});
     // as duas fontes são independentes: se uma cair, a outra ainda avisa
     let ok = 0;
     const [dc, inmet] = await Promise.all([
