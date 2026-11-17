@@ -21,7 +21,7 @@ import { SupabaseSetupModal } from './components/SupabaseSetupModal';
 import { MunicipalityDetailModal } from './components/MunicipalityDetailModal';
 import { PingoFloater } from './components/mascot/PingoFloater';
 import { HydroView } from './components/HydroView';
-import { CopernicusView } from './components/CopernicusView';
+import { SentinelView } from './components/SentinelView';
 import { UpdateGate } from './components/UpdateGate';
 import { NEARBY_CITIES } from './components/RadarMap';
 import { CHAPECO_RADAR_META } from './cities';
@@ -863,7 +863,7 @@ export default function App() {
 
         {monitorMode === 'satelite' && <SatelliteView nowcast={nowcast} nowcastComputing={isNowcastComputing} />}
         {monitorMode === 'rios' && <HydroView />}
-        {monitorMode === 'copernicus' && <CopernicusView />}
+        {monitorMode === 'copernicus' && <SentinelView />}
         <MonitorModeSelector value={monitorMode} onChange={setMonitorMode} />
 
         {/* Pingo: mascote educativo de prevenção de desastres */}
