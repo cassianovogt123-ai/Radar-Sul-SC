@@ -96,9 +96,17 @@ export function extractCellsFromImage(
   if (!ctx) return [];
 
   ctx.drawImage(img, 0, 0);
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const data = imageData.data;
+  return extractCellsFromPixels(ctx.getImageData(0, 0, width, height).data, width, height, metadata, minDbz);
+}
 
+/** Mesma análise, a partir dos pixels RGBA já decodificados (usado também sem tela, no aviso em segundo plano). */
+export function extractCellsFromPixels(
+  data: Uint8ClampedArray | Uint8Array,
+  width: number,
+  height: number,
+  metadata: RadarMetadata,
+  minDbz = 10
+): RainCell[] {
   // Radar tower location in pixels
   const radarLat = metadata.coordinates.lat;
   const radarLon = metadata.coordinates.lon;

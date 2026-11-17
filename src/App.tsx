@@ -23,6 +23,7 @@ import { PingoFloater } from './components/mascot/PingoFloater';
 import { HydroView } from './components/HydroView';
 import { UpdateGate } from './components/UpdateGate';
 import { NEARBY_CITIES } from './components/RadarMap';
+import { CHAPECO_RADAR_META } from './cities';
 import { MonitorMode, MonitorModeSelector, SatelliteView } from './components/SatelliteView';
 import {
   analyzeRadarEchoesReal,
@@ -37,24 +38,6 @@ import {
   trackCellsBetweenFrames,
   evaluateMunicipalityThreat,
 } from './utils/cellTracker';
-
-const CHAPECO_RADAR_META: RadarMetadata = {
-  code: 'CHP',
-  name: 'Radar Meteorológico de Chapecó (Oeste SC)',
-  operator: 'Defesa Civil de Santa Catarina / Epagri CIRAM',
-  location: 'Rua Balduíno Battisti, Loteamento Desbravador, Chapecó - SC',
-  coordinates: { lat: -27.0968, lon: -52.618 },
-  band: 'Banda S/C Doppler Polarimétrico',
-  rangeKm: 250,
-  minLon: -55.0710069,
-  minLat: -29.2106056,
-  maxLon: -50.1335368,
-  maxLat: -24.8625699,
-  leafletBounds: [
-    [-29.2106056, -55.0710069],
-    [-24.8625699, -50.1335368],
-  ],
-};
 
 const BASEMAP_CREDITS: Record<'osm' | 'dark' | 'satellite' | 'topo', string> = {
   osm: '© OpenStreetMap contributors',
