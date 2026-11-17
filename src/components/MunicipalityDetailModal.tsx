@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { X, CloudRain, ShieldAlert, Radar, Info, RefreshCw, ChevronDown, Phone, ExternalLink } from 'lucide-react';
+import { X, BellRing, CloudRain, ShieldAlert, Radar, Info, RefreshCw, ChevronDown, Phone, ExternalLink } from 'lucide-react';
 import { MunicipalityProximityStatus, ThreatLevel } from '../utils/cellTracker';
 import {
   CityForecast,
@@ -26,6 +26,9 @@ interface MunicipalityDetailModalProps {
   alerts: AlertState;
   inmetAlerts: AlertState;
   onRetryAlerts: () => void;
+  /** é a cidade que recebe o aviso de tempestade severa com o app fechado */
+  isMyCity?: boolean;
+  onSetMyCity?: () => void;
   onClose: () => void;
 }
 
@@ -151,6 +154,8 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
   alerts,
   inmetAlerts,
   onRetryAlerts,
+  isMyCity = false,
+  onSetMyCity,
   onClose,
 }) => {
   const cityAlerts = useMemo(
@@ -205,6 +210,34 @@ export const MunicipalityDetailModal: React.FC<MunicipalityDetailModalProps> = (
         </div>
 
         <div className="px-4 py-4 space-y-5 overflow-y-auto">
+          {/* Cidade do usuário: só ela recebe o aviso de tempestade severa no celular */}
+          {onSetMyCity && (
+            <button
+              onClick={isMyCity ? undefined : onSetMyCity}
+              aria-pressed={isMyCity}
+              className={`w-full flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-[12px] ${
+                isMyCity
+                  ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-100 cursor-default'
+                  : 'border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/[0.06] cursor-pointer'
+              }`}
+            >
+              <BellRing className={`w-4 h-4 shrink-0 ${isMyCity ? 'text-cyan-300' : 'text-slate-400'}`} />
+              <span>
+                {isMyCity ? (
+                  <>
+                    <b className="font-medium">Sua cidade.</b> O celular avisa quando há tempestade severa aqui ou a até
+                    25 km, mesmo com o app fechado.
+                  </>
+                ) : (
+                  <>
+                    <b className="font-medium">Avisar tempestade severa aqui.</b> Troca a sua cidade: só ela recebe
+                    esse aviso no celular.
+                  </>
+                )}
+              </span>
+            </button>
+          )}
+
           {/* Previsão */}
           <Section icon={<CloudRain className="w-4 h-4 text-sky-300" />} title="Previsão de chuva">
             {forecast ? (

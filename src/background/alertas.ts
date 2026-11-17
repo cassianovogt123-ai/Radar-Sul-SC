@@ -24,6 +24,7 @@ const IDAP_FEED_URL = 'https://idapfile.mdr.gov.br/idap/api/rss/cap';
 const SEEN_KEY = 'alertasVistos';
 const STORM_KEY = 'tempestadesAvisadas';
 const STORM_FILE_KEY = 'tempestadeUltimaVarredura';
+const MY_CITY_KEY = 'minhaCidade'; // escolhida no app (detalhes do município); padrão Itapiranga
 const FIRST_RUN_WINDOW_MS = 2 * 3600000; // na 1ª execução, só avisa o que saiu nas últimas 2 h
 const MAX_AGE_MS = 12 * 3600000;
 export const EXTREME_CHANNEL = 'alerta-extremo';
@@ -82,7 +83,7 @@ function readSeen(): Record<string, number> | null {
   }
 }
 
-/** Tempestade severa (≥ 55 dBZ) no município ou a até 25 km, pela última varredura do radar. */
+/** Tempestade severa (≥ 55 dBZ) na cidade do usuário ou a até 25 km dela, pela última varredura do radar. */
 async function checarTempestades(now: number) {
   const scan = await latestSevereCores(now);
   if (!scan || CapacitorKV.get(STORM_FILE_KEY)?.value === scan.file) return; // sem dado novo
@@ -92,7 +93,9 @@ async function checarTempestades(now: number) {
   } catch {
     /* começa do zero */
   }
-  const r = pickStormNotices(scan.cores, WATCHED, seen, now);
+  // só a cidade do usuário recebe o aviso de tempestade severa
+  const mine = CapacitorKV.get(MY_CITY_KEY)?.value || 'Itapiranga';
+  const r = pickStormNotices(scan.cores, WATCHED.filter((c) => c.name === mine), seen, now);
   if (r.notices.length) {
     const base = 1000000 + (Math.floor(now / 1000) % 1000000);
     CapacitorNotifications.schedule(r.notices.slice(0, 3).map((n, i) => stormNotification(n, base + i, EXTREME_CHANNEL)));
@@ -124,6 +127,17 @@ addEventListener('checarAlertas', async (resolve, reject) => {
     for (const [k, t] of Object.entries(seen || {})) if (now - t < 3 * 86400000) next[k] = t;
     for (const a of [...dc, ...inmet]) next[a.id] = next[a.id] ?? now;
     CapacitorKV.set(SEEN_KEY, JSON.stringify(next));
+    resolve();
+  } catch (err) {
+    reject(err);
+  }
+});
+
+// O app avisa qual é a cidade do usuário (ao abrir e quando ele troca nos detalhes do município)
+addEventListener('definirCidade', (resolve, reject, args) => {
+  try {
+    const cidade = (args as { cidade?: string } | null)?.cidade;
+    if (cidade && WATCHED.some((c) => c.name === cidade)) CapacitorKV.set(MY_CITY_KEY, cidade);
     resolve();
   } catch (err) {
     reject(err);
