@@ -12,7 +12,7 @@ S2B_MSIL2A_20261115T133829_R124_T22JBQ_20261115T185235 2026-11-15T13:38:29.02400
 S2C_MSIL2A_20261110T133831_R124_T22JBR_20261110T165412 2026-11-10T13:38:31.025000Z 0.210397
 S2C_MSIL2A_20261110T133831_R124_T22JBQ_20261110T165412 2026-11-10T13:38:31.025000Z 2.53863
 access-control-allow-origin: *
-{"id":"pc1.1795527270.a9e4209877d44101b9367b722083f288","links":[{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/info","rel":"metadata","title":"Mosaic metadata"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/tilejson.json","rel":"tilejson","templated":true,"title":"Link for TileJSON (Template URL)"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/WMTSCapabilities.xml","rel":"wmts","template
+{"id":"pc1.1795527350.5a6c1c2f8f984be690437c1761062bd1","links":[{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527350.5a6c1c2f8f984be690437c1761062bd1/info","rel":"metadata","title":"Mosaic metadata"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527350.5a6c1c2f8f984be690437c1761062bd1/tilejson.json","rel":"tilejson","templated":true,"title":"Link for TileJSON (Template URL)"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527350.5a6c1c2f8f984be690437c1761062bd1/WMTSCapabilities.xml","rel":"wmts","template
 mosaic tile 200 image/jpeg 20794
 access-control-allow-credentials: true
 access-control-allow-headers: X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
@@ -21,4 +21,4 @@ access-control-allow-origin: *
 access-control-max-age: 1728000
 cache-control: public, max-age=3600
 x-cache: CONFIG_NOCACHE
-item tile 200 image/jpeg 668
+crs84 tile 200 image/jpeg 21232
