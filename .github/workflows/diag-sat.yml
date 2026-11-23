@@ -9,19 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Mosaico e RainViewer
+      - name: Planetary Computer
         run: |
-          B="https://sifap.defesacivil.sc.gov.br/radarsc/rest/radar"
-          curl -sk -m 30 "$B/getUltimasImagens?prod=4&radar=COMP&data=" > lista.json
-          head -c 400 lista.json > m.txt; echo >> m.txt
-          name=$(python3 -c "import json;d=json.load(open('lista.json'));print(sorted(d)[-1])")
-          curl -sk -m 30 -o comp.png -w "comp %{http_code} %{content_type} %{size_download}\n" -H "Referer: https://sifap.defesacivil.sc.gov.br/radarsc/" "$B/getImagem?prod=4&radar=COMP&file=$name" >> m.txt
-          curl -s -m 30 https://api.rainviewer.com/public/weather-maps.json -o rv.json; head -c 700 rv.json >> m.txt; echo >> m.txt
-          host=$(python3 -c "import json;d=json.load(open('rv.json'));print(d['host'])"); path=$(python3 -c "import json;d=json.load(open('rv.json'));print(d['radar']['past'][-1]['path'])")
-          for zxy in 5/11/18 5/10/18 5/11/17 6/22/36 4/5/9; do f=rv_$(echo $zxy|tr / _).png; curl -s -m 30 -o $f -w "$zxy %{http_code} %{size_download}\n" -I "$host$path/256/$zxy/2/1_0.png" -o /dev/null >> m.txt; curl -s -m 30 -o $f "$host$path/256/$zxy/2/1_0.png"; done
-          curl -s -m 30 -D - -o /dev/null "$host$path/256/5/11/18/2/1_0.png" | grep -i "access-control\|content-type" >> m.txt
+          PC=https://planetarycomputer.microsoft.com/api
+          cat > q.json <<'J'
+          {"collections":["sentinel-2-l2a"],"intersects":{"type":"Point","coordinates":[-53.71,-27.17]},"datetime":"2026-08-01T00:00:00Z/2026-11-23T23:59:59Z","sortby":[{"field":"datetime","direction":"desc"}],"limit":8,"fields":{"include":["id","properties.datetime","properties.eo:cloud_cover"],"exclude":["assets","links","geometry"]}}
+          J
+          curl -s -m 60 -X POST -H "Content-Type: application/json" -H "Origin: https://localhost" -D h1.txt -d @q.json "$PC/stac/v1/search" -o s.json
+          grep -i "access-control" h1.txt > p.txt
+          python3 -c "import json;d=json.load(open('s.json'));[print(f['id'],f['properties']['datetime'],f['properties'].get('eo:cloud_cover')) for f in d['features']]" >> p.txt
+          cat > r.json <<'J'
+          {"collections":["sentinel-2-l2a"],"filter-lang":"cql2-json","filter":{"op":"and","args":[{"op":"anyinteracts","args":[{"property":"datetime"},{"interval":["2026-11-01T00:00:00Z","2026-11-23T23:59:59Z"]}]},{"op":"<=","args":[{"property":"eo:cloud_cover"},60]}]},"sortby":[{"field":"eo:cloud_cover","direction":"asc"}]}
+          J
+          curl -s -m 60 -X POST -H "Content-Type: application/json" -H "Origin: https://localhost" -D h2.txt -d @r.json "$PC/data/v1/mosaic/register" -o reg.json
+          grep -i "access-control" h2.txt >> p.txt; head -c 600 reg.json >> p.txt; echo >> p.txt
+          sid=$(python3 -c "import json;print(json.load(open('reg.json')).get('searchid') or json.load(open('reg.json')).get('id'))")
+          # tile z14 over Itapiranga
+          python3 -c "
+          import math
+          lat,lon,z=-27.172,-53.715,14
+          n=2**z; x=int((lon+180)/360*n); y=int((1-math.log(math.tan(math.radians(lat))+1/math.cos(math.radians(lat)))/math.pi)/2*n); print(z,x,y)" > zxy.txt
+          read z x y < zxy.txt
+          curl -s -m 60 -H "Origin: https://localhost" -D h3.txt -o tile.png -w "mosaic tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/mosaic/$sid/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first" >> p.txt
+          grep -i "access-control\|cache" h3.txt >> p.txt
+          id=$(python3 -c "import json;d=json.load(open('s.json'));print(d['features'][0]['id'])")
+          curl -s -m 60 -o tile2.png -w "item tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/item/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&item=$id&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0" >> p.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f m.txt comp.png rv_*.png; git commit -m "diag16 [skip ci]"; git push
+          git add -f p.txt tile.png tile2.png; git commit -m "diag17 [skip ci]"; git push
