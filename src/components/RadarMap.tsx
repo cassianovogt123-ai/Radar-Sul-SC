@@ -9,6 +9,7 @@ import { CityForecast, RAIN_LEVEL_LABEL, RainLevel } from '../services/forecast'
 import type { SevereCore } from '../services/severeStorms';
 import { jumpTime, type LightningJump } from '../services/lightningJump';
 import { useLightningLayer } from './lightningLayer';
+import { useRegionalRadarLayer } from './regionalRadarLayer';
 import { NEARBY_CITIES } from '../cities';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
@@ -105,6 +106,25 @@ export const RadarMap: React.FC<RadarMapProps> = ({
     [radarMeta.coordinates.lat, radarMeta.coordinates.lon]
   );
 
+  // Radares de outras regiões, fora do alcance de Chapecó (começa ligado; escolha salva)
+  const [showRegional, setShowRegional] = useState(() => {
+    try {
+      return localStorage.getItem('regionalOn') !== '0';
+    } catch {
+      return true;
+    }
+  });
+  const toggleRegional = () =>
+    setShowRegional((v) => {
+      try {
+        localStorage.setItem('regionalOn', v ? '0' : '1');
+      } catch {
+        /* sem armazenamento: vale só nesta sessão */
+      }
+      return !v;
+    });
+  const regionalAt = useRegionalRadarLayer(mapInstance, showRegional && !isNowcast, RADAR_COORDS, radarMeta.rangeKm || 250, opacity / 100);
+
   // Tile layer URLs dictionary
   const getTileConfig = (type: 'osm' | 'dark' | 'satellite' | 'topo') => {
     switch (type) {
@@ -147,7 +167,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       zoom: 8,
       zoomControl: false,
       attributionControl: false,
-      minZoom: 6,
+      minZoom: 5,
       maxZoom: 14,
     });
 
@@ -439,7 +459,21 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       )}
 
       {!isNowcast && (
-        <div className="absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500]">
+        <div className="absolute top-[6.75rem] sm:top-4 left-1/2 -translate-x-1/2 z-[500] flex flex-col items-center gap-1.5">
+          <button
+            onClick={toggleRegional}
+            aria-pressed={showRegional}
+            title={showRegional ? 'Esconder os radares de fora do alcance de Chapecó (fonte: RainViewer)' : 'Mostrar a chuva dos radares de outras regiões (fonte: RainViewer)'}
+            className={`rounded-full border bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] shadow-lg whitespace-nowrap cursor-pointer ${
+              showRegional ? 'border-sky-300/50 text-sky-200' : 'border-white/15 text-slate-400'
+            }`}
+          >
+            🌎 Outras regiões {showRegional
+              ? regionalAt
+                ? `· ${new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(regionalAt))} · ocultar`
+                : '· carregando…'
+              : '· mostrar'}
+          </button>
           <button
             onClick={toggleLightning}
             aria-pressed={showLightning}
