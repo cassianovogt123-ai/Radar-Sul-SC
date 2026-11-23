@@ -8,13 +8,16 @@ import { getText } from './SatelliteView';
 // Fonte: NASA GIBS (camadas HLS, 30 m, sem chave) + catálogo CMR da NASA para saber
 // quais dias têm imagem sobre a área visível e quanto de nuvem tinha.
 // HLS só existe em projeção geográfica no GIBS, por isso este mapa usa EPSG:4326.
+// Sentinel-2 em 10 m (3x mais nítido que o HLS de 30 m): Microsoft Planetary Computer (grátis, sem chave),
+// imagem "visual" (cor natural) já pronta, servida na grade WorldCRS84Quad, que bate com o EPSG:4326 do Leaflet.
 const GIBS_WMS = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi';
 const CMR = 'https://cmr.earthdata.nasa.gov/search/granules.json';
+const PC = 'https://planetarycomputer.microsoft.com/api';
 const CENTER: [number, number] = [-27.1, -53.2];
 const DIAS = 90;
 
 const SATS = {
-  s2: { label: 'Sentinel-2', layer: 'HLS_S30_Nadir_BRDF_Adjusted_Reflectance', cmr: 'HLSS30' },
+  s2: { label: 'Sentinel-2 · 10 m', layer: 'HLS_S30_Nadir_BRDF_Adjusted_Reflectance', cmr: 'HLSS30' },
   l8: { label: 'Landsat 8/9', layer: 'HLS_L30_Nadir_BRDF_Adjusted_Reflectance', cmr: 'HLSL30' },
 } as const;
 type SatId = keyof typeof SATS;
@@ -47,10 +50,62 @@ async function buscarDias(sat: SatId, c: L.LatLng): Promise<Dia[]> {
   return [...porDia].map(([dia, nuvem]) => ({ dia, nuvem })).sort((x, y) => (x.dia < y.dia ? 1 : -1));
 }
 
+/** Dias com Sentinel-2 (10 m) no centro do mapa, pelo catálogo do Planetary Computer. */
+async function buscarDiasS2(c: L.LatLng): Promise<Dia[]> {
+  const fim = new Date();
+  const ini = new Date(fim.getTime() - DIAS * 864e5);
+  const res = await fetch(`${PC}/stac/v1/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      collections: ['sentinel-2-l2a'],
+      intersects: { type: 'Point', coordinates: [clamp(c.lng, -180, 180), clamp(c.lat, -90, 90)] },
+      datetime: `${ini.toISOString()}/${fim.toISOString()}`,
+      sortby: [{ field: 'datetime', direction: 'desc' }],
+      limit: 100,
+      fields: { include: ['properties.datetime', 'properties.eo:cloud_cover'], exclude: ['assets', 'links', 'geometry'] },
+    }),
+  });
+  if (!res.ok) throw new Error(`Planetary Computer ${res.status}`);
+  const json = await res.json();
+  const porDia = new Map<string, number | null>();
+  for (const f of json?.features ?? []) {
+    const dia = String(f.properties?.datetime ?? '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dia)) continue;
+    const n = typeof f.properties?.['eo:cloud_cover'] === 'number' ? f.properties['eo:cloud_cover'] : null;
+    const antes = porDia.get(dia);
+    if (antes === undefined || (n != null && (antes == null || n < antes))) porDia.set(dia, n);
+  }
+  return [...porDia].map(([dia, nuvem]) => ({ dia, nuvem })).sort((x, y) => (x.dia < y.dia ? 1 : -1));
+}
+
+const mosaicos = new Map<string, string>();
+/** Registra (uma vez por dia) o mosaico de todas as cenas Sentinel-2 daquele dia e devolve o endereço dos blocos. */
+async function urlMosaicoS2(dia: string): Promise<string> {
+  let id = mosaicos.get(dia);
+  if (!id) {
+    const res = await fetch(`${PC}/data/v1/mosaic/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        collections: ['sentinel-2-l2a'],
+        'filter-lang': 'cql2-json',
+        filter: { op: 'anyinteracts', args: [{ property: 'datetime' }, { interval: [`${dia}T00:00:00Z`, `${dia}T23:59:59Z`] }] },
+        sortby: [{ field: 'eo:cloud_cover', direction: 'asc' }],
+      }),
+    });
+    if (!res.ok) throw new Error(`Planetary Computer ${res.status}`);
+    id = String((await res.json()).searchid);
+    mosaicos.set(dia, id);
+  }
+  return `${PC}/data/v1/mosaic/${id}/tiles/WorldCRS84Quad/{z}/{x}/{y}@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first`;
+}
+
 export const SentinelView: React.FC = () => {
   const boxRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const imgRef = useRef<L.TileLayer.WMS | null>(null);
+  const s2Ref = useRef<L.TileLayer | null>(null);
   const [sat, setSat] = useState<SatId>('s2');
   const [dias, setDias] = useState<Dia[]>([]);
   const [dia, setDia] = useState<string | null>(null);
@@ -82,6 +137,7 @@ export const SentinelView: React.FC = () => {
     img.on('loading', () => setImgCarregando(true));
     img.on('load', () => setImgCarregando(false));
     imgRef.current = img;
+
     map.createPane('referencia').style.zIndex = '450';
     for (const layers of ['Reference_Features_15m', 'Reference_Labels_15m'])
       L.tileLayer.wms(GIBS_WMS, { layers, format: 'image/png', transparent: true, pane: 'referencia', tileSize: 512 }).addTo(map);
@@ -97,7 +153,7 @@ export const SentinelView: React.FC = () => {
     if (!map) return;
     setCarregando(true);
     try {
-      const lista = await buscarDias(sat, map.getCenter());
+      const lista = sat === 's2' ? await buscarDiasS2(map.getCenter()) : await buscarDias(sat, map.getCenter());
       setDias(lista);
       setErro(false);
       // mantém o dia escolhido se ainda existir; senão o mais novo com pouca nuvem
@@ -131,8 +187,30 @@ export const SentinelView: React.FC = () => {
   }, [carregar]);
 
   useEffect(() => {
+    const s2 = sat === 's2';
+    // Landsat continua pelo HLS da NASA (30 m é a resolução nativa dele)
     imgRef.current?.setParams({ layers: SATS[sat].layer, time: dia ?? '' } as L.WMSParams);
-    imgRef.current?.setOpacity(dia ? 1 : 0);
+    imgRef.current?.setOpacity(dia && !s2 ? 1 : 0);
+    s2Ref.current?.setOpacity(0);
+    if (!s2 || !dia) return;
+    let vivo = true;
+    urlMosaicoS2(dia)
+      .then((url) => {
+        const map = mapRef.current;
+        if (!vivo || !map) return;
+        if (!s2Ref.current) {
+          // criada só quando já há endereço (evita pedidos vazios)
+          const layer = L.tileLayer(url, { maxZoom: 14, maxNativeZoom: 14 }).addTo(map);
+          layer.on('loading', () => setImgCarregando(true));
+          layer.on('load', () => setImgCarregando(false));
+          s2Ref.current = layer;
+        } else s2Ref.current.setUrl(url);
+        s2Ref.current.setOpacity(1);
+      })
+      .catch(() => vivo && setErro(true));
+    return () => {
+      vivo = false;
+    };
   }, [sat, dia]);
 
   return (
