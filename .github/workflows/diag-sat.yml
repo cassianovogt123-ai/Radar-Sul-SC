@@ -9,34 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Planetary Computer
+      - name: Vento
         run: |
-          PC=https://planetarycomputer.microsoft.com/api
-          cat > q.json <<'J'
-          {"collections":["sentinel-2-l2a"],"intersects":{"type":"Point","coordinates":[-53.71,-27.17]},"datetime":"2026-08-01T00:00:00Z/2026-11-23T23:59:59Z","sortby":[{"field":"datetime","direction":"desc"}],"limit":8,"fields":{"include":["id","properties.datetime","properties.eo:cloud_cover"],"exclude":["assets","links","geometry"]}}
-          J
-          curl -s -m 60 -X POST -H "Content-Type: application/json" -H "Origin: https://localhost" -D h1.txt -d @q.json "$PC/stac/v1/search" -o s.json
-          grep -i "access-control" h1.txt > p.txt
-          python3 -c "import json;d=json.load(open('s.json'));[print(f['id'],f['properties']['datetime'],f['properties'].get('eo:cloud_cover')) for f in d['features']]" >> p.txt
-          cat > r.json <<'J'
-          {"collections":["sentinel-2-l2a"],"filter-lang":"cql2-json","filter":{"op":"and","args":[{"op":"anyinteracts","args":[{"property":"datetime"},{"interval":["2026-11-01T00:00:00Z","2026-11-23T23:59:59Z"]}]},{"op":"<=","args":[{"property":"eo:cloud_cover"},60]}]},"sortby":[{"field":"eo:cloud_cover","direction":"asc"}]}
-          J
-          curl -s -m 60 -X POST -H "Content-Type: application/json" -H "Origin: https://localhost" -D h2.txt -d @r.json "$PC/data/v1/mosaic/register" -o reg.json
-          grep -i "access-control" h2.txt >> p.txt; head -c 600 reg.json >> p.txt; echo >> p.txt
-          sid=$(python3 -c "import json;print(json.load(open('reg.json')).get('searchid') or json.load(open('reg.json')).get('id'))")
-          # tile z14 over Itapiranga
           python3 -c "
-          import math
-          lat,lon,z=-27.172,-53.715,14
-          n=2**z; x=int((lon+180)/360*n); y=int((1-math.log(math.tan(math.radians(lat))+1/math.cos(math.radians(lat)))/math.pi)/2*n); print(z,x,y)" > zxy.txt
-          read z x y < zxy.txt
-          curl -s -m 60 -H "Origin: https://localhost" -D h3.txt -o tile.png -w "mosaic tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/mosaic/$sid/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first" >> p.txt
-          grep -i "access-control\|cache" h3.txt >> p.txt
-          curl -s -m 60 -o tile2.png -w "crs84 tile %{http_code} %{content_type} %{size_download}\\n" "$PC/data/v1/mosaic/$sid/tiles/WorldCRS84Quad/13/5747/5332@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first" >> p.txt
-          exit 0
-          curl -s -m 60 -o tile2.png -w "item tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/item/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&item=$id&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0" >> p.txt
+          N=8;s,n,w,e=-31.5,-23.5,-58.5,-48.5
+          la=[f'{s+(n-s)*i/(N-1):.2f}' for i in range(N) for j in range(N)]; lo=[f'{w+(e-w)*j/(N-1):.2f}' for i in range(N) for j in range(N)]
+          print('https://api.open-meteo.com/v1/forecast?latitude='+','.join(la)+'&longitude='+','.join(lo)+'&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=UTC')" > url.txt
+          curl -s -m 60 -D h.txt -H "Origin: https://localhost" "$(cat url.txt)" -o vento.json
+          { head -1 h.txt; grep -i access-control h.txt; wc -c < vento.json; } > p.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f p.txt tile.png tile2.png; git commit -m "diag18 [skip ci]"; git push
+          git add -f p.txt vento.json; git commit -m "diag19 [skip ci]"; git push
