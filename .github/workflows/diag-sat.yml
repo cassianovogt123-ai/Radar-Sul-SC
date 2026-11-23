@@ -32,10 +32,11 @@ jobs:
           read z x y < zxy.txt
           curl -s -m 60 -H "Origin: https://localhost" -D h3.txt -o tile.png -w "mosaic tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/mosaic/$sid/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first" >> p.txt
           grep -i "access-control\|cache" h3.txt >> p.txt
-          id=$(python3 -c "import json;d=json.load(open('s.json'));print(d['features'][0]['id'])")
+          curl -s -m 60 -o tile2.png -w "crs84 tile %{http_code} %{content_type} %{size_download}\\n" "$PC/data/v1/mosaic/$sid/tiles/WorldCRS84Quad/13/5747/5332@1x?collection=sentinel-2-l2a&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0&pixel_selection=first" >> p.txt
+          exit 0
           curl -s -m 60 -o tile2.png -w "item tile %{http_code} %{content_type} %{size_download}\n" "$PC/data/v1/item/tiles/WebMercatorQuad/$z/$x/$y@1x?collection=sentinel-2-l2a&item=$id&assets=visual&asset_bidx=visual%7C1%2C2%2C3&nodata=0" >> p.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f p.txt tile.png tile2.png; git commit -m "diag17 [skip ci]"; git push
+          git add -f p.txt tile.png tile2.png; git commit -m "diag18 [skip ci]"; git push
