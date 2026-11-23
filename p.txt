@@ -1,0 +1,24 @@
+access-control-allow-credentials: true
+access-control-allow-headers: X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+access-control-allow-methods: PUT, GET, POST, OPTIONS
+access-control-allow-origin: *
+access-control-max-age: 1728000
+S2A_MSIL2A_20261122T134211_R124_T22JBR_20261122T194705 2026-11-22T13:42:11.024000Z 100.0
+S2A_MSIL2A_20261122T134211_R124_T22JBQ_20261122T194705 2026-11-22T13:42:11.024000Z 99.731666
+S2C_MSIL2A_20261120T133831_R124_T22JBR_20261120T162803 2026-11-20T13:38:31.025000Z 100.0
+S2C_MSIL2A_20261120T133831_R124_T22JBQ_20261120T162803 2026-11-20T13:38:31.025000Z 100.0
+S2B_MSIL2A_20261115T133829_R124_T22JBR_20261115T185235 2026-11-15T13:38:29.024000Z 41.615489
+S2B_MSIL2A_20261115T133829_R124_T22JBQ_20261115T185235 2026-11-15T13:38:29.024000Z 33.509457
+S2C_MSIL2A_20261110T133831_R124_T22JBR_20261110T165412 2026-11-10T13:38:31.025000Z 0.210397
+S2C_MSIL2A_20261110T133831_R124_T22JBQ_20261110T165412 2026-11-10T13:38:31.025000Z 2.53863
+access-control-allow-origin: *
+{"id":"pc1.1795527270.a9e4209877d44101b9367b722083f288","links":[{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/info","rel":"metadata","title":"Mosaic metadata"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/tilejson.json","rel":"tilejson","templated":true,"title":"Link for TileJSON (Template URL)"},{"href":"https://planetarycomputer.microsoft.com/api/data/v1/mosaic/pc1.1795527270.a9e4209877d44101b9367b722083f288/WMTSCapabilities.xml","rel":"wmts","template
+mosaic tile 200 image/jpeg 20794
+access-control-allow-credentials: true
+access-control-allow-headers: X-PC-Request-Entity,DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+access-control-allow-methods: PUT, GET, POST, OPTIONS
+access-control-allow-origin: *
+access-control-max-age: 1728000
+cache-control: public, max-age=3600
+x-cache: CONFIG_NOCACHE
+item tile 200 image/jpeg 668
