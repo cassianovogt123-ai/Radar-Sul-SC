@@ -9,19 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: SIFAP imagem
+      - name: Mosaico e RainViewer
         run: |
           B="https://sifap.defesacivil.sc.gov.br/radarsc/rest/radar"
-          curl -sk -m 30 "$B/getUltimasImagens?prod=0&radar=CHP&data=" > lista.json
-          head -c 600 lista.json > sifap_img.txt; echo >> sifap_img.txt
-          name=$(python3 -c "import json;d=json.load(open('lista.json'));print(d[-1] if isinstance(d[-1],str) else d[-1].get('nome') or d[-1])")
-          echo "name $name" >> sifap_img.txt
-          for path in "getImagem?prod=0&radar=CHP&file=$name"; do
-            curl -sk -m 30 -o img.bin -w "$path %{http_code} %{content_type} %{size_download}\n" -H "Referer: https://sifap.defesacivil.sc.gov.br/radarsc/" "$B/$path" >> sifap_img.txt
-            if file img.bin | grep -qi image; then echo "== IMG" >> sifap_img.txt; base64 -w0 img.bin >> sifap_img.txt; echo >> sifap_img.txt; break; fi
-          done
+          curl -sk -m 30 "$B/getUltimasImagens?prod=4&radar=COMP&data=" > lista.json
+          head -c 400 lista.json > m.txt; echo >> m.txt
+          name=$(python3 -c "import json;d=json.load(open('lista.json'));print(sorted(d)[-1])")
+          curl -sk -m 30 -o comp.png -w "comp %{http_code} %{content_type} %{size_download}\n" -H "Referer: https://sifap.defesacivil.sc.gov.br/radarsc/" "$B/getImagem?prod=4&radar=COMP&file=$name" >> m.txt
+          curl -s -m 30 https://api.rainviewer.com/public/weather-maps.json -o rv.json; head -c 700 rv.json >> m.txt; echo >> m.txt
+          host=$(python3 -c "import json;d=json.load(open('rv.json'));print(d['host'])"); path=$(python3 -c "import json;d=json.load(open('rv.json'));print(d['radar']['past'][-1]['path'])")
+          for zxy in 5/11/18 5/10/18 5/11/17 6/22/36 4/5/9; do f=rv_$(echo $zxy|tr / _).png; curl -s -m 30 -o $f -w "$zxy %{http_code} %{size_download}\n" -I "$host$path/256/$zxy/2/1_0.png" -o /dev/null >> m.txt; curl -s -m 30 -o $f "$host$path/256/$zxy/2/1_0.png"; done
+          curl -s -m 30 -D - -o /dev/null "$host$path/256/5/11/18/2/1_0.png" | grep -i "access-control\|content-type" >> m.txt
       - name: Salvar
         if: always()
         run: |
           git config user.name diag; git config user.email diag@users.noreply.github.com
-          git add -f sifap_img.txt; git commit -m "diag15 [skip ci]"; git push
+          git add -f m.txt comp.png rv_*.png; git commit -m "diag16 [skip ci]"; git push
