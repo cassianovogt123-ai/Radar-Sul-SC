@@ -10,6 +10,7 @@ import type { SevereCore } from '../services/severeStorms';
 import { jumpTime, type LightningJump } from '../services/lightningJump';
 import { useLightningLayer } from './lightningLayer';
 import { useRegionalRadarLayer } from './regionalRadarLayer';
+import { useWindLayer } from './windLayer';
 import { NEARBY_CITIES } from '../cities';
 
 const RAIN_COLOR: Record<RainLevel, string> = {
@@ -139,6 +140,24 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       }
       return !v;
     });
+  // Vento animado (começa desligado; escolha salva)
+  const [showWind, setShowWind] = useState(() => {
+    try {
+      return localStorage.getItem('windOn') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const toggleWind = () =>
+    setShowWind((v) => {
+      try {
+        localStorage.setItem('windOn', v ? '0' : '1');
+      } catch {
+        /* sem armazenamento: vale só nesta sessão */
+      }
+      return !v;
+    });
+  const windAt = useWindLayer(mapInstance, showWind);
   const regionalAt = useRegionalRadarLayer(mapInstance, showRegional && !isNowcast, RADAR_COORDS, radarMeta.rangeKm || 250, opacity / 100);
 
   // Tile layer URLs dictionary
@@ -487,6 +506,20 @@ export const RadarMap: React.FC<RadarMapProps> = ({
             🌎 Outras regiões {showRegional
               ? regionalAt
                 ? `· ${new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(regionalAt))} · ocultar`
+                : '· carregando…'
+              : '· mostrar'}
+          </button>
+          <button
+            onClick={toggleWind}
+            aria-pressed={showWind}
+            title={showWind ? 'Esconder a animação do vento' : 'Mostrar o vento (direção e força reais, Open-Meteo)'}
+            className={`rounded-full border bg-[#050b18]/85 px-2.5 py-1 font-mono text-[10.5px] shadow-lg whitespace-nowrap cursor-pointer ${
+              showWind ? 'border-white/40 text-white' : 'border-white/15 text-slate-400'
+            }`}
+          >
+            💨 Vento {showWind
+              ? windAt
+                ? `· ${new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' }).format(new Date(windAt))} · ocultar`
                 : '· carregando…'
               : '· mostrar'}
           </button>
