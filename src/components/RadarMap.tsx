@@ -157,7 +157,7 @@ export const RadarMap: React.FC<RadarMapProps> = ({
       }
       return !v;
     });
-  const windAt = useWindLayer(mapInstance, showWind);
+  const windAt = useWindLayer(mapInstance, showWind, baseMapType === 'osm' || baseMapType === 'topo');
   const regionalAt = useRegionalRadarLayer(mapInstance, showRegional && !isNowcast, RADAR_COORDS, radarMeta.rangeKm || 250, opacity / 100);
 
   // Tile layer URLs dictionary

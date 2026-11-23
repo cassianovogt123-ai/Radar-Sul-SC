@@ -1,7 +1,7 @@
 // Animação do vento (estilo Windy): risquinhos que andam na direção e na velocidade do vento real.
 // Dados: Open-Meteo (vento a 10 m, valor atual) numa grade de 8×8 pontos sobre a região,
 // interpolada entre os pontos. Desenho num canvas por cima do mapa, sem mexer nas outras camadas.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 
 const N = 8; // pontos por lado da grade
@@ -59,8 +59,11 @@ export function windAt(g: WindGrid, la: number, lo: number): [number, number] | 
 }
 
 /** Liga a animação; devolve a hora dos dados (ou null). */
-export function useWindLayer(map: L.Map | null, enabled: boolean): number | null {
+export function useWindLayer(map: L.Map | null, enabled: boolean, lightMap = false): number | null {
   const [at, setAt] = useState<number | null>(null);
+  // mapa claro (Ruas, Relevo): risquinhos escuros; mapa escuro/satélite: claros. Trocar não reinicia a animação.
+  const lightRef = useRef(lightMap);
+  lightRef.current = lightMap;
 
   useEffect(() => {
     if (!map || !enabled) {
@@ -111,7 +114,7 @@ export function useWindLayer(map: L.Map | null, enabled: boolean): number | null
       ctx.fillStyle = 'rgba(0,0,0,0.86)';
       ctx.fillRect(0, 0, w, h);
       ctx.globalCompositeOperation = 'source-over';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = lightRef.current ? 1.4 : 1;
       for (const p of parts) {
         const ll = map.containerPointToLatLng([p.x, p.y]);
         const wv = windAt(grid, ll.lat, ll.lng);
@@ -125,7 +128,10 @@ export function useWindLayer(map: L.Map | null, enabled: boolean): number | null
         const ny = p.y - wv[1] * 0.04;
         // mais forte = mais claro e mais amarelado
         const t = Math.min(1, speed / 60);
-        ctx.strokeStyle = `rgba(255,${Math.round(255 - 70 * t)},${Math.round(255 - 200 * t)},${0.45 + 0.45 * t})`;
+        ctx.strokeStyle = lightRef.current
+          ? // azul-marinho (fraco) → vermelho-escuro (forte)
+            `rgba(${Math.round(30 + 150 * t)},${Math.round(41 - 15 * t)},${Math.round(90 - 60 * t)},${0.6 + 0.35 * t})`
+          : `rgba(255,${Math.round(255 - 70 * t)},${Math.round(255 - 200 * t)},${0.45 + 0.45 * t})`;
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(nx, ny);
