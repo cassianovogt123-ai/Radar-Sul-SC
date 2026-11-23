@@ -54,6 +54,22 @@ const BASEMAP_OPTIONS: { id: 'osm' | 'dark' | 'satellite' | 'topo'; label: strin
   { id: 'topo', label: 'Relevo', title: 'Esri Topográfico' },
 ];
 
+/**
+ * O servidor do mapa às vezes recusa pedaços quando se afasta/aproxima rápido (muitos pedidos de uma vez);
+ * sem isso o pedaço fica em branco (quadrado escuro). Tenta de novo até 4 vezes, esperando um pouco mais a cada vez.
+ */
+function retryTiles(layer: L.TileLayer): L.TileLayer {
+  layer.on('tileerror', (e: L.TileErrorEvent) => {
+    const tile = e.tile as HTMLImageElement & { _tries?: number };
+    const tries = (tile._tries = (tile._tries ?? 0) + 1);
+    if (tries > 4) return;
+    setTimeout(() => {
+      if (tile.isConnected) tile.src = `${layer.getTileUrl(e.coords)}?r=${tries}`;
+    }, 800 * tries);
+  });
+  return layer;
+}
+
 export const RadarMap: React.FC<RadarMapProps> = ({
   currentFrame,
   opacity,
@@ -173,10 +189,10 @@ export const RadarMap: React.FC<RadarMapProps> = ({
 
     // Add Base Tile Layer
     const cfg = getTileConfig(baseMapType);
-    const baseTile = L.tileLayer(cfg.url, {
+    const baseTile = retryTiles(L.tileLayer(cfg.url, {
       maxZoom: cfg.maxZoom,
       subdomains: (cfg as any).subdomains || 'abc',
-    }).addTo(map);
+    })).addTo(map);
     baseTileLayerRef.current = baseTile;
 
     // 1. Radar Tower Marker (Loteamento Desbravador, Chapecó / SC)
@@ -293,11 +309,11 @@ export const RadarMap: React.FC<RadarMapProps> = ({
     }
 
     const cfg = getTileConfig(baseMapType);
-    const newBase = L.tileLayer(cfg.url, {
+    const newBase = retryTiles(L.tileLayer(cfg.url, {
       maxZoom: cfg.maxZoom,
       maxNativeZoom: (cfg as any).maxNativeZoom,
       subdomains: (cfg as any).subdomains || 'abc',
-    }).addTo(mapInstance);
+    })).addTo(mapInstance);
 
     // Ensure it sits at the bottom
     newBase.bringToBack();
